@@ -8,6 +8,32 @@ Format: what you chose, why, and what it rules out.
 
 ---
 
+## Environment
+
+**Python 3.12.14**, not 3.11 as the plan assumed.
+- Why: system Python is 3.14, too new for compiled wheels of the geo stack
+  (geopandas/shapely/pyproj/pyogrio). The `py` launcher listed a 3.11 but it
+  pointed at a removed install (`Documents\Noble_Desktop\python.exe`).
+- 3.12 (a uv-managed CPython build) has wheels for the entire stack and
+  installed clean in under a minute. No conda needed.
+
+**Installer: `uv`**, not pip. Same packages, much faster. `.venv` created with
+`uv venv --python <3.12 path>`; deps with `uv pip install`.
+
+**One venv holds both requirement files.** `requirements-pipeline.txt` (geo
+stack) and `requirements.txt` (streamlit, pandas) are both installed locally.
+The lean/heavy split still does its real job — it governs what Streamlit Cloud
+installs — but locally a single environment is simpler.
+
+**Versions installed:** geopandas 1.1.4, folium 0.20.0, shapely 2.1.2,
+pyproj 3.8.0, streamlit 1.63.0. Reprojection EPSG:4326 -> EPSG:32610 verified
+against a known Seattle point.
+
+**Streamlit app:** all four pages (`app.py` + three `pages/`) render their
+empty states with no exceptions (checked via `streamlit.testing`).
+
+---
+
 ## Data provenance
 
 **Business licenses**
