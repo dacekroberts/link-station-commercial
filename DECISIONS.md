@@ -8,6 +8,33 @@ Format: what you chose, why, and what it rules out.
 
 ---
 
+## Changes
+
+Macro-level deviations from the original project design, newest first. One line
+each; detail lives in the sections below.
+
+### 2026-09-06 — Session 1
+
+- **Toolchain:** Python 3.12 via `uv`, not 3.11 via pip/conda. System Python is
+  3.14 (no geo-stack wheels); the `py` launcher's 3.11 pointed at a deleted
+  install. One venv holds both requirement files locally.
+- **Business-license data:** split into a CSV spine (canonical, all analyses)
+  plus a GIS layer used only to donate point geometry via an account-number
+  join. Rejected the GIS layer as primary — it hides a ~10% coverage gap, the
+  same bias problem that got OSM rejected.
+- **Correction:** "Seattle's business license dataset stops at the city line"
+  is not accurate. The CSV carries ~30% non-Seattle rows (licensed here,
+  located elsewhere); step 2 filters to `City == "SEATTLE"`. The scope decision
+  (Seattle 1 Line only) is unaffected — we still can't get other cities' full
+  business populations from this source.
+- **COLUMN_MAP** filled in Session 1 rather than Session 3 (the file was
+  already in hand).
+- **Station coordinates:** `LINKStations.shp` (Sound Transit GIS, in
+  `st_gis_shapefiles.zip`) added as a fallback between GTFS parsing and
+  hand-building `stations.csv`.
+
+---
+
 ## Environment
 
 **Python 3.12.14**, not 3.11 as the plan assumed.

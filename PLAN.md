@@ -4,6 +4,11 @@ Nine sessions, roughly 14 hours. Ordered so that anything capable of killing
 the project surfaces in the first three hours, while it's still cheap to
 change course.
 
+**Progress:** Session 1 complete (2026-09-06). Deviations from this plan are
+tracked in `DECISIONS.md` under "Changes" — notably Python 3.12/`uv` instead
+of 3.11/conda, the CSV-spine + GIS-geometry-donor split for business licenses,
+and `COLUMN_MAP` filled early.
+
 Two rules that make the rest work:
 
 - **Commit after every green step.** Each script writes a CSV checkpoint. A
@@ -13,21 +18,24 @@ Two rules that make the rest work:
 
 ---
 
-## Session 1 — Environment and data (1.5 h)
+## Session 1 — Environment and data (1.5 h) — DONE 2026-09-06
 
 The goal is to hit every failure mode while they're cheap.
 
-- [ ] `python -m venv .venv && source .venv/bin/activate`
-- [ ] `pip install -r requirements-pipeline.txt`
-- [ ] `python -c "import geopandas; print(geopandas.__version__)"`
-- [ ] If that fails: `conda install -c conda-forge geopandas folium`
-- [ ] `streamlit run app.py` — confirm all four pages load with empty states
-- [ ] `git init && git add -A && git commit -m "scaffold"`
-- [ ] Download all three datasets per `data/raw/README.md`
-- [ ] Open `business_licenses.csv` and answer three questions:
-      exact column names? status/expiration column? employee count column?
-- [ ] Record the answers and your download date in `DECISIONS.md`
-- [ ] Set `LICENSE_SNAPSHOT` in `config.py`
+- [x] venv — `uv venv --python 3.12` (system Python 3.14 lacks geo wheels)
+- [x] `uv pip install -r requirements-pipeline.txt` (+ `requirements.txt`)
+- [x] `geopandas.__version__` → 1.1.4; reprojection 4326→32610 verified
+- [x] conda not needed
+- [x] `streamlit run app.py` — all four pages render empty states, no errors
+- [x] `git init` + commits (identity `tykwondo`, repo-local)
+- [x] Downloads in `data/raw/`: GTFS, license CSV, GIS donor geojson, ST GIS
+      shapefiles
+- [x] CSV inspected: columns confirmed; **no** status/expiration column
+      (active-only → tenure not survival); **no** employee count
+- [x] Answers + download date recorded in `DECISIONS.md`
+- [x] `LICENSE_SNAPSHOT = "2026-09-06"` in `config.py`
+- [x] `COLUMN_MAP` filled (pulled forward from Session 3)
+- [x] Business-license source decided: CSV spine + GIS geometry donor
 
 **Gate:** if geopandas won't install after 45 minutes, switch to conda and
 move on. Do not debug a build toolchain — it is not what this project is
@@ -45,15 +53,21 @@ teaching you.
 - [ ] Eyeball two or three coordinates against a map
 - [ ] Commit
 
-**Bail at 60 minutes.** Hand-build `data/processed/stations.csv` with columns
-`station,latitude,longitude`. Sixteen rows. Note it in `DECISIONS.md` and
-move on — this is completely defensible and costs you nothing analytically.
+**Bail at 60 minutes.** Fallback ladder: (1) pull points from
+`LINKStations.shp` in `data/raw/st_gis_shapefiles.zip` (authoritative Sound
+Transit layer, no route matching); (2) hand-build
+`data/processed/stations.csv` with columns `station,latitude,longitude`,
+sixteen rows. Note which in `DECISIONS.md` and move on — both are completely
+defensible and cost you nothing analytically.
 
 ---
 
 ## Session 3 — Clean the business data (2 h)
 
-- [ ] Fill in `COLUMN_MAP` in `src/step2_clean_businesses.py`
+- [x] Fill in `COLUMN_MAP` in `src/step2_clean_businesses.py` (done Session 1)
+- [ ] Wire the deferred step-2 work: filter to `City == "SEATTLE"` (~30% of
+      rows are out-of-city), carry `City Account Number` + `License Start
+      Date`, dedupe on account number not UBI (UBI is 8% blank)
 - [ ] `python src/step2_clean_businesses.py`
 - [ ] Read the drop counts at each filter stage. A stage that drops 90% of
       rows is a bug, not a filter — investigate before continuing
@@ -68,18 +82,24 @@ downstream inherits it. Spend the time here rather than regretting it later.
 
 ---
 
-## Session 4 — Geocode (1.5 h)
+## Session 4 — Geocode (1.5 h, likely less)
 
+- [ ] Wire the donor join in step 3: left-join geometry from
+      `business_licenses_geocoded.geojson` on `City Account Number`
+      (reproject `EPSG:2926` → `EPSG:32610`), send only the unmatched
+      remainder to the Census geocoder
 - [ ] `python src/step3_geocode.py`
-- [ ] Note the match rate. Write it in `DECISIONS.md`
-- [ ] If below 80%: add `usaddress` parsing to `normalize_address` in step 2,
-      re-run both steps (geocoding batches are cached, so re-runs are cheap)
-- [ ] Spot-check five geocoded points against a map
+- [ ] Note **both** figures in `DECISIONS.md`: donor-join coverage (~90%
+      expected) and Census match rate on the remainder
+- [ ] If the remainder's Census rate is poor: add `usaddress` parsing to
+      `normalize_address` in step 2, re-run (batches are cached)
+- [ ] Spot-check five points from each source against a map
 - [ ] Commit
 
-**Bail:** accept anything at 75% or above and document it. Chasing the last
-few percent is a poor use of your remaining hours, and an honestly reported
-match rate is worth more than a slightly higher unreported one.
+**Bail:** the donor join alone should clear ~90% with authoritative City
+coordinates, so overall coverage is not the risk it was. Accept the Census
+remainder at whatever it lands and document it — an honestly reported rate
+beats a higher unreported one.
 
 ---
 

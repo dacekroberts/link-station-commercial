@@ -16,6 +16,11 @@ Seattle Link light rail / commercial density analysis. Full context in
   gradient is meaningless.
 - Pipeline writes `outputs/`; the Streamlit app only reads it. Nothing else
   crosses that boundary.
+- **Business-license data:** the CSV (`business_licenses.csv`) is canonical for
+  every analysis. The GIS layer (`business_licenses_geocoded.geojson`) is a
+  geometry donor only — joined by account number in step 3. Do not swap the
+  pipeline to the GIS layer as its primary source (it hides a ~10% coverage
+  gap). See `DECISIONS.md`.
 
 ## Working with this user
 
@@ -31,9 +36,12 @@ building them.
 
 ## Commands
 
-```bash
-source .venv/bin/activate
-python src/step1_stations.py    # then 2, 3, 4, 5 in order
+Venv is `.venv` on Python 3.12 (system Python is 3.14, too new for the geo
+wheels). Built with `uv`; plain `venv`/`pip` is equivalent.
+
+```powershell
+.venv\Scripts\Activate.ps1        # Windows; macOS/Linux: source .venv/bin/activate
+python src/step1_stations.py      # then 2, 3, 4, 5 in order
 streamlit run app.py
 ```
 

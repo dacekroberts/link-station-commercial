@@ -24,8 +24,8 @@ requirements.txt             app deps only (Streamlit Cloud reads this)
 requirements-pipeline.txt    geo stack, local only
 
 src/step1_stations.py        GTFS -> station coordinates
-src/step2_clean_businesses.py  license data -> cleaned addresses
-src/step3_geocode.py         Census bulk geocoder -> lat/lon
+src/step2_clean_businesses.py  license data -> cleaned Seattle addresses
+src/step3_geocode.py         GIS geometry join, Census geocoder for the rest
 src/step4_rings.py           buffers, spatial join, three analyses
 src/step5_map.py             Folium -> outputs/heatmap.html
 
@@ -41,24 +41,27 @@ outputs/                     committed - the app needs these at runtime
 
 ## Setup
 
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements-pipeline.txt
-```
-
-If pip struggles with geopandas, use conda instead:
+The geo stack needs a Python with compiled wheels available — 3.11 to 3.13
+(3.14 was too new as of this writing). This project used `uv` with 3.12:
 
 ```bash
-conda install -c conda-forge geopandas folium
+uv venv --python 3.12 .venv
+uv pip install -r requirements-pipeline.txt   # pipeline
+uv pip install -r requirements.txt            # streamlit, to run the app locally
 ```
+
+Plain `venv` + `pip` works the same way. Activate with
+`.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate`
+(macOS/Linux). If pip struggles with geopandas,
+`conda install -c conda-forge geopandas folium`.
 
 ## Running
 
-Fetch the three manual downloads first — see `data/raw/README.md`. Then:
+Fetch the manual downloads first — see `data/raw/README.md`. Then:
 
 ```bash
 python src/step1_stations.py
-python src/step2_clean_businesses.py    # fill in COLUMN_MAP first
+python src/step2_clean_businesses.py
 python src/step3_geocode.py
 python src/step4_rings.py
 python src/step5_map.py
@@ -85,8 +88,10 @@ prints unmatched stations — do not ignore that warning.
 ## Scope
 
 Seattle city limits only, Northgate through Rainier Beach. The 1 Line runs
-well past both ends and the 2 Line is entirely on the Eastside, but Seattle's
-business license dataset stops at the city line and chasing seven more
-municipal datasets is out of scope here.
+well past both ends and the 2 Line is entirely on the Eastside, but a
+cross-station comparison outside Seattle would need each city's own business
+license data, and chasing seven more municipal datasets is out of scope here.
+(Seattle's export does list some businesses located outside the city — those
+are filtered out in step 2.)
 
 Read `pages/3_Methodology.py` before drawing conclusions from any of this.

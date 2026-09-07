@@ -55,8 +55,10 @@ discipline section.
 1. `README.md` — architecture and the two known failure modes
 2. `PLAN.md` — nine sessions with time budgets and bail-out triggers
 3. `config.py` — every tunable, with the reasoning in comments
-4. `data/raw/README.md` — the three manual downloads
-5. `DECISIONS.md` — currently a template; it gets filled in as work proceeds
+4. `data/raw/README.md` — the manual downloads (GTFS, license CSV, GIS donor,
+   ST station shapefile, ridership)
+5. `DECISIONS.md` — the running record; "Changes" section up top for
+   macro-level deviations, template sections below fill in as work proceeds
 
 ---
 
@@ -66,16 +68,26 @@ These were worked through at length. Reopening them costs hours the project
 does not have.
 
 **Scope: Seattle 1 Line only.** The 1 Line runs north to Lynnwood and south
-past the airport, and the 2 Line is entirely on the Eastside. Seattle's
-business license dataset stops at the city line, and sourcing seven more
-municipal datasets is out of budget. Sixteen stations, Northgate through
-Rainier Beach.
+past the airport, and the 2 Line is entirely on the Eastside. A cross-station
+comparison outside Seattle would need each city's own business license data,
+and sourcing seven more municipal datasets is out of budget. Sixteen stations,
+Northgate through Rainier Beach. (Seattle's export does list ~30% of rows at
+non-Seattle addresses — businesses licensed here but located elsewhere. Step 2
+filters to `City == "SEATTLE"`. This does not widen scope.)
 
 **Commercial data: business licenses, not OpenStreetMap.** OSM was considered
 and rejected. Its coverage bias correlates with urban density — the very
 thing being measured — so it is fatal to cross-station comparison. More
 importantly, licenses carry NAICS codes and issue dates, which the tenure
 and chain analyses require and OSM does not have.
+
+**Which license dataset: the CSV, not the GIS layer.** Seattle publishes the
+same licenses twice — a tabular CSV ("Active Business License Tax
+Certificate") and a pre-geocoded GIS layer ("Seattle Business License"). The
+CSV is canonical; the GIS layer is a geometry donor only (joined by account
+number in step 3, then Census-geocode the remainder). The GIS layer omits
+~10% of Seattle businesses with no way to characterise the gap — the same
+bias problem that sank OSM, smaller. Full rationale in `DECISIONS.md`.
 
 **Ridership: manual export.** The Sound Transit dashboard is an embedded
 Power BI report. The data is not in the page HTML and there is no CSV
@@ -132,16 +144,17 @@ warns about unmatched stations. That warning is never noise.
 
 ## What only the user can do
 
-Three downloads and one inspection. You cannot do these; don't wait on them
-either, since setup and station work proceed in parallel.
+Three downloads and one inspection.
 
 - Download the GTFS zip, business license CSV, and ridership numbers
 - Open the business license CSV and determine: exact column names, whether a
   status/expiration column exists, whether an employee count exists
 
-That second one is not a delegable step even in principle. Whether the export
-holds only active licenses determines whether survival is computable or only
-tenure among survivors, and that changes what the project can claim.
+**Status as of 2026-09-06 (Session 1):** GTFS zip, license CSV, and the GIS
+donor layer are downloaded and in `data/raw/`. The CSV inspection is done —
+columns confirmed and mapped, **no status/expiration column** (active-only
+snapshot → tenure among survivors is computable, survival is not), **no
+employee count**. Ridership numbers are still outstanding (Session 5).
 
 ---
 
@@ -151,9 +164,11 @@ The plan has two hard bail-outs. Enforce them; a beginner will not
 spontaneously abandon a problem they're deep into.
 
 **GTFS join: 60 minutes.** If `step1_stations.py` won't produce a sensible
-station list, stop and hand-build `data/processed/stations.csv`. Sixteen
-rows, three columns. Note it in `DECISIONS.md`. It costs nothing
-analytically.
+station list, don't grind on it. Fallback ladder: (1) pull station points
+from `LINKStations.shp` in `st_gis_shapefiles.zip` — an authoritative Sound
+Transit layer, no route-pattern matching; (2) failing that, hand-build
+`data/processed/stations.csv`, sixteen rows, three columns. Either way, note
+it in `DECISIONS.md`. It costs nothing analytically.
 
 **Geocoding: one improvement attempt.** If the match rate is below 80%, add
 `usaddress` parsing in step 2 and re-run once. Then accept 75% or above and
@@ -210,11 +225,17 @@ overstate pedestrian exposure, and belongs in the findings discussion.
 
 ---
 
-## First session
+## Progress
 
-Nothing analytical. Session 1 in `PLAN.md`: create the venv, install
-`requirements-pipeline.txt`, confirm geopandas imports, boot Streamlit and
-check all four pages render their empty states, `git init`, first commit.
+**Session 1 — done (2026-09-06).** venv + geo stack (Python 3.12 / `uv`),
+Streamlit boots with all four empty states, `git init` + commits, all
+downloads in `data/raw/`, CSV inspected and `COLUMN_MAP` filled, business-
+license source decided. Deviations from the plan are logged in `DECISIONS.md`
+under "Changes".
 
-The point is to hit every environment failure while it costs an hour instead
-of a project.
+**Next: Session 2 — station coordinates.** `python src/step1_stations.py`
+against `data/raw/gtfs.zip`. Watch the 60-minute bail-out (fallback ladder in
+Time discipline above). Check whether NE 130th / Pinehurst is in the feed.
+
+The point of Session 1 was to hit every environment failure while it cost an
+hour instead of a project. It did its job.
