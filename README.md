@@ -1,0 +1,92 @@
+# Commercial density around Seattle's light rail stations
+
+Measures commercial density in concentric rings around the sixteen Link 1
+Line stations inside Seattle, tests whether density falls off with distance
+from the platform, and looks at which kinds of businesses concentrate
+closest.
+
+## Design
+
+Two halves that share nothing but a directory.
+
+The **pipeline** (`src/`) does the geospatial work locally and writes to
+`outputs/`. The **app** (`app.py`, `pages/`) reads `outputs/` and displays it.
+Nothing else crosses that boundary.
+
+This split is deliberate. Streamlit Cloud installs from `requirements.txt`,
+and keeping geopandas out of it avoids the compiled GDAL/GEOS/PROJ
+dependencies that are the usual cause of a failed deploy. `outputs/` is
+committed to git for the same reason — the app cannot regenerate it.
+
+```
+config.py                    every tunable: rings, CRS, station list, NAICS
+requirements.txt             app deps only (Streamlit Cloud reads this)
+requirements-pipeline.txt    geo stack, local only
+
+src/step1_stations.py        GTFS -> station coordinates
+src/step2_clean_businesses.py  license data -> cleaned addresses
+src/step3_geocode.py         Census bulk geocoder -> lat/lon
+src/step4_rings.py           buffers, spatial join, three analyses
+src/step5_map.py             Folium -> outputs/heatmap.html
+
+app.py                       Streamlit entry
+pages/1_Heatmap.py           embeds the saved map
+pages/2_Findings.py          gradient, ridership, chains
+pages/3_Methodology.py       sources and limitations
+
+data/raw/                    manual downloads (gitignored, see its README)
+data/processed/              intermediate CSVs (gitignored, regenerable)
+outputs/                     committed - the app needs these at runtime
+```
+
+## Setup
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-pipeline.txt
+```
+
+If pip struggles with geopandas, use conda instead:
+
+```bash
+conda install -c conda-forge geopandas folium
+```
+
+## Running
+
+Fetch the three manual downloads first — see `data/raw/README.md`. Then:
+
+```bash
+python src/step1_stations.py
+python src/step2_clean_businesses.py    # fill in COLUMN_MAP first
+python src/step3_geocode.py
+python src/step4_rings.py
+python src/step5_map.py
+
+streamlit run app.py
+```
+
+Each step writes a CSV checkpoint, so a failure costs you one step rather
+than the run. Geocoding batches are cached to `data/raw/geocode_cache/` and
+skipped on re-run.
+
+## Two things that will bite
+
+**Coordinate systems.** Lat/lon is measured in degrees, and a degree of
+longitude is about 75 km at this latitude. Buffering 0.3 miles in degrees
+produces ovals of the wrong size. The pipeline projects to EPSG:32610
+(metres) before any distance operation and back to EPSG:4326 for display.
+If you add spatial code, follow that pattern.
+
+**Station name matching.** The join between ridership and station data is on
+name. GTFS names carry suffixes and the dashboard's names may differ. Step 4
+prints unmatched stations — do not ignore that warning.
+
+## Scope
+
+Seattle city limits only, Northgate through Rainier Beach. The 1 Line runs
+well past both ends and the 2 Line is entirely on the Eastside, but Seattle's
+business license dataset stops at the city line and chasing seven more
+municipal datasets is out of scope here.
+
+Read `pages/3_Methodology.py` before drawing conclusions from any of this.

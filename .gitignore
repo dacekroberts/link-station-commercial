@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+.DS_Store
+
+# Raw downloads are large and re-downloadable. Keep the README that
+# explains how to fetch them, not the files themselves.
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/README.md
+
+# Intermediate files are regenerable from raw.
+data/processed/*
+!data/processed/.gitkeep
+
+# Outputs ARE committed - Streamlit Cloud needs them at runtime,
+# and the pipeline does not run there.

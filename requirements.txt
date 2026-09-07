@@ -1,0 +1,6 @@
+# Streamlit Cloud installs from this file.
+# Keep it lean: no geopandas, no GDAL, no compiled geo stack.
+# The heavy dependencies live in requirements-pipeline.txt and are only
+# needed on your machine when you regenerate outputs/.
+streamlit>=1.40
+pandas>=2.2

@@ -1,0 +1,14 @@
+# Local pipeline dependencies. Not installed on Streamlit Cloud.
+# Install with: pip install -r requirements-pipeline.txt
+#
+# If pip struggles with geopandas, use conda instead:
+#   conda install -c conda-forge geopandas folium
+pandas>=2.2
+geopandas>=1.0
+shapely>=2.0
+pyproj>=3.6
+folium>=0.17
+requests>=2.32
+usaddress>=0.5.10
+rapidfuzz>=3.9
+jupyterlab>=4.2
