@@ -1,0 +1,4 @@
+# Normalize line endings: LF in the repo, on every platform. Streamlit Cloud
+# deploys on Linux, so LF is what actually runs. Git auto-detects binary
+# files and leaves them untouched.
+* text=auto eol=lf
