@@ -37,12 +37,33 @@ empty states with no exceptions (checked via `streamlit.testing`).
 ## Data provenance
 
 **Business licenses**
-- Downloaded: _[date]_
-- Source: _[exact dataset name and URL]_
-- Row count as downloaded: _[n]_
-- Status/expiration column present: _[yes/no — determines whether survival
-  is computable or only tenure among survivors]_
-- Employee count column present: _[yes/no]_
+- Downloaded: 2026-09-06
+- Source: City of Seattle Open Data — "Active Business License Tax Certificate",
+  dataset `wnbq-64tb` (data.seattle.gov). Daily refresh.
+- File: `data/raw/business_licenses.csv`
+- Row count as downloaded: 84,390 (58,774 with a Seattle address; the rest are
+  businesses licensed with Seattle but located in Kent, Bellevue, Tacoma, etc.
+  — filtered out in step 2)
+- Columns: Business Legal Name, Trade Name, Ownership Type, NAICS Code, NAICS
+  Description, License Start Date, Street Address, City, State, Zip, Business
+  Phone, City Account Number, UBI
+- Status/expiration column present: **no**. This is an active-only snapshot, so
+  we can measure **tenure among current licensees** (from License Start Date)
+  but **not survival** — closed businesses are absent, not marked. Documented
+  limitation.
+- Employee count column present: **no**. No business-size proxy available.
+- License Start Date: `YYYYMMDD`, 100% parseable, real mass 2018–2026.
+
+**Business license geometry (donor)**
+- Downloaded: 2026-09-06
+- Source: "Seattle Business License" GIS layer (SeattleCityGIS / ArcGIS Hub;
+  catalog stub `wmtg-dzy4` on data.seattle.gov). 54,443 pre-geocoded points,
+  `EPSG:2926` (WA State Plane N, feet).
+- File: `data/raw/business_licenses_geocoded.geojson`
+- Use: **geometry only**. step 3 left-joins these coordinates onto the CSV by
+  City Account Number (~53,015 of ~58,774 Seattle rows match), then Census-
+  geocodes the remainder. See "Business license source" below for why it is
+  not the primary source.
 
 **Ridership**
 - Accessed: _[date]_
@@ -60,6 +81,29 @@ empty states with no exceptions (checked via `streamlit.testing`).
 ---
 
 ## Analyst choices
+
+**Business license source: CSV spine + GIS geometry donor**
+- Chose: the "Active Business License Tax Certificate" CSV as the canonical
+  source for every analysis; the "Seattle Business License" GIS layer used only
+  to donate point coordinates (joined on City Account Number).
+- Rejected: using the GIS layer as the primary source. It is a strict subset of
+  the CSV — it contains only the ~90% of Seattle businesses the City's geocoder
+  successfully placed, and silently omits ~5,700 Seattle businesses with no way
+  to characterise what is missing. That is the same coverage-bias problem that
+  got OpenStreetMap rejected: the gap is not random (new, home-based, informal-
+  address businesses) and it correlates with the thing being measured. Starting
+  from the CSV and geocoding it ourselves makes every drop visible and
+  reportable.
+- Rejected: pure CSV with no donor. The account-number join collapses the
+  Session 4 geocoding risk — ~53k rows get authoritative City coordinates for
+  free, leaving only ~5.7k for the Census geocoder — for no analytical cost.
+- Also gained from the CSV: Ownership Type (sole prop / corp / LLC), UBI, split
+  address components. Lost vs. GIS: an expiration date (minor — start date
+  carries the tenure analysis) and a `BUSINESS_ID` chain link (recoverable via
+  the same join if needed).
+- Implementation (Session 3/4, not yet wired): step 2 filters to Seattle and
+  carries City Account Number + License Start Date; step 3 does the donor join
+  before calling Census and reports both match rates.
 
 **NAICS prefixes kept**
 - Final list: _[...]_

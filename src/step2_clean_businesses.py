@@ -27,16 +27,24 @@ from config import (  # noqa: E402
 
 RAW_CSV = DATA_RAW / "business_licenses.csv"
 
-# TODO: fill these in after inspecting the raw file's headers.
+# Mapped against "Active Business License Tax Certificate" (data.seattle.gov
+# wnbq-64tb), downloaded 2026-09-06. Headers confirmed against the raw file.
+#
+# Still TODO in Session 3 (not wired yet, tracked in DECISIONS.md):
+#   - filter to City == "SEATTLE" (~30% of rows are licensed-here / located
+#     elsewhere - Kent, Bellevue, Tacoma)
+#   - carry "City Account Number" (dedupe key + join key to the GIS geometry
+#     donor in step 3) and "License Start Date" (YYYYMMDD, feeds tenure)
+#   - dedupe on account number, not UBI (UBI is 8.3% blank here)
 COLUMN_MAP = {
-    "business_name": "TODO",
-    "ubi": "TODO",          # unique business identifier, for deduplication
-    "naics": "TODO",
-    "street": "TODO",
-    "city": "TODO",
-    "state": "TODO",
-    "zip": "TODO",
-    "status": "TODO",       # may not exist - see note in main()
+    "business_name": "Trade Name",
+    "ubi": "UBI",
+    "naics": "NAICS Code",
+    "street": "Street Address",
+    "city": "City",
+    "state": "State",
+    "zip": "Zip",
+    "status": None,               # no status/expiration column - active-only snapshot
 }
 
 

@@ -16,19 +16,48 @@ Used by: `src/step1_stations.py`
 
 ## 2. `business_licenses.csv` — commercial spaces
 
-City of Seattle Open Data portal, "Active Business License Tax Certificates."
-Export as CSV and save here.
+City of Seattle Open Data portal, **"Active Business License Tax Certificate"**
+(dataset `wnbq-64tb`). Export as CSV, save here as `business_licenses.csv`.
 
-Before running step 2, open the file and note:
+Inspected 2026-09-06 (see `DECISIONS.md` for the full record):
 
-- the exact column names (you'll paste them into `COLUMN_MAP`)
-- whether a status or expiration column exists — this determines whether you
-  can compute survival or only tenure among survivors
-- whether an employee-count field exists — a rough size proxy if so
+- Columns: Business Legal Name, Trade Name, Ownership Type, NAICS Code, NAICS
+  Description, License Start Date, Street Address, City, State, Zip, Business
+  Phone, City Account Number, UBI. `COLUMN_MAP` in step 2 is filled from these.
+- **No status or expiration column** — active-only snapshot. Tenure among
+  current licensees is computable; survival is not. Documented as a limitation.
+- **No employee-count column.**
+- ~30% of rows have a non-Seattle address (licensed here, located elsewhere).
+  Step 2 filters to `City == "SEATTLE"`.
 
-Record your download date in `config.py` under `LICENSE_SNAPSHOT`.
+Record the download date in `config.py` under `LICENSE_SNAPSHOT`.
 
 Used by: `src/step2_clean_businesses.py`
+
+---
+
+## 2b. `business_licenses_geocoded.geojson` — geometry donor
+
+ArcGIS Hub, **"Seattle Business License"** (SeattleCityGIS; catalog stub
+`wmtg-dzy4`). Download the GeoJSON, save here under this name.
+
+This is the same businesses as file 2, pre-geocoded by the City. Step 3 joins
+its coordinates onto the CSV by City Account Number so that only the unmatched
+remainder goes to the Census geocoder. It is **not** the primary source — it
+silently omits ~10% of Seattle businesses (see `DECISIONS.md`).
+
+Used by: `src/step3_geocode.py`
+
+---
+
+## 2c. `st_gis_shapefiles.zip` — Link station points (optional, Session 2)
+
+Sound Transit public GIS data (`STPublicData.zip`). Contains `LINKStations.shp`,
+an authoritative point layer of Link stations. If parsing station coordinates
+out of the GTFS feed (step 1) proves fiddly, this shapefile is a clean
+fallback — no route-pattern matching needed. Save the zip here under this name.
+
+Used by: `src/step1_stations.py` (fallback path)
 
 ---
 

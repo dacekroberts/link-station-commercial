@@ -118,5 +118,9 @@ KING_COUNTY_BBOX = {
 # the temporal gap between them is a documented limitation.
 RIDERSHIP_SNAPSHOT = "May 2025"
 RIDERSHIP_SOURCE = "Sound Transit System Performance Tracker"
-LICENSE_SNAPSHOT = "TODO - fill in your download date"
-LICENSE_SOURCE = "City of Seattle Open Data - Active Business License Tax Certificates"
+LICENSE_SNAPSHOT = "2026-09-06"
+LICENSE_SOURCE = (
+    "City of Seattle Open Data - Active Business License Tax Certificate "
+    "(dataset wnbq-64tb). Point geometry joined from the companion GIS layer "
+    "'Seattle Business License' where account numbers match."
+)
