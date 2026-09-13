@@ -58,6 +58,21 @@ each; detail lives in the sections below.
 - Verified the embed inside Streamlit (`pages/1_Heatmap.py`), not just the
   standalone file - loads cleanly, the two console 404s present are
   Streamlit's own internal routing artifacts, unrelated to the map.
+  **Correction, found later the same day:** "loads cleanly" was true of
+  that pass's checks (layers render, no console errors) but missed two
+  real defects only visible on closer inspection - see the Post-Session-7
+  entry below. A page rendering without errors is not the same bar as
+  every visible string and control being correct and reachable.
+- **Post-Session-7 fix, same day:** two bugs found testing the embedded
+  page more closely - `pages/1_Heatmap.py` read the saved HTML with the
+  OS default encoding (cp1252 on Windows) instead of UTF-8, mangling every
+  em dash into mojibake in the legend and layer names; and the layer
+  control, left at Leaflet's default top-right corner, fell outside
+  Streamlit's content area once the sidebar was open (the map's fixed
+  1000px width, itself required by the Leaflet.heat fix above, doesn't
+  always fit). Fixed by reading the file as UTF-8 explicitly and moving
+  the control to top-left, where it's always visible. Full detail in "Map
+  rendering" below.
 
 ### 2026-09-13 — Session 6
 
@@ -660,6 +675,37 @@ Consolidated from several separate decisions made across the session - the
   chasing pixel-perfect hover in the automated browser pane) - tooltip
   content confirmed correct, e.g. "Capitol Hill" / "278,486 avg. monthly
   boardings (2025)," matching Session 5's numbers exactly.
+
+**Post-Session-7, same day: mojibake in the embed, and an unreachable layer control**
+
+- Caught by the user, testing the actual embedded Streamlit page (not the
+  standalone file) at a realistic window width: the legend and layer-control
+  labels showed mangled characters (`â€"` etc.) in place of every em dash,
+  and the layer control itself couldn't be found at all.
+- **Mojibake root cause:** `pages/1_Heatmap.py` read `outputs/heatmap.html`
+  with `Path.read_text()` and no explicit encoding. Folium always saves
+  that file as UTF-8; on Windows, `read_text()` without an encoding falls
+  back to the OS codepage (cp1252), which corrupts any multi-byte UTF-8
+  character on read. The saved file on disk was always correct - this was
+  a read bug in the embedding page only, not a data or generation problem.
+  Fixed by reading explicitly as UTF-8.
+- **Layer-control root cause:** `folium.LayerControl()` defaults to
+  Leaflet's top-right corner. The map has a fixed 1000px width (needed for
+  the earlier Leaflet.heat fix), and Streamlit's content area is often
+  narrower than that with the sidebar open, pushing the control past the
+  visible/scrollable edge. Fixed by setting `position="topleft"`, where it
+  stacks under the zoom control and stays reachable at any width. Also
+  enabled iframe scrolling in `pages/1_Heatmap.py` as a defensive fallback
+  for any future width overflow.
+- Why Session 7's own verification missed both: that pass checked "does it
+  load without errors and do the layers render," which it did - neither
+  bug throws a console error or breaks a layer. Only reading the actual
+  rendered text, and checking control reachability at a realistic (not
+  maximized) window width, surfaced them.
+- Verified after the fix: layer-control icon visible and expandable at
+  800px width; legend and all 15 business-layer names render with correct
+  em dashes; regenerated `outputs/heatmap.html` and re-checked inside
+  Streamlit, not just the standalone file.
 
 ---
 
