@@ -13,6 +13,18 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-13 — Session 3 (in progress)
+
+- Wired the deferred step-2 work: Seattle filter (84,390 -> 58,774), dedupe on
+  City Account Number instead of UBI, carried account number + license start
+  date through.
+- **New methodology structure:** added a "What was filtered out" section that
+  renders directly from a new `NAICS_STOREFRONT_EXCLUDE` dict in `config.py` —
+  each individually-excluded NAICS code carries its reasoning in one place, so
+  the code and the write-up can't drift apart. First entry: `812930` "Parking
+  Lots and Garages" (826 rows) excluded — parking is a planned trip decision,
+  not the incidental foot traffic this analysis measures.
+
 ### 2026-09-13 — Session 2
 
 - **Route matching fixed:** `ROUTE_NAME_PATTERN` substring-matched on
@@ -163,10 +175,24 @@ empty states with no exceptions (checked via `streamlit.testing`).
   before calling Census and reports both match rates.
 
 **NAICS prefixes kept**
-- Final list: _[...]_
-- Why: _[what you saw in the sample of 20 that led here]_
-- Considered and rejected: _[e.g. 721 accommodation, 71 arts/rec — why]_
-- Effect: _[row count before and after]_
+- Prefix list unchanged: `44`, `45`, `722`, `812`. Session 3 sample review
+  (20 random rows + the top-20 category breakdown, of 14,728 rows surviving
+  the prefix filter) is otherwise still in progress — see "Things that went
+  wrong" / ongoing notes below for categories still under consideration
+  (e.g. "All Other Personal Services," the largest single category at 2,421
+  rows, is a NAICS grab-bag that reads as a mix of plausible storefronts and
+  likely home-based/registered-agent listings).
+- **Individual exclusion: NAICS `812930` "Parking Lots and Garages" (826
+  rows).** Kept by the `812` prefix but excluded on its own. Reasoning
+  (also on the methodology page, "What was filtered out" — both read from
+  `NAICS_STOREFRONT_EXCLUDE` in `config.py`, one source): paying to park is a
+  planned decision made before the trip, not the incidental foot traffic —
+  a meal, a purchase — this analysis measures. A commuter who drove and paid
+  to park made a different choice than one who walked past a shop from the
+  platform; counting both as the same kind of "storefront" would credit
+  driving trips to a measure meant to capture walking ones.
+- Effect: NAICS prefix filter 58,774 -> 14,728; parking exclusion
+  14,728 -> 13,902; final clean count after dedup/address validity: 13,887.
 
 **Ring boundaries**
 - Used: 0.1 / 0.2 / 0.3 / 0.6 miles

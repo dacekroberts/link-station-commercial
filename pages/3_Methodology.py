@@ -12,6 +12,7 @@ import streamlit as st
 from config import (
     RING_EDGES_MILES,
     NAICS_STOREFRONT_PREFIXES,
+    NAICS_STOREFRONT_EXCLUDE,
     LICENSE_SNAPSHOT,
     LICENSE_SOURCE,
     RIDERSHIP_SNAPSHOT,
@@ -47,6 +48,27 @@ Sound Transit by public records request; the directional split is the
 authors' derived estimate, not an agency figure.
 """
 )
+
+st.header("What was filtered out")
+
+st.markdown(
+    """
+The NAICS prefix filter above is broad by design — it is meant to catch
+retail, food service, and personal services in one pass, not to hand-pick
+categories. That breadth pulls in a few things that don't belong for
+specific reasons. Rather than narrow the prefix list itself (and lose
+categories it correctly keeps), individual NAICS codes are excluded one at a
+time, each with its reasoning recorded here so the choice is checkable
+rather than silent.
+"""
+)
+
+if NAICS_STOREFRONT_EXCLUDE:
+    for code, (label, reason) in NAICS_STOREFRONT_EXCLUDE.items():
+        st.markdown(f"**{label}** (NAICS `{code}`)")
+        st.markdown(reason)
+else:
+    st.markdown("*No categories excluded yet.*")
 
 st.header("Method")
 

@@ -23,29 +23,31 @@ from config import (  # noqa: E402
     DATA_RAW,
     BUSINESSES_CLEAN_CSV,
     NAICS_STOREFRONT_PREFIXES,
+    NAICS_STOREFRONT_EXCLUDE,
 )
 
 RAW_CSV = DATA_RAW / "business_licenses.csv"
 
 # Mapped against "Active Business License Tax Certificate" (data.seattle.gov
 # wnbq-64tb), downloaded 2026-09-06. Headers confirmed against the raw file.
-#
-# Still TODO in Session 3 (not wired yet, tracked in DECISIONS.md):
-#   - filter to City == "SEATTLE" (~30% of rows are licensed-here / located
-#     elsewhere - Kent, Bellevue, Tacoma)
-#   - carry "City Account Number" (dedupe key + join key to the GIS geometry
-#     donor in step 3) and "License Start Date" (YYYYMMDD, feeds tenure)
-#   - dedupe on account number, not UBI (UBI is 8.3% blank here)
 COLUMN_MAP = {
     "business_name": "Trade Name",
-    "ubi": "UBI",
+    "ubi": "UBI",                       # 8.3% blank here - not used for dedupe
     "naics": "NAICS Code",
     "street": "Street Address",
     "city": "City",
     "state": "State",
     "zip": "Zip",
-    "status": None,               # no status/expiration column - active-only snapshot
+    "status": None,                     # no status/expiration column - active-only snapshot
+    "account_number": "City Account Number",  # 0% blank, 0 dupes - the real dedupe key,
+                                               # and the join key to the GIS geometry donor in step 3
+    "license_start_date": "License Start Date",  # YYYYMMDD string; feeds the tenure analysis in step 4
 }
+
+# This export mixes Seattle addresses with businesses that hold a Seattle tax
+# certificate but are located elsewhere (Kent, Bellevue, Tacoma, ...) - about
+# 30% of rows. Restrict to Seattle before any other filtering.
+CITY_KEEP = "SEATTLE"
 
 
 def normalize_address(street: str) -> str:
@@ -92,6 +94,14 @@ def main():
 
     df = df.rename(columns={v: k for k, v in COLUMN_MAP.items()})
 
+    # --- Restrict to Seattle ----------------------------------------------
+    # Do this before any other filter so the drop counts below describe the
+    # population this project is actually about, not a mix of Seattle and
+    # Kent/Bellevue/Tacoma businesses that happen to hold a Seattle license.
+    before = len(df)
+    df = df[df["city"].str.upper().str.strip() == CITY_KEEP]
+    print(f"Seattle filter: {before:,} -> {len(df):,} rows")
+
     # --- Filter to storefront categories --------------------------------
     # This is the single most consequential choice in the script. Everything
     # downstream inherits it. Record the prefix list in your methodology.
@@ -100,6 +110,19 @@ def main():
     keep = naics.str.startswith(tuple(NAICS_STOREFRONT_PREFIXES))
     df = df[keep]
     print(f"NAICS filter: {before:,} -> {len(df):,} rows")
+
+    # --- Drop individually-excluded categories ---------------------------
+    # Codes whose prefix matched above but that don't belong for a specific
+    # reason. See NAICS_STOREFRONT_EXCLUDE in config.py for the reasoning -
+    # rendered on the methodology page too, from the same source.
+    if NAICS_STOREFRONT_EXCLUDE:
+        before = len(df)
+        excluded = naics[df.index].isin(NAICS_STOREFRONT_EXCLUDE)
+        for code, (label, _reason) in NAICS_STOREFRONT_EXCLUDE.items():
+            n = (naics[df.index] == code).sum()
+            print(f"  excluding {code} ({label}): {n:,} rows")
+        df = df[~excluded]
+        print(f"NAICS exclusions: {before:,} -> {len(df):,} rows")
 
     # --- Active licenses only -------------------------------------------
     # If this dataset holds only currently-active licenses, you have no
@@ -116,11 +139,12 @@ def main():
         )
 
     # --- Deduplicate ----------------------------------------------------
-    # One physical location can hold several licenses. Dedupe on UBI plus
-    # normalized address, never on business name - chains share names.
+    # One physical location can hold several licenses. Dedupe on the City
+    # Account Number plus normalized address - not UBI (8.3% blank here) and
+    # never on business name alone, since chains share names.
     df["street_clean"] = df["street"].apply(normalize_address)
     before = len(df)
-    df = df.drop_duplicates(subset=["ubi", "street_clean"])
+    df = df.drop_duplicates(subset=["account_number", "street_clean"])
     print(f"Deduplication: {before:,} -> {len(df):,} rows")
 
     # --- Drop unusable addresses ----------------------------------------

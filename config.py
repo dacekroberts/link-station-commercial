@@ -110,6 +110,24 @@ NAICS_STOREFRONT_PREFIXES = [
 #   "721"  Accommodation
 #   "621"  Ambulatory health care (clinics, dentists)
 
+# Individual 6-digit NAICS codes excluded from the prefix list above, even
+# though their prefix matches. Each entry carries its reasoning so step 2's
+# filter and pages/3_Methodology.py's "What was filtered out" section render
+# from the same source instead of drifting apart. Add to this dict rather
+# than writing prose only on the methodology page.
+NAICS_STOREFRONT_EXCLUDE = {
+    "812930": (
+        "Parking Lots and Garages",
+        "Paying to park is a planned decision made before the trip, not the "
+        "incidental foot traffic — a meal, a purchase — this analysis is "
+        "trying to measure near a platform. Someone who chose to drive and "
+        "pay for parking made a different choice than someone who walked "
+        "past a restaurant or shop on the way from the platform; treating "
+        "the two as the same kind of \"storefront\" would credit driving "
+        "trips to a measure meant to capture walking ones.",
+    ),
+}
+
 # Sanity bounds for geocoder output. Anything outside this is a bad match.
 KING_COUNTY_BBOX = {
     "lat_min": 47.15,
