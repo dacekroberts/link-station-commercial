@@ -449,6 +449,106 @@ empty states with no exceptions (checked via `streamlit.testing`).
 
 ---
 
+## Map rendering (Session 7, 2026-09-13)
+
+Consolidated from several separate decisions made across the session - the
+"Changes" entry above has the compact version; this is the full account.
+
+**Basemap: CartoDB Positron replaced with OpenStreetMap**
+- The original design specified `tiles="CartoDB positron"` - a muted,
+  minimal basemap chosen deliberately so the heat layer would read clearly
+  against it.
+- Found broken, not assumed: CartoDB now requires an API key. The preset
+  silently fails - confirmed both by a console warning and visually (tiles
+  rendered as a tiled "API KEY REQUIRED" watermark instead of a map).
+- Considered Esri's free legacy "World Light Gray Base" as a closer visual
+  match to the original intent - tested it, and it did look closer. Then
+  checked its terms rather than trusting "free": flagged mature/deprecated
+  status, a paid/key-gated migration Esri has been urging since 2022, and
+  non-commercial-use-only terms. Rejected - the same fragility class that
+  just broke CartoDB, not worth trading one ticking time bomb for another
+  in a deliverable meant to keep working unattended.
+- Landed on OpenStreetMap: busier and more colorful than the original
+  design intent, but free/open with a long, stable track record, and the
+  standard safe default nearly every mapping library assumes. The heat
+  layer still resolves clearly against it - verified at both the default
+  city-wide zoom and zoomed into downtown.
+
+**A real bug that was silently breaking the entire map, not just the basemap**
+- `HeatMap` (Folium's wrapper around the Leaflet.heat plugin) throws
+  `Uncaught IndexSizeError: Failed to execute 'getImageData' ... source
+  width is 0` on load. This is a known, still-open upstream bug
+  (github.com/Leaflet/Leaflet.heat/issues/95): the plugin reads the map's
+  pixel size before the browser finishes resolving a percentage-based
+  (100%/100%) container, and `getImageData` throws when that read comes
+  back zero.
+- Because the exception was uncaught, it silently aborted the rest of the
+  generated script - the ring-boundary circles, station markers, and the
+  layer control never rendered at all, not just the heat layer. Confirmed
+  directly: `map.eachLayer()` showed only 2 layers present (the tile layer
+  and a broken heat-layer object) instead of the full set.
+- Reproduced deterministically on every reload - not a one-off timing
+  fluke - which is what made it worth chasing down rather than dismissing
+  as an environment quirk.
+- Fixed by giving the map explicit fixed pixel dimensions
+  (`width=1000, height=650`) instead of the default percentage-based
+  sizing, which resolves synchronously and sidesteps the race. Verified
+  after the fix: every layer renders, and interaction (zoom, pan, toggling
+  each layer) surfaces no new errors. One harmless residual console line
+  (a Canvas2D performance hint, not the exception) can still appear once on
+  load; confirmed it does not recur or affect behaviour.
+- Checked in both contexts the file needs to work in: standalone (opened
+  directly) and embedded inside Streamlit's `components.html` iframe
+  (`pages/1_Heatmap.py`) - both load cleanly.
+
+**Heat layer tuning: radius=8, blur=10, min_opacity=0.35**
+- The inherited defaults (radius=12, blur=18, min_opacity=0.3) were never a
+  deliberate choice - scaffold values, untouched until this session.
+- Generated three variants and compared them visually, at both the default
+  city-wide zoom and zoomed into downtown, rather than picking numbers by
+  feel:
+  - Original (12/18): smooth, moderate legibility, but most neighbourhoods
+    blend into one continuous wash at the default zoom.
+  - **Tighter (8/10/0.35), chosen:** individual neighbourhood clusters
+    (Ballard, Fremont, U-District, Capitol Hill) read as distinguishable
+    patches rather than one blob. Converges with the original at deep zoom,
+    so nothing is lost there.
+  - Smoother (18/25): clearly worse - washes the whole corridor into one
+    undifferentiated shape, works against the "make it legible" goal the
+    plan set. Rejected outright.
+
+**New, beyond the original plan: a per-business pin layer, NAICS color-coded**
+- Added at the user's request: individual business markers, colored by
+  category, with a legend - not part of the original session design.
+- Volume (11,409 businesses) made plain, unclustered markers impractical -
+  overlapping and unreadable at any zoom a viewer would actually use, and a
+  much heavier file. Used `folium.plugins.FastMarkerCluster` (client-side
+  clustering from a compact coordinate array) rather than one full `Marker`
+  object per point - a requirement at this volume, not a style preference.
+- Categorized using the same three groups `NAICS_STOREFRONT_PREFIXES`
+  already defines (Retail 44/45, Food service 722, Personal services 812)
+  rather than inventing a new scheme. Every business falls into exactly one
+  group by construction: 5,221 / 3,909 / 2,279, summing exactly to the
+  11,409 total, so no "Other" bucket was needed.
+- Colors drawn from a tested categorical palette (blue / orange / aqua),
+  chosen for mutual distinguishability rather than picked arbitrarily.
+- Built as three separate toggleable layers (one per category) so a viewer
+  can isolate, e.g., "just show restaurants," rather than one mixed layer.
+  Off by default - a detail layer, not the primary view.
+- `FastMarkerCluster`'s own `show` parameter did not reliably hide the
+  layer at load - a real quirk hit during implementation, not assumed.
+  Fixed by wrapping each cluster in a `folium.FeatureGroup(show=False)`,
+  the same mechanism the ring layers already use reliably.
+- Verified by hand: clustering, zoom-driven declustering into individual
+  pins, layer toggling, and individual popups all tested working (a popup
+  correctly read "MCDONALDS" at its real downtown Seattle location, next to
+  OpenStreetMap's own McDonald's icon).
+- Resulting file: ~1.25 MB - reasonable for a single self-contained HTML
+  artifact carrying ~11,400 named, located points plus the heat and ring
+  layers.
+
+---
+
 ## Observations
 
 **Gradient**
