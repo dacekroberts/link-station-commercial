@@ -195,6 +195,29 @@ def main():
 
     stations = pd.read_csv(STATIONS_CSV)
     businesses = pd.read_csv(BUSINESSES_GEOCODED_CSV, dtype={"naics": str})
+    businesses = businesses.dropna(subset=["latitude", "longitude"])
+
+    # Restrict the whole map - heat layer and every pin layer - to
+    # businesses that actually fall within some station's outer ring
+    # (0.6 mi). Nearest-station distance is used rather than a fresh
+    # union-of-buffers computation: if a business's CLOSEST station is
+    # already farther than the outer ring edge, every other station is
+    # farther still, so "nearest station within 0.6 mi" and "inside at
+    # least one station's buffer" are the same condition. Without this,
+    # the map silently included every Seattle business regardless of
+    # distance from a station - inconsistent with step4_rings.py, which
+    # only ever counts businesses inside a station's buffer, and
+    # misleading for a map titled "commercial density around station
+    # areas." Computed once here, up front, so both the heat layer below
+    # and the per-business pin layers later use the identical filtered set.
+    businesses["nearest_station"], businesses["ring_band"] = nearest_station_and_ring(
+        businesses, stations
+    )
+    total_before = len(businesses)
+    businesses = businesses[~businesses["ring_band"].str.startswith("Beyond")].copy()
+    print(f"{total_before - len(businesses):,} of {total_before:,} businesses fall "
+          f"outside every station's ring and are excluded from the map "
+          f"({len(businesses):,} remain).")
 
     m = folium.Map(
         location=SEATTLE_CENTER,
@@ -304,13 +327,18 @@ def main():
         rail_layer.add_to(m)
 
     # --- Individual business pins, one clustered layer per NAICS group ----
-    # 11,409 points is too many for plain (unclustered) markers - overlapping
-    # dots at any zoom level a viewer would actually use, and a much heavier
-    # file. FastMarkerCluster ships a compact coordinate array and clusters
-    # client-side, rather than one full Marker object per point. Off by
-    # default (show=False): this is a detail layer, not what a first-time
-    # viewer should load into.
-    businesses = businesses.dropna(subset=["latitude", "longitude"])
+    # Even after the ring filter above, plain (unclustered) markers would
+    # overlap and be unreadable at any zoom a viewer would actually use, and
+    # a much heavier file. FastMarkerCluster ships a compact coordinate array
+    # and clusters client-side, rather than one full Marker object per
+    # point. Off by default (show=False): this is a detail layer, not what
+    # a first-time viewer should load into.
+    #
+    # nearest_station / ring_band (used below for the hover tooltip) were
+    # already computed above, on the full pre-filter set, to do the ring
+    # filtering itself - see nearest_station_and_ring()'s docstring for why
+    # this is a separate, simpler computation from step4's overlap-aware
+    # ring_stats.
     businesses["_group"], businesses["_color"] = zip(
         *businesses["naics"].map(naics_group)
     )
@@ -318,13 +346,6 @@ def main():
     if unmatched:
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
-
-    # Nearest station + ring band, for the hover tooltip only - see
-    # nearest_station_and_ring()'s docstring for why this is a separate,
-    # simpler computation from step4's overlap-aware ring_stats.
-    businesses["nearest_station"], businesses["ring_band"] = nearest_station_and_ring(
-        businesses, stations
-    )
 
     def add_pin_layer(rows, sublabel, group_name, color):
         """One toggleable, clustered, coloured pin layer - the one pattern
