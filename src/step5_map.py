@@ -257,7 +257,7 @@ def main():
 
     # Ring circles, each toggleable so the map is not overwhelming at load.
     for i, label in enumerate(RING_LABELS):
-        layer = folium.FeatureGroup(name=f"Ring: {label}", show=(i == 2))
+        layer = folium.FeatureGroup(name=f"Concentric Ring {i + 1}: {label}", show=(i == 2))
         for _, station in stations.iterrows():
             folium.Circle(
                 location=[station["latitude"], station["longitude"]],
