@@ -547,6 +547,39 @@ Consolidated from several separate decisions made across the session - the
   artifact carrying ~11,400 named, located points plus the heat and ring
   layers.
 
+**Follow-up, same session: finer per-category splits, and a cosmetic naming fix**
+- The legend read `Retail (44/45)` right next to a business count also in
+  parens (`(5,221)`) in the layer control - two different kinds of number
+  easy to mistake for each other. Fixed by spelling out
+  `Retail — NAICS Code: 44/45`, count kept in its own separate parens.
+- Considered building a dynamic, JS-driven NAICS-code filter (a dropdown
+  reconfiguring the map on the fly) instead of more static toggle layers.
+  Technically possible - fully client-side, no backend needed - but judged
+  out of proportion for this stage: new, untested JS complexity in a file
+  that had already needed two real bug fixes this session, for a polish
+  feature on what the plan calls "illustration," while Session 8 (the
+  actual write-up) is what the plan calls the highest-value hours left.
+  Took the cheaper option instead, reusing the identical proven pattern.
+- Added finer, still-static toggle layers within each of the three broad
+  groups - real top categories by count, not guessed: Retail split into
+  Clothing & accessories (595), Supermarkets & grocery (237), the
+  NAICS-459999 catch-all reviewed back in Session 3 (1,188), and an "Other"
+  residual (3,201); Food service into Full-service (1,282), Limited-service
+  (1,258), Mobile food (385), Other (984); Personal services into Beauty
+  salons (1,141), Pet care (261), Barber shops (174), Other (703). Every
+  split sums exactly to its parent group's total.
+  Sub-layers keep their parent's colour throughout (no new legend rows) -
+  they refine *which* businesses of a colour show, not what the colour
+  means.
+- Renamed the base tile layer from Folium's default "openstreetmap" label
+  to "Seattle 1 Line Business Density Heatmap," at the user's request.
+- Total business layers: 15 (3 broad + 12 fine-grained), all built with the
+  same `add_pin_layer()` helper - one pattern, no new JS. File grew to
+  ~1.98 MB (each business now appears in two layers - its broad group and
+  one specific sub-category). Verified: layer control shows all 15 with
+  correct counts, toggling a sub-layer (tested: "Full-service restaurants")
+  shows a visibly smaller, correctly-filtered cluster set, console clean.
+
 ---
 
 ## Observations

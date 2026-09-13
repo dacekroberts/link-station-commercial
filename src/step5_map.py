@@ -44,9 +44,9 @@ HEAT_MIN_OPACITY = 0.35
 
 # Same three groups NAICS_STOREFRONT_PREFIXES already defines in config.py
 # (retail, food service, personal services) - every kept business falls into
-# exactly one, so no "Other" bucket is needed. Colors from the Cove
-# categorical palette (blue/orange/aqua), chosen for mutual distinguishability
-# rather than picked arbitrarily.
+# exactly one, so no top-level "Other" bucket is needed. Colors from the
+# Cove categorical palette (blue/orange/aqua), chosen for mutual
+# distinguishability rather than picked arbitrarily.
 #
 # name / prefixes / color. Labels spell out "NAICS Code:" rather than just
 # putting the digits in parens - "Retail (44/45)" sat right next to a
@@ -57,6 +57,30 @@ NAICS_GROUPS = [
     ("Food service", ("722",), "#eb6834"),
     ("Personal services", ("812",), "#1baf7a"),
 ]
+
+# Finer, toggleable splits within each broad group (Session 7 add-on) - the
+# top few specific NAICS codes by count, plus an "Other" residual for
+# everything else in that group. Same color as the parent group throughout:
+# these layers refine WHICH businesses of a colour show, they don't add new
+# colours, so the legend (3 rows, unchanged) still tells the whole story.
+# Real category names and codes pulled from the actual data, not guessed.
+NAICS_SUBCATEGORIES = {
+    "Retail": [
+        ("Clothing & accessories", "458110"),
+        ("Supermarkets & grocery", "445110"),
+        ("All other misc. retailers (NAICS 459999)", "459999"),
+    ],
+    "Food service": [
+        ("Full-service restaurants", "722511"),
+        ("Limited-service restaurants", "722513"),
+        ("Mobile food services", "722330"),
+    ],
+    "Personal services": [
+        ("Beauty salons", "812112"),
+        ("Pet care", "812910"),
+        ("Barber shops", "812111"),
+    ],
+}
 
 
 def naics_label(name: str, prefixes: tuple) -> str:
@@ -101,10 +125,14 @@ def main():
     m = folium.Map(
         location=SEATTLE_CENTER,
         zoom_start=12,
-        tiles="OpenStreetMap",
+        tiles=None,  # added explicitly below, so its layer-control name is ours to set
         width=1000,
         height=650,
     )
+    folium.TileLayer(
+        tiles="OpenStreetMap",
+        name="Seattle 1 Line Business Density Heatmap",
+    ).add_to(m)
 
     heat_points = businesses[["latitude", "longitude"]].dropna().values.tolist()
     HeatMap(
@@ -157,14 +185,15 @@ def main():
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
 
-    for name, prefixes, color in NAICS_GROUPS:
-        rows = businesses[businesses["_group"] == name]
+    def add_pin_layer(rows, sublabel, group_name, color):
+        """One toggleable, clustered, coloured pin layer - the one pattern
+        reused for every business layer below, broad or fine-grained."""
         data = [
             [row.latitude, row.longitude, row.business_name]
             for row in rows.itertuples()
         ]
         if not data:
-            continue
+            return
         callback = f"""
             function (row) {{
                 var marker = L.circleMarker(new L.LatLng(row[0], row[1]), {{
@@ -178,15 +207,30 @@ def main():
         # FastMarkerCluster's own `show` param is not reliable for hiding it
         # at load - wrap it in a FeatureGroup instead, the same mechanism the
         # ring layers above use, which does respect show=False.
-        # Business COUNT goes in its own parens, separate from the NAICS
-        # code (spelled out in naics_label) - the two numbers sitting next
-        # to each other in parens was the exact confusion being fixed.
-        group = folium.FeatureGroup(
-            name=f"Businesses: {naics_label(name, prefixes)} ({len(data):,})",
-            show=False,
-        )
-        FastMarkerCluster(data, callback=callback).add_to(group)
-        group.add_to(m)
+        # Business COUNT goes in its own parens, separate from any NAICS
+        # code mentioned in the label - two numbers sitting next to each
+        # other in parens was the exact confusion fixed earlier.
+        layer_name = f"Businesses: {group_name} — {sublabel} ({len(data):,})"
+        fg = folium.FeatureGroup(name=layer_name, show=False)
+        FastMarkerCluster(data, callback=callback).add_to(fg)
+        fg.add_to(m)
+
+    for name, prefixes, color in NAICS_GROUPS:
+        group_rows = businesses[businesses["_group"] == name]
+
+        # The broad group as a whole, toggleable on its own - unchanged
+        # from before.
+        add_pin_layer(group_rows, naics_label(name, prefixes), name, color)
+
+        # Finer splits within it (Session 7 add-on, cheap reuse of the same
+        # pattern): a few specific NAICS codes by count, plus "Other" for
+        # the rest of the group. Same colour throughout - see
+        # NAICS_SUBCATEGORIES comment above for why.
+        named_codes = {code for _, code in NAICS_SUBCATEGORIES[name]}
+        for sublabel, code in NAICS_SUBCATEGORIES[name]:
+            add_pin_layer(group_rows[group_rows["naics"] == code], sublabel, name, color)
+        other_rows = group_rows[~group_rows["naics"].isin(named_codes)]
+        add_pin_layer(other_rows, "Other", name, color)
 
     m.get_root().html.add_child(folium.Element(
         LEGEND_HTML.format(rows="".join(
