@@ -396,7 +396,15 @@ def main():
     # plugin, real new complexity for a polish feature; this uses only
     # Leaflet's own built-in collapsed state plus a height cap, so the panel
     # never covers the whole map even fully expanded.
-    folium.LayerControl(collapsed=True).add_to(m)
+    #
+    # position="topleft", not Leaflet's topright default: the map has a
+    # fixed 1000px width (needed for the Leaflet.heat init-race fix above),
+    # and Streamlit's content area is often narrower than that once the
+    # sidebar is open - a topright control gets pushed past the visible/
+    # scrollable edge and effectively disappears. topleft sits right under
+    # the zoom control, which Leaflet stacks automatically, and is visible
+    # at any width since it's anchored to the map's origin corner.
+    folium.LayerControl(collapsed=True, position="topleft").add_to(m)
     m.get_root().html.add_child(folium.Element("""
         <style>
             .leaflet-control-layers-expanded {
