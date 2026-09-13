@@ -250,14 +250,16 @@ def main():
             rail_coords, color="#0a7a3c", weight=5, opacity=0.85,
         ).add_to(rail_layer)
         # A large, high-contrast label - not a hover tooltip, always visible.
-        # Anchored at Othello, well south of downtown: checked visually, not
-        # assumed - a computed centroid of all 16 stations, and even Beacon
-        # Hill, both still landed under the (now quite tall) layer control
-        # panel at the default zoom, since the downtown station cluster
-        # pulls any average north and the panel has grown with each new
-        # layer added this session.
-        label_station = stations.loc[stations["station"] == "Othello"].iloc[0]
-        label_lat, label_lon = label_station["latitude"], label_station["longitude"]
+        # Anchored at Westlake's latitude (the heart of the downtown
+        # corridor) but offset well west of it, out over Elliott Bay/
+        # Myrtle Edwards Park - clear of the dense heat/pin corridor itself
+        # and, checked visually, clear of the layer control too. (Earlier
+        # attempts - a computed station centroid, then Beacon Hill, then
+        # Othello - moved south instead of west and kept landing under the
+        # panel or off in the least interesting part of the map.)
+        label_station = stations.loc[stations["station"] == "Westlake"].iloc[0]
+        label_lat = label_station["latitude"]
+        label_lon = label_station["longitude"] - 0.045
         folium.Marker(
             location=[label_lat, label_lon],
             icon=folium.DivIcon(html="""
