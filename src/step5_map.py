@@ -20,7 +20,7 @@ from pathlib import Path
 
 import folium
 import pandas as pd
-from folium.plugins import HeatMap
+from folium.plugins import HeatMap, FastMarkerCluster
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (  # noqa: E402
@@ -33,6 +33,53 @@ from config import (  # noqa: E402
 
 SEATTLE_CENTER = [47.6062, -122.3321]
 
+# Heat layer tuning (Session 7). Leaflet.heat pixel-space params, not a
+# statistical bandwidth - chosen by eye across a few candidates for legibility
+# at the default city-wide zoom, where radius=12/blur=18 read as one
+# undifferentiated wash. Tighter values keep individual neighbourhood
+# clusters distinguishable there, at no real cost once zoomed into downtown.
+HEAT_RADIUS = 8
+HEAT_BLUR = 10
+HEAT_MIN_OPACITY = 0.35
+
+# Same three groups NAICS_STOREFRONT_PREFIXES already defines in config.py
+# (retail, food service, personal services) - every kept business falls into
+# exactly one, so no "Other" bucket is needed. Colors from the Cove
+# categorical palette (blue/orange/aqua), chosen for mutual distinguishability
+# rather than picked arbitrarily.
+NAICS_GROUPS = [
+    ("Retail (44/45)", ("44", "45"), "#2a78d6"),
+    ("Food service (722)", ("722",), "#eb6834"),
+    ("Personal services (812)", ("812",), "#1baf7a"),
+]
+
+LEGEND_HTML = """
+<div style="
+    position: fixed; bottom: 24px; left: 24px; z-index: 9999;
+    background: white; padding: 10px 14px; border: 1px solid #999;
+    border-radius: 4px; font-family: sans-serif; font-size: 13px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+">
+  <div style="font-weight: bold; margin-bottom: 6px;">Business category</div>
+  {rows}
+</div>
+"""
+LEGEND_ROW = """
+  <div style="display:flex; align-items:center; margin:3px 0;">
+    <span style="display:inline-block; width:11px; height:11px;
+      border-radius:50%; background:{color}; margin-right:7px;
+      border:1px solid rgba(0,0,0,0.3);"></span>{label}
+  </div>
+"""
+
+
+def naics_group(code: str):
+    code = str(code)
+    for label, prefixes, color in NAICS_GROUPS:
+        if code.startswith(prefixes):
+            return label, color
+    return None, None
+
 
 def main():
     for path in (STATIONS_CSV, BUSINESSES_GEOCODED_CSV):
@@ -40,20 +87,22 @@ def main():
             sys.exit(f"Missing {path}. Run the earlier steps first.")
 
     stations = pd.read_csv(STATIONS_CSV)
-    businesses = pd.read_csv(BUSINESSES_GEOCODED_CSV)
+    businesses = pd.read_csv(BUSINESSES_GEOCODED_CSV, dtype={"naics": str})
 
     m = folium.Map(
         location=SEATTLE_CENTER,
         zoom_start=12,
-        tiles="CartoDB positron",  # muted basemap so the heat layer reads clearly
+        tiles="OpenStreetMap",
+        width=1000,
+        height=650,
     )
 
     heat_points = businesses[["latitude", "longitude"]].dropna().values.tolist()
     HeatMap(
         heat_points,
-        radius=12,
-        blur=18,
-        min_opacity=0.3,
+        radius=HEAT_RADIUS,
+        blur=HEAT_BLUR,
+        min_opacity=HEAT_MIN_OPACITY,
         name="Commercial density",
     ).add_to(m)
 
@@ -82,6 +131,56 @@ def main():
             popup=folium.Popup(station["station"], max_width=200),
         ).add_to(station_layer)
     station_layer.add_to(m)
+
+    # --- Individual business pins, one clustered layer per NAICS group ----
+    # 11,409 points is too many for plain (unclustered) markers - overlapping
+    # dots at any zoom level a viewer would actually use, and a much heavier
+    # file. FastMarkerCluster ships a compact coordinate array and clusters
+    # client-side, rather than one full Marker object per point. Off by
+    # default (show=False): this is a detail layer, not what a first-time
+    # viewer should load into.
+    businesses = businesses.dropna(subset=["latitude", "longitude"])
+    businesses["_group"], businesses["_color"] = zip(
+        *businesses["naics"].map(naics_group)
+    )
+    unmatched = businesses["_group"].isna().sum()
+    if unmatched:
+        print(f"WARNING: {unmatched} businesses matched no NAICS group - "
+              "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
+
+    for label, _prefixes, color in NAICS_GROUPS:
+        rows = businesses[businesses["_group"] == label]
+        data = [
+            [row.latitude, row.longitude, row.business_name]
+            for row in rows.itertuples()
+        ]
+        if not data:
+            continue
+        callback = f"""
+            function (row) {{
+                var marker = L.circleMarker(new L.LatLng(row[0], row[1]), {{
+                    radius: 5, color: '{color}', fillColor: '{color}',
+                    fillOpacity: 0.85, weight: 1
+                }});
+                marker.bindPopup(row[2]);
+                return marker;
+            }}
+        """
+        # FastMarkerCluster's own `show` param is not reliable for hiding it
+        # at load - wrap it in a FeatureGroup instead, the same mechanism the
+        # ring layers above use, which does respect show=False.
+        group = folium.FeatureGroup(
+            name=f"Businesses: {label} ({len(data):,})", show=False
+        )
+        FastMarkerCluster(data, callback=callback).add_to(group)
+        group.add_to(m)
+
+    m.get_root().html.add_child(folium.Element(
+        LEGEND_HTML.format(rows="".join(
+            LEGEND_ROW.format(color=color, label=label)
+            for label, _prefixes, color in NAICS_GROUPS
+        ))
+    ))
 
     folium.LayerControl(collapsed=False).add_to(m)
 

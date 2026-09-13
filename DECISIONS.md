@@ -13,6 +13,46 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-13 — Session 7
+
+- **CartoDB Positron (the originally intended basemap) is dead** — now
+  requires an API key, silently fails to load. Switched to OpenStreetMap
+  tiles, which are busier but have a long, stable free-use track record.
+  Tested and rejected an Esri "light gray canvas" alternative that looked
+  closer to the original intent: its free legacy endpoint is flagged
+  mature/deprecated and non-commercial-only, the same fragility class that
+  just broke CartoDB. Not worth trading one ticking time bomb for another.
+- **Found and fixed a bug that was silently breaking the entire map, not
+  just the basemap.** Leaflet.heat throws `IndexSizeError` on init when the
+  map container's size isn't resolved yet — a known, still-open upstream
+  issue (github.com/Leaflet/Leaflet.heat/issues/95) — and because it was
+  uncaught, every layer added after the heat layer in the generated script
+  (rings, stations, layer control) silently never rendered. Fixed by giving
+  the map fixed pixel dimensions (1000x650) instead of percentage-based
+  sizing, which sidesteps the race. One harmless console line can still
+  fire on load; verified (zoom, pan, layer toggling all tested) that it
+  doesn't recur or affect behavior.
+- Heat layer tuned from the untouched defaults (radius=12/blur=18) to
+  radius=8/blur=10/min_opacity=0.35 after a 3-way visual comparison — the
+  tighter setting keeps individual neighbourhood clusters distinguishable
+  at the default city-wide zoom, where the original defaults blended into
+  one wash. A smoother candidate (radius=18/blur=25) was tested and
+  rejected outright - it washed the whole corridor into one undifferentiated
+  blob.
+- **Added, beyond the original plan:** a per-business pin layer, one
+  clustered group per NAICS category (Retail 44/45, Food service 722,
+  Personal services 812 - the same three groups `NAICS_STOREFRONT_PREFIXES`
+  already defines, so no new categorization scheme), with a legend. Off by
+  default (detail layer, not the primary view). 11,409 individual markers
+  made `FastMarkerCluster` a requirement, not a preference - plain markers
+  at that volume would be unreadable and much heavier. Verified: toggling,
+  clustering, zoom-driven declustering, and individual popups all tested
+  working (a popup correctly named "MCDONALDS" at its real Seattle
+  location).
+- Verified the embed inside Streamlit (`pages/1_Heatmap.py`), not just the
+  standalone file - loads cleanly, the two console 404s present are
+  Streamlit's own internal routing artifacts, unrelated to the map.
+
 ### 2026-09-13 — Session 6
 
 - Ran `step4_rings.py` end to end: 6,847 business-ring matches, 16 of 16

@@ -170,14 +170,19 @@ better than a weak positive you oversell.
 
 ---
 
-## Session 7 — The map (1.5 h)
+## Session 7 — The map (1.5 h) — DONE 2026-09-13
 
-- [ ] `python src/step5_map.py`
-- [ ] Open `outputs/heatmap.html` directly in a browser
-- [ ] Tune `radius` and `blur` until the pattern is legible. Do not chase
-      beauty — this is illustration, and the ring stats carry your claims
-- [ ] Confirm it embeds correctly on the Heatmap page
-- [ ] Commit, **including `outputs/`** — the deployed app cannot regenerate it
+- [x] `python src/step5_map.py`
+- [x] Opened `outputs/heatmap.html` directly in a browser — found and fixed
+      two real bugs in the process (dead CartoDB tiles, a Leaflet.heat init
+      race that was silently breaking the whole map). See DECISIONS.md.
+- [x] Tuned `radius`/`blur` via a 3-way visual comparison, not guessing —
+      landed on radius=8/blur=10/min_opacity=0.35
+- [x] Confirmed it embeds correctly on the Heatmap page (checked inside
+      actual Streamlit, not just the standalone file)
+- [x] **Beyond the original plan:** added a per-business, NAICS-color-coded,
+      clustered pin layer with a legend (off by default) — see DECISIONS.md
+- [x] Commit, including `outputs/`
 
 ---
 
