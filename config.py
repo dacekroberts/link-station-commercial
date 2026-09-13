@@ -126,6 +126,29 @@ NAICS_STOREFRONT_EXCLUDE = {
         "the two as the same kind of \"storefront\" would credit driving "
         "trips to a measure meant to capture walking ones.",
     ),
+    "812990": (
+        "All Other Personal Services",
+        "This is NAICS's residual catch-all within 812 — businesses that "
+        "didn't fit a more specific personal-services code, which already "
+        "exist and are kept separately (nail salons, barber shops, dry "
+        "cleaners, pet care each have their own line). A hand sample of 40 "
+        "of the 2,421 rows found roughly 10% that plausibly are walk-in "
+        "storefronts (a dance studio, a massage therapy practice, a dog "
+        "daycare) against a large majority that were home-based sole "
+        "proprietors (an individual's name at a residential address), "
+        "professional offices (law, design, consulting, investment firms), "
+        "or services that travel to the customer rather than the reverse "
+        "(hauling, pet-sitting, event planning, doula care). Dropped as a "
+        "category rather than triaged row-by-row: no finer NAICS subcode "
+        "exists to split it further, manually reviewing 2,421 records for "
+        "roughly 240 likely storefronts is a poor use of the project's "
+        "remaining hours, and the storefront types this bucket's minority "
+        "represents (massage, dance, pet care, wellness) are already "
+        "substantially captured under their own dedicated NAICS codes "
+        "elsewhere in the dataset — so this is a bounded, characterized "
+        "undercount of those categories specifically, not an unaccounted-"
+        "for gap.",
+    ),
 }
 
 # Sanity bounds for geocoder output. Anything outside this is a bad match.

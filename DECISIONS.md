@@ -23,7 +23,13 @@ each; detail lives in the sections below.
   each individually-excluded NAICS code carries its reasoning in one place, so
   the code and the write-up can't drift apart. First entry: `812930` "Parking
   Lots and Garages" (826 rows) excluded — parking is a planned trip decision,
-  not the incidental foot traffic this analysis measures.
+  not the incidental foot traffic this analysis measures. Second entry:
+  `812990` "All Other Personal Services" (2,424 rows) — NAICS's residual
+  catch-all, sample-characterized as ~90% non-storefront (home-based sole
+  proprietors, professional offices, come-to-you services); its ~10%
+  plausible-storefront minority is already substantially covered under other
+  dedicated codes. Clean dataset now 11,466 rows (was 13,887 before this
+  exclusion, 14,728 before any individual exclusions).
 
 ### 2026-09-13 — Session 2
 
@@ -175,13 +181,7 @@ empty states with no exceptions (checked via `streamlit.testing`).
   before calling Census and reports both match rates.
 
 **NAICS prefixes kept**
-- Prefix list unchanged: `44`, `45`, `722`, `812`. Session 3 sample review
-  (20 random rows + the top-20 category breakdown, of 14,728 rows surviving
-  the prefix filter) is otherwise still in progress — see "Things that went
-  wrong" / ongoing notes below for categories still under consideration
-  (e.g. "All Other Personal Services," the largest single category at 2,421
-  rows, is a NAICS grab-bag that reads as a mix of plausible storefronts and
-  likely home-based/registered-agent listings).
+- Prefix list unchanged: `44`, `45`, `722`, `812`.
 - **Individual exclusion: NAICS `812930` "Parking Lots and Garages" (826
   rows).** Kept by the `812` prefix but excluded on its own. Reasoning
   (also on the methodology page, "What was filtered out" — both read from
@@ -191,8 +191,25 @@ empty states with no exceptions (checked via `streamlit.testing`).
   to park made a different choice than one who walked past a shop from the
   platform; counting both as the same kind of "storefront" would credit
   driving trips to a measure meant to capture walking ones.
+- **Individual exclusion: NAICS `812990` "All Other Personal Services"
+  (2,424 rows — the single largest category, ~17% of what the prefix filter
+  had kept).** This is NAICS's residual catch-all within 812; the
+  well-defined personal-service categories (salons, barbers, dry cleaners,
+  pet care) already have their own codes and stay in the dataset untouched.
+  A hand sample of 40 of the 2,421 category rows: ~10% plausibly walk-in
+  storefronts (a dance studio, a massage practice, a dog daycare); the large
+  majority were home-based sole proprietors (an individual's name at a
+  residential address), professional offices (law/design/consulting/
+  investment firms), or services that travel to the customer (hauling,
+  pet-sitting, event planning, doula care). Dropped as a category rather
+  than triaged row-by-row: no finer NAICS subcode exists to split it, hand-
+  reviewing 2,421 rows for ~240 likely storefronts is a poor use of
+  remaining hours, and the storefront types in its minority are already
+  substantially represented under their own dedicated codes elsewhere — so
+  this is a bounded, characterized undercount, not a silent gap.
 - Effect: NAICS prefix filter 58,774 -> 14,728; parking exclusion
-  14,728 -> 13,902; final clean count after dedup/address validity: 13,887.
+  14,728 -> 13,902; personal-services exclusion 13,902 -> 11,478; final
+  clean count after dedup/address validity: **11,466**.
 
 **Ring boundaries**
 - Used: 0.1 / 0.2 / 0.3 / 0.6 miles
