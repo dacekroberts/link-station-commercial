@@ -650,6 +650,16 @@ Consolidated from several separate decisions made across the session - the
   `naics_label()` string (which also has the name) as the sublabel for
   just that one call site doubled it - the 12 finer sub-category layers
   were already clean. One-line fix.
+- **Station markers switched from click-popup (name only) to hover-tooltip
+  (name + 2025 avg monthly ridership)**, matching the business-pin tooltip
+  pattern. Reused `ridership_by_station.csv` from Session 5 directly - no
+  need to re-derive anything from the PDF. Left join (not inner), so a
+  station missing a ridership match still gets a marker rather than
+  vanishing silently; none were missing here, all 16 matched. Verified
+  programmatically via direct Leaflet layer inspection (more reliable than
+  chasing pixel-perfect hover in the automated browser pane) - tooltip
+  content confirmed correct, e.g. "Capitol Hill" / "278,486 avg. monthly
+  boardings (2025)," matching Session 5's numbers exactly.
 
 ---
 
