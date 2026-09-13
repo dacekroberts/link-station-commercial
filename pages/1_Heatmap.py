@@ -27,10 +27,15 @@ cluster" and take the numbers from the findings page.
 )
 
 if HEATMAP_HTML.exists():
-    components.html(HEATMAP_HTML.read_text(), height=700, scrolling=False)
+    # folium always saves this file as UTF-8. On Windows, Path.read_text()
+    # without an explicit encoding falls back to the OS codepage (cp1252),
+    # which mangles every multi-byte character (em dashes in particular) -
+    # not a bug in the saved file, only in how it's read back here.
+    heatmap_html = HEATMAP_HTML.read_text(encoding="utf-8")
+    components.html(heatmap_html, height=700, scrolling=True)
     st.download_button(
         "Download the map",
-        data=HEATMAP_HTML.read_text(),
+        data=heatmap_html,
         file_name="heatmap.html",
         mime="text/html",
     )
