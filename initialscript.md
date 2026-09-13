@@ -208,10 +208,13 @@ honestly rather than hunting for a specification that produces a positive.
 
 ## Useful context
 
-**NE 130th / Pinehurst** was slated to open in 2026. Check whether it appears
-in the GTFS feed. If it's running, it goes in `SEATTLE_1LINE_STATIONS` —
-along with a note that a station open for part of the window isn't comparable
-to one open throughout.
+**NE 130th / Pinehurst** was slated to open in 2026. **Checked in Session 2
+(2026-09-13, GTFS feed dated 2026-08-28): not present.** It is not in
+`SEATTLE_1LINE_STATIONS`, not in `stations.csv`, and stays out of the
+analysis — 16 stations, as originally scoped. If the GTFS feed is
+re-downloaded later and it has since opened, re-check before assuming this
+still holds; if it's running by then, add it and note that a station open for
+only part of the window isn't comparable to one open throughout.
 
 **Three stations have known explanations** for looking empty, and they are
 worth checking against the results rather than treating as data errors:
@@ -233,9 +236,15 @@ downloads in `data/raw/`, CSV inspected and `COLUMN_MAP` filled, business-
 license source decided. Deviations from the plan are logged in `DECISIONS.md`
 under "Changes".
 
-**Next: Session 2 — station coordinates.** `python src/step1_stations.py`
-against `data/raw/gtfs.zip`. Watch the 60-minute bail-out (fallback ladder in
-Time discipline above). Check whether NE 130th / Pinehurst is in the feed.
+**Session 2 — done (2026-09-13).** GTFS join fixed (route matching was
+substring-catching the shuttle bus-bridge route) and re-run: 16 of 16 Seattle
+stations, zero unmatched warnings. NE 130th/Pinehurst confirmed absent from
+the feed (see "Useful context" above).
+
+**Next: Session 3 — clean the business data.** Wire the deferred step-2 work
+(Seattle filter, carry account number + start date, dedupe on account
+number), then the NAICS storefront sample review — that judgment call is the
+user's.
 
 The point of Session 1 was to hit every environment failure while it cost an
 hour instead of a project. It did its job.

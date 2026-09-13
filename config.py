@@ -50,12 +50,18 @@ RING_LABELS = ["0-0.1 mi", "0.1-0.2 mi", "0.2-0.3 mi", "0.3-0.6 mi"]
 # 1 Line stations inside Seattle city limits, ordered north to south.
 # Stations north of Northgate (Shoreline, Mountlake Terrace, Lynnwood) and
 # south of Rainier Beach (Tukwila, SeaTac, Angle Lake, Federal Way) are
-# excluded: Seattle's business license dataset stops at the city line.
+# excluded: a cross-station comparison outside Seattle would need each city's
+# own business license data, which is out of scope. (The Seattle export does
+# list some non-Seattle addresses - those are filtered in step 2 - but it is
+# not a source for other cities' business populations.)
 #
-# Verify these names against stops.txt in the GTFS feed. Sound Transit has
-# renamed stations before (University Street became Symphony), and NE 130th
-# St / Pinehurst was slated to open in 2026 - if it is running, add it
-# between Northgate and Roosevelt and note the partial-year caveat.
+# Verified against stops.txt in the GTFS feed (Session 2, 2026-09-13,
+# feed dated 2026-08-28): all 16 names below matched exactly, zero warnings.
+# NE 130th St / Pinehurst was slated to open in 2026 but is NOT in this feed -
+# confirmed absent, not included. Re-verify if the GTFS feed is re-downloaded
+# later; if it has opened by then, add it between Northgate and Roosevelt and
+# note the partial-year caveat. Sound Transit has renamed stations before
+# (University Street became Symphony) - re-verify names too on any re-run.
 SEATTLE_1LINE_STATIONS = [
     "Northgate",
     "Roosevelt",
