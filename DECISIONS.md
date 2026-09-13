@@ -454,6 +454,15 @@ empty states with no exceptions (checked via `streamlit.testing`).
   geocoded businesses across 16 stations x 4 rings. No unmatched-station
   warnings anywhere in the run (stations.csv, businesses_geocoded.csv, and
   ridership_by_station.csv all agree on names).
+- **Share of businesses actually near a station (post-Session-7, same
+  day):** of the 11,409 geocoded businesses citywide, only **4,120 (36%)**
+  fall within any station's ring at all (nearest station within 0.6 mi);
+  the other 7,289 (64%) are more than 0.6 mi from every station. Distinct
+  from the 6,847 business-ring matches above, which counts business x ring
+  pairs (a downtown business can match more than one station); this is
+  unique businesses. **Candidate headline stat for the Session 8 write-up**
+  — flagged by the user as worth emphasizing, not written up here per the
+  project's own rule that this analysis is the user's to interpret.
 - **Chain analysis validity bug, caught and fixed (Session 6):** the chain
   metric's `station_count` can be inflated by the same downtown buffer
   overlap already disclosed for density — one physical location inside the
