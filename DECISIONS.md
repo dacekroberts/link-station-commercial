@@ -24,8 +24,13 @@ each; detail lives in the sections below.
   reported 45.7% of locations as chains instead of the true 8.8%. Fixed in
   `step4_rings.py` and `pages/2_Findings.py` to require `location_count >=
   2`. Written up on the methodology page.
-- Gradient and per-station results ready for review — not summarized here,
-  since the "Observations" section below is the user's to write.
+- **Observations written up** (below): the aggregate gradient's non-
+  monotonicity was traced to a specific, checkable cause — station spacing
+  vs. ring radii (Symphony/Westlake 0.268 mi apart, closer than the ring
+  system's own reach) — rather than left as an unexplained bump. Also:
+  Northgate and UW both have zero businesses in the entire 0-0.1mi ring,
+  worth the same attention as the three stations the plan named; UW is the
+  sharpest ridership/density outlier (r = 0.684 overall).
 
 ### 2026-09-13 — Session 5
 
@@ -406,19 +411,64 @@ empty states with no exceptions (checked via `streamlit.testing`).
 
 ## Observations
 
-Write these down in session 6, while the numbers are in front of you.
-
 **Gradient**
-- _[monotonic? how steep? which rings?]_
+- Not monotonic. Aggregate density by ring: 957 -> 550 -> **592** -> 311
+  businesses/sq mi — a real uptick at ring 3 (0.2-0.3mi). Only 2 of 16
+  stations decline cleanly (International District/Chinatown, U District).
+- **Root cause identified, not just observed:** station spacing vs. ring
+  radii. Symphony and Westlake sit 0.268 mi apart — closer than the ring
+  system's own reach — so each one's ring 3 partly samples the *other's*
+  core, not its own periphery. Both spike at exactly ring 3 (Westlake
+  2519->1498->**2570**->781; Symphony 1467->1265->**2410**->779). Beacon
+  Hill/Mount Baker sit right at the boundary (0.659 mi) and show only a weak
+  version of the same thing — the effect scales with how close the overlap
+  is, which is itself evidence it's real and not noise.
+- This sharpens the existing "downtown buffers overlap" disclosure into a
+  specific causal claim: the *shape* of the aggregate gradient, not just its
+  level, is partly a station-spacing artifact.
+- One exception the mechanism doesn't explain: Pioneer Square rises from
+  ring 1 to ring 2 (797->1520), not ring 2 to ring 3, and its nearest
+  neighbor (ID/Chinatown, 0.354 mi) is too far to be the cause. Reads more
+  like a genuine siting effect — its commercial core sitting slightly off
+  from the platform — left as an open question, not folded into the
+  overlap explanation.
 
 **Stations against the pattern**
-- _[which, and your explanation]_
+- **Rainier Beach** (13 businesses within 0.3mi): literal zero in the
+  0.2-0.3mi ring specifically, not just low. Consistent with the
+  documented "commercial core sits several blocks from the platform."
+- **SODO** (110): density *rises* through rings 1-3 (287->308->459) before
+  falling. Reads as industrial immediately at the platform, real commerce
+  only appearing toward Pioneer Square at the buffer's edge.
+- **Stadium** (15): 1 business in ring 1, then 373 in ring 4 — largely
+  borrowed from International District/Chinatown, 0.416 mi away and inside
+  Stadium's outer ring. Not really "Stadium's own" walkshed.
+- **Northgate and University of Washington** — not named in the original
+  plan, but the data flags them just as starkly: **zero businesses in the
+  entire 0-0.1mi ring**, both of them. Plausibly a still-developing
+  redevelopment area (Northgate) and a campus/hospital-immediate platform
+  (UW), but not independently confirmed the way the other three were.
 
 **Ridership relationship**
-- _[correlation, and what the access-mode problem does to its meaning]_
+- r = 0.684 (avg monthly boardings vs. businesses within 0.3mi), n=16.
+  Moderate-to-strong positive.
+- **University of Washington is the sharpest outlier**: lowest commercial
+  density of any station (5 businesses within 0.3mi) but 5th-highest
+  ridership (152,748/month) — a large positive residual. Consistent with
+  the access-mode limitation already on the methodology page: a
+  campus/hospital population that rides without shopping nearby.
 
 **Chains**
-- _[share of locations, whether it rises toward the platform]_
+- After the `location_count >= 2` fix (see "Quality metrics" and "Things
+  that went wrong" above for the bug itself): **8.8%** of locations belong
+  to a real multi-location chain (153 brands). The pre-fix number would
+  have said 45.7% — over 5x too high.
+- Real top chains, verified: Subway (7 locations/8 stations), Evergreens
+  Salad (7/5), Caffe Ladro (5/5), Westman's Bagels, Metro by T-Mobile,
+  Great State Burger, Just Poke, Dough Zone Dumpling House — all real,
+  checkable Seattle/PNW brands, not overlap artifacts.
+- Whether chain share rises toward the platform (ring 1 vs. ring 4) not yet
+  checked — worth doing before the findings write-up.
 
 ---
 

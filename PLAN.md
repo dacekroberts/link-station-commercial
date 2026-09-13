@@ -157,9 +157,9 @@ The moment of truth. Everything before this was plumbing.
 - [x] **Checked the chain output by hand — found and fixed a real bug.**
       `station_count > 1` was inflated 5x by downtown buffer overlap; fixed
       to require `location_count >= 2`. Full detail in DECISIONS.md.
-- [ ] **Write your three main observations into `DECISIONS.md`** — this is
-      the one box only you can check. The numbers are ready; the
-      interpretation is the point of the project.
+- [x] **Observations written into `DECISIONS.md`** — Gradient, Stations
+      against the pattern, Ridership relationship, Chains, all four filled
+      in (more than three, since all of it was worth keeping)
 - [x] Commit (pipeline run + chain-bug fix)
 
 **If the gradient is flat**, that is a finding, not a failure. Businesses
