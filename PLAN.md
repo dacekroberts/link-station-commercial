@@ -113,15 +113,23 @@ beats a higher unreported one.
 
 ---
 
-## Session 5 — Ridership by hand (0.5 h)
+## Session 5 — Ridership by hand (revised: 12 months, not 1)
 
-- [ ] Open the Sound Transit dashboard, filter to Link / 1 Line / one month
-- [ ] Try the three-dot menu → Export data. If absent, type the numbers
-- [ ] Save as `data/raw/ridership_by_station.csv` with columns
-      `station,avg_weekday_boardings`
+Reconfigured mid-session from the original one-month plan: all twelve months
+of 2025 captured by hand as dashboard screenshots (total boardings per
+station per month), collected in a Google Doc, transcribed from there. Still
+manual — no Power BI automation — just twelve months of manual reading
+instead of one, for a full-year average instead of a single-month snapshot.
+See `data/raw/README.md` and `DECISIONS.md` for the reasoning.
+
+- [x] Screenshots captured for all 16 stations x 12 months (Jan-Dec 2025),
+      total boardings per month
+- [ ] Transcribe into `data/raw/ridership_by_station.csv` with columns
+      `station,avg_monthly_boardings` (average of the twelve monthly totals)
 - [ ] **Match station names to `data/processed/stations.csv` exactly** — this
       is the single most common silent failure in the pipeline
-- [ ] Record the month, any filters, and the access date in `DECISIONS.md`
+- [ ] Record the months covered, any filters, and the access date in
+      `DECISIONS.md`
 - [ ] Set `RIDERSHIP_SNAPSHOT` in `config.py`
 - [ ] Commit
 

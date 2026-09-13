@@ -160,6 +160,21 @@ Boardings measure departures, not arrivals. For a customer-arrival proxy
 alightings are conceptually closer, though at most stations the two are
 similar over a full day since riders make round trips.
 
+**The boardings figure used here includes weekends**, deliberately, not by
+default. It is each station's average monthly total (twelve months of 2025,
+averaged), not the "average weekday boardings" figure transit agencies more
+commonly report. That choice cuts both ways: weekday ridership is
+disproportionately commute-driven — passing through on the way to a job, not
+stopping to shop — so a weekday-only figure would arguably *understate*
+pedestrian exposure to the storefronts this analysis counts. Including
+weekends better matches the discretionary, retail-adjacent trips this
+project cares about, at the cost of not being directly comparable to
+published "average weekday boardings" figures elsewhere. A same-shaped
+"average daily boardings" figure also appears on Sound Transit's dashboard
+but was not used or transcribed — it is `total monthly boardings ÷ days in
+that month`, arithmetically dependent on the figure already used here, not
+independent information.
+
 **Access mode is the substantive problem.** A large share of riders at some
 stations arrive by car or connecting bus and board directly. Sound Transit's
 garage at Lynnwood City Center accounts for roughly 40% of that station's
@@ -181,15 +196,24 @@ st.subheader("Temporal misalignment")
 
 st.markdown(
     f"""
-Ridership reflects {RIDERSHIP_SNAPSHOT}; business license data reflects
-{LICENSE_SNAPSHOT}. The network changed inside that gap. The Federal Way
-extension opened in late 2025, and the full East Link extension in 2026
-allowed riders travelling between stations north of International
-District/Chinatown to take either line — a change expected to reduce 1 Line
-counts without any change in underlying travel demand.
+Ridership reflects {RIDERSHIP_SNAPSHOT}; business license data reflects a
+single snapshot on {LICENSE_SNAPSHOT}. Two gaps follow from that, not one.
 
-Station-level ridership from the earlier period may therefore misstate
-current conditions, particularly downtown and at the south end. Figures are
+First, the twelve months averaged into the ridership figure are not
+evenly comparable to each other: the Federal Way extension opened in late
+2025, so the ridership window itself may span a system change rather than
+sit entirely before or after one. Averaging smooths month-to-month noise,
+but it can also blend two different network configurations into one number.
+
+Second, the license snapshot postdates the full ridership window by roughly
+nine months, and the full East Link extension completed in 2026 — entirely
+after the ridership period this analysis uses — allowing riders travelling
+between stations north of International District/Chinatown to take either
+line. That's expected to reduce 1 Line counts without any change in
+underlying travel demand.
+
+Station-level ridership from 2025 may therefore misstate current (2026)
+conditions, particularly downtown and at the south end. Figures are
 labelled with their snapshot date wherever they appear.
 """
 )

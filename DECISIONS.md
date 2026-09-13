@@ -13,6 +13,27 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-13 — Session 5 (in progress)
+
+- **Ridership reconfigured from one month to twelve.** Rather than a single
+  Power BI export/transcription, all twelve months of 2025 were captured as
+  screenshots, collected in a Google Doc, and will be transcribed and
+  averaged into `avg_monthly_boardings`. Still fully manual - no automation
+  added, just more manual reads. `RIDERSHIP_SNAPSHOT` changed from
+  `"May 2025"` to `"Jan-Dec 2025 (average of monthly totals)"`.
+- **Deliberately weekend-inclusive, not weekday-only.** The dashboard's
+  "average boardings per day" figure (which includes weekends, so it's not
+  the standard weekday metric anyway) was not transcribed - it's
+  arithmetically derivable from the monthly total and would add transcription
+  risk for zero independent signal. Using a weekend-inclusive figure over a
+  weekday-only one is a considered choice: weekday ridership is
+  commute-skewed and may understate exposure to the retail/food storefronts
+  this project measures.
+- Touched: `config.py` (RIDERSHIP_SNAPSHOT), `data/raw/README.md` (schema +
+  reasoning), `PLAN.md` (Session 5 rewritten), `pages/2_Findings.py` (chart
+  label), `pages/3_Methodology.py` (temporal-misalignment reframed for a
+  year-average; new paragraph on the weekday/weekend choice).
+
 ### 2026-09-13 — Session 4
 
 - Wired the GIS donor join scoped back in Session 1: `step3_geocode.py` now
@@ -142,10 +163,34 @@ empty states with no exceptions (checked via `streamlit.testing`).
   not the primary source.
 
 **Ridership**
-- Accessed: _[date]_
-- Month shown: _[e.g. May 2026]_
-- Dashboard filters set: _[line, metric, any others]_
-- Obtained by: _[dashboard export / manual transcription]_
+- Accessed: _[date - pending, screenshots captured, CSV not yet built]_
+- Months shown: **Jan-Dec 2025 (all twelve)**, revised from the original
+  single-month plan mid-Session-5 — see "Changes" above and
+  `data/raw/README.md`.
+- Metric: **total boardings per month**, averaged across the twelve months
+  into `avg_monthly_boardings`. Deliberately *not* the standard "average
+  weekday boardings" — see reasoning below.
+- Obtained by: manual screenshots of the Sound Transit dashboard tables,
+  collected into a Google Doc by the user, transcribed from there. Still
+  fully manual (no Power BI automation) — just twelve months of manual
+  reading instead of one.
+- **Metric decision:** the dashboard tables also show "average boardings per
+  day" per month, but that figure includes weekends
+  (`total monthly ÷ days in month`) — it is not the weekday-filtered
+  industry-standard figure, and it is arithmetically dependent on the
+  monthly total, not independent information. Not transcribed; derivable
+  later (`÷ ~30.44`) if a "typical day" display figure is ever wanted.
+  Using the weekend-inclusive monthly total instead of a weekday-only figure
+  is a deliberate choice, not just convenience: weekday ridership is
+  disproportionately commute-driven (passing through, not stopping to shop),
+  so it would arguably understate pedestrian exposure to the NAICS-filtered
+  storefronts this project counts. Cost: not directly comparable to a
+  published "average weekday boardings" figure elsewhere. Written up on the
+  methodology page under "Ridership as a foot-traffic proxy."
+- Averaging twelve months instead of using one (as originally planned)
+  smooths seasonality, at the cost of the ridership window possibly spanning
+  the Federal Way extension's late-2025 opening internally — also written up
+  on the methodology page ("Temporal misalignment").
 
 **GTFS**
 - Downloaded: 2026-09-06 (feed dated 2026-08-28 internally)

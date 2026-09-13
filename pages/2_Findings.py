@@ -61,7 +61,7 @@ if STATION_STATS_CSV.exists():
         col = ridership_cols[0]
         st.scatter_chart(
             stats, x=col, y="businesses_within_0_3mi",
-            x_label="Average weekday boardings",
+            x_label="Average monthly boardings",
             y_label="Businesses within 0.3 miles",
         )
         clean = stats[[col, "businesses_within_0_3mi"]].dropna()

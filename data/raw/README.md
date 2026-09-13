@@ -66,29 +66,37 @@ Used by: `src/step1_stations.py` (fallback path)
 From Sound Transit's System Performance Tracker ridership dashboard.
 
 The dashboard is an embedded Power BI report. Its data is not in the page
-HTML and there is no CSV endpoint behind it, so:
+HTML and there is no CSV endpoint behind it, so this project reads the
+numbers by hand rather than automating the extraction — do not automate
+this: browser automation against a Power BI embed is roughly three hours of
+work with a real chance of failure, for data needed once.
 
-1. Filter to Link, 1 Line, and a single month.
-2. Hover a visual and look for a three-dot menu with **Export data**. If it's
-   there, export and reshape to the schema below.
-3. If export is disabled, read the values off the chart and type them in.
-   Sixteen numbers, about fifteen minutes.
+**What was actually done (Session 5):** rather than one month, all twelve
+months of 2025 were captured by hand as screenshots (total boardings per
+month, per station), collected into a Google Doc and transcribed from there.
+Averaging a full year smooths out any single month's seasonality — more
+robust than the single-month figure the schema below originally assumed.
 
-Do not automate this. Browser automation against a Power BI embed is roughly
-three hours of work with a real chance of failure, for data you need once.
+The dashboard's tables also show an "average boardings per day" figure per
+month, but that includes weekends — it is `total monthly boardings ÷ days in
+that month`, not the industry-standard *weekday* boardings figure, and not
+independent information. It was **not** transcribed: deriving it later from
+the monthly total (`÷ ~30.44`) is exact and avoids a second number that has
+to agree with the first.
 
 **Schema** — station names must match `data/processed/stations.csv` exactly,
-or the join in step 4 silently drops rows.
+or the join in step 4 silently drops rows. One row per station, holding the
+average of its twelve monthly totals:
 
 ```csv
-station,avg_weekday_boardings
-Northgate,4000
-Roosevelt,3700
+station,avg_monthly_boardings
+Northgate,124000
+Roosevelt,98000
 ...
 ```
 
-Record which month you used, and any other filters you set, in `config.py`
-under `RIDERSHIP_SNAPSHOT`. Note the access date here too — that's what makes
+Record the month(s) covered, and any filters set on the dashboard, in
+`config.py` under `RIDERSHIP_SNAPSHOT`. Note the access date here too — that's what makes
 the step reproducible.
 
 Used by: `src/step4_rings.py`

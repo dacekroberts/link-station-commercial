@@ -201,7 +201,13 @@ GEOCODE_FAILED_RATE = GEOCODE_TOTAL_FAILED / GEOCODE_TOTAL
 
 # These strings are printed on the methodology page. Keep them accurate;
 # the temporal gap between them is a documented limitation.
-RIDERSHIP_SNAPSHOT = "May 2025"
+#
+# Revised in Session 5: rather than one month, all twelve months of 2025 were
+# captured by hand (screenshots -> Google Doc -> transcribed), and
+# avg_monthly_boardings in ridership_by_station.csv is the average of each
+# station's twelve monthly totals - not a single-month snapshot. See
+# data/raw/README.md and DECISIONS.md.
+RIDERSHIP_SNAPSHOT = "Jan-Dec 2025 (average of monthly totals)"
 RIDERSHIP_SOURCE = "Sound Transit System Performance Tracker"
 LICENSE_SNAPSHOT = "2026-09-06"
 LICENSE_SOURCE = (
