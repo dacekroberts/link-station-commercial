@@ -49,6 +49,12 @@ COLUMN_MAP = {
 # 30% of rows. Restrict to Seattle before any other filtering.
 CITY_KEEP = "SEATTLE"
 
+# "19000101" is a null-date placeholder in this export, not a real founding
+# date - found via a hand review during Session 3. Left in place it would
+# poison a tenure calculation with a business that's supposedly 126 years
+# old. Nulled out in main(), not dropped, since the row itself is fine.
+SENTINEL_LICENSE_START_DATE = "19000101"
+
 
 def normalize_address(street: str) -> str:
     """Strip unit designators and standardise spacing.
@@ -93,6 +99,24 @@ def main():
         )
 
     df = df.rename(columns={v: k for k, v in COLUMN_MAP.items()})
+
+    # --- Small per-field data-quality fixes -------------------------------
+    # Found by hand review during Session 3 (see DECISIONS.md "Open items").
+    # Fixed here, at the source, rather than worked around downstream.
+    blank_name = df["business_name"].fillna("").str.strip() == ""
+    if blank_name.any():
+        print(f"Filling {blank_name.sum()} blank Trade Name(s) from Business Legal Name")
+        df.loc[blank_name, "business_name"] = df.loc[blank_name, "Business Legal Name"]
+
+    sentinel = df["license_start_date"] == SENTINEL_LICENSE_START_DATE
+    if sentinel.any():
+        print(
+            f"Nulling {sentinel.sum()} sentinel license_start_date value(s) "
+            f"({SENTINEL_LICENSE_START_DATE!r} is a null-date placeholder, "
+            "not a real founding date)"
+        )
+        df.loc[sentinel, "license_start_date"] = ""
+    print()
 
     # --- Restrict to Seattle ----------------------------------------------
     # Do this before any other filter so the drop counts below describe the

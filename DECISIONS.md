@@ -282,12 +282,22 @@ problems reads differently from one assembled from a template.
 
 - _[...]_
 
-## Open items (small, not yet actioned)
+## Open items
 
-- **2 rows have a blank `business_name`** (`FLORECER URBANO`,
-  `PUDDLE WOOD TURNING LLC`) — Trade Name was empty but Business Legal Name
-  was populated. Step 2 only reads Trade Name. Fix: fall back to Legal Name
-  when Trade Name is blank. Not done yet - decide before Session 4.
-- **1 row has an `1900-01-01` `license_start_date`** — a null-date sentinel,
-  not a real business age. Doesn't affect density counts; will need
-  filtering before any tenure calculation in Session 6.
+Both fixed in step 2, at the source (raw 84,390-row file), rather than
+patched on the already-filtered set:
+
+- **Blank `business_name`** — Trade Name empty but Business Legal Name
+  populated. Fixed by falling back to Legal Name. Only 2 of these survived
+  into the 11,466-row clean set when first spotted, but the fix runs before
+  any filtering and caught **22** in the full raw file.
+- **`19000101` sentinel `license_start_date`** — a null-date placeholder, not
+  a real founding date (would otherwise read as a 126-year-old business).
+  Nulled out (set to blank), not dropped — the row itself is fine, just that
+  one field. 1 survived into the clean set when first spotted; the fix
+  caught **5** in the full raw file.
+
+Verified after re-running step 2: 0 blank `business_name`, 0 `19000101`
+values, 1 blank `license_start_date` (the nulled one that happened to survive
+filtering) — correctly represented as missing rather than a bogus date. Row
+count unchanged at 11,466; these were fixes, not filters.
