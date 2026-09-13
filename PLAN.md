@@ -190,6 +190,11 @@ better than a weak positive you oversell.
 
 The highest-value hours in the project. Protect them.
 
+**Candidate headline stat, flagged post-Session-7:** only 4,120 of 11,409
+geocoded businesses citywide (36%) fall within any station's ring at all.
+Full number and how it was computed in `DECISIONS.md` under "Quality
+metrics."
+
 - [ ] Fill the three `TODO` blocks in `pages/2_Findings.py`
 - [ ] Fill `[FILL IN]` and `[Confirm which applies]` in `pages/3_Methodology.py`
 - [ ] Transfer everything from `DECISIONS.md` into the methodology page
