@@ -626,6 +626,24 @@ Consolidated from several separate decisions made across the session - the
   Console clean throughout; verified with the browser's own error log, not
   just "it looks fine."
 
+**Two small follow-ups, same session**
+
+- **Repositioned the "1 Line" label** a second time - from Othello (far
+  south) to Westlake's latitude (the heart of the corridor), offset west
+  over Elliott Bay. The user asked for it "leftbound of the downtown
+  corridor" specifically, not just anywhere clear of the UI.
+- **Collapsed the layer control by default and capped its expanded
+  height.** 23 toggleable layers (4 rings + 15 business layers +
+  heat/stations/rail) had grown the always-open panel large enough to
+  cover most of the map. Considered building true nested/collapsible
+  groups (a single "Businesses" dropdown holding all 15) - would need a
+  custom Leaflet control or a third-party plugin, real new complexity for
+  a polish feature, the same class of thing declined earlier this session
+  for the dynamic filter idea. Used only Leaflet's own built-in collapsed
+  state plus a CSS max-height/scroll cap instead - zero new JS. Verified:
+  collapsed by default, map fully visible; expand and collapse both work;
+  console clean.
+
 ---
 
 ## Observations
