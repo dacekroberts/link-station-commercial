@@ -356,7 +356,23 @@ def main():
         ))
     ))
 
-    folium.LayerControl(collapsed=False).add_to(m)
+    # Collapsed by default: with 23 toggleable layers now (4 rings + 15
+    # business layers + heat/stations/rail), an always-open panel covered a
+    # large share of the map. Collapsed, it's a small icon until clicked - a
+    # true nested/collapsible-group control (e.g. one "Businesses" dropdown
+    # holding all 15) would need a custom Leaflet control or a third-party
+    # plugin, real new complexity for a polish feature; this uses only
+    # Leaflet's own built-in collapsed state plus a height cap, so the panel
+    # never covers the whole map even fully expanded.
+    folium.LayerControl(collapsed=True).add_to(m)
+    m.get_root().html.add_child(folium.Element("""
+        <style>
+            .leaflet-control-layers-expanded {
+                max-height: 480px;
+                overflow-y: auto;
+            }
+        </style>
+    """))
 
     HEATMAP_HTML.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(HEATMAP_HTML))
