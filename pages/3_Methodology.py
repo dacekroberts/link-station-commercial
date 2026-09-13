@@ -152,6 +152,17 @@ serve a downtown block.
 Ring boundaries are analyst-chosen. Different cutpoints would produce a
 different gradient.
 
+**Station points are an average of two platforms, not a single focal point.**
+Northbound and southbound platforms are recorded separately in the GTFS feed
+and collapsed to one coordinate per station. The offset between a platform
+and that averaged point ranges from 14 m (Capitol Hill) to 72 m (Columbia
+City) across the sixteen stations, averaging 48 m. Against the innermost
+ring's 161 m width (0.1 mile), that is not negligible: a business near the
+inner-ring boundary could fall in a different ring depending on whether the
+averaged point or a single platform is used as the reference. It matters less
+for the outer rings — 48 m against a 483 m radius (0.3 mile) is a small
+fraction — so the effect is concentrated in the finest-grained comparison.
+
 **Station siting is not random.** Link was routed through corridors that
 were already commercially active, so proximity and density are partly
 co-determined. Rainier Beach shows the reverse case: the neighbourhood's

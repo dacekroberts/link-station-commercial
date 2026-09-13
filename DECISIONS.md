@@ -124,7 +124,12 @@ empty states with no exceptions (checked via `streamlit.testing`).
   Washington"`, `"Int'l Dist/Chinatown"` -> `"International
   District/Chinatown"` (`GTFS_NAME_ALIASES` in step 1).
 - Stations resolved: 16 of 16, zero unmatched warnings, coordinates spot-
-  checked against three known locations (Northgate, Westlake, Rainier Beach).
+  checked against three known locations (Northgate, Westlake, Rainier Beach)
+  and confirmed by the user against a real map for all sixteen.
+- Platform-averaging offset measured: 14 m (Capitol Hill) to 72 m (Columbia
+  City), mean 48 m from each platform to the averaged station point. Not
+  negligible against the innermost 0.1 mi ring (161 m wide). Written up in
+  `pages/3_Methodology.py` under "Spatial interpretation".
 - NE 130th / Pinehurst included: **no**. Not present anywhere in this feed's
   52 1-Line stops (all cities) — not running as of this snapshot.
 - Hand-built instead of joined: no — GTFS join worked once the route filter
