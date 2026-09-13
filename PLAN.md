@@ -43,15 +43,18 @@ teaching you.
 
 ---
 
-## Session 2 — Station coordinates (1.5 h)
+## Session 2 — Station coordinates (1.5 h) — DONE 2026-09-13
 
-- [ ] `python src/step1_stations.py` — it prints `routes.txt` and stops
-- [ ] Update `ROUTE_NAME_PATTERN` to match what you actually see
-- [ ] Re-run; confirm roughly 16 Seattle stations
-- [ ] Check whether NE 130th / Pinehurst is in the feed. If it's open, add it
-      to `SEATTLE_1LINE_STATIONS` and note the partial-window caveat
-- [ ] Eyeball two or three coordinates against a map
-- [ ] Commit
+- [x] `python src/step1_stations.py` — printed `routes.txt` and stops
+- [x] Fixed route matching to exact `route_short_name == "1 Line"` — the
+      substring match had also pulled in the shuttle bus-bridge route
+- [x] Re-ran; **16 of 16** Seattle stations, zero unmatched warnings
+- [x] NE 130th / Pinehurst checked — **not in this feed**, not added
+- [x] Eyeballed three coordinates (Northgate, Westlake, Rainier Beach) against
+      known locations
+- [x] Commit
+
+Took well under budget once the route filter was fixed — see `DECISIONS.md`.
 
 **Bail at 60 minutes.** Fallback ladder: (1) pull points from
 `LINKStations.shp` in `data/raw/st_gis_shapefiles.zip` (authoritative Sound

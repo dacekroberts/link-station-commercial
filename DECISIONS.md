@@ -13,6 +13,19 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-13 — Session 2
+
+- **Route matching fixed:** `ROUTE_NAME_PATTERN` substring-matched on
+  `route_long_name` too, which pulled in the "1 Line Shuttle Bus" replacement
+  service alongside the real train. Now an exact match on `route_short_name`.
+  Without this, `stations.csv` would have had 17 rows including 3 bus-stop
+  duplicates of SODO.
+- **GTFS name aliasing added** for two abbreviated stop names ("Univ of
+  Washington", "Int'l Dist/Chinatown") so the station-name join key is
+  canonical from step 1 onward, not patched later.
+- NE 130th/Pinehurst confirmed **not** in this GTFS snapshot — stays out of
+  scope for now, 16 stations as planned.
+
 ### 2026-09-06 — Session 1
 
 - **Toolchain:** Python 3.12 via `uv`, not 3.11 via pip/conda. System Python is
@@ -99,11 +112,23 @@ empty states with no exceptions (checked via `streamlit.testing`).
 - Obtained by: _[dashboard export / manual transcription]_
 
 **GTFS**
-- Downloaded: _[date]_
-- Route pattern matched: _[value of ROUTE_NAME_PATTERN]_
-- Stations resolved: _[n]_
-- NE 130th / Pinehurst included: _[yes/no, and why]_
-- Hand-built instead of joined: _[yes/no]_
+- Downloaded: 2026-09-06 (feed dated 2026-08-28 internally)
+- Route pattern matched: `route_short_name == "1 Line"` (exact), route_id
+  `100479`. Originally substring-matched on both short and long name, which
+  also pulled in `1-SHUTTLE` ("1 Line Shuttle Bus" — a bus-bridge replacement
+  service) because its route_long_name contains "1 Line" too; that produced 3
+  bogus "SODO Busway" bus-stop rows instead of the one real SODO station.
+  Fixed to exact match on route_short_name only.
+- Two GTFS stop names are abbreviated and were mapped to the canonical names
+  used everywhere else: `"Univ of Washington"` -> `"University of
+  Washington"`, `"Int'l Dist/Chinatown"` -> `"International
+  District/Chinatown"` (`GTFS_NAME_ALIASES` in step 1).
+- Stations resolved: 16 of 16, zero unmatched warnings, coordinates spot-
+  checked against three known locations (Northgate, Westlake, Rainier Beach).
+- NE 130th / Pinehurst included: **no**. Not present anywhere in this feed's
+  52 1-Line stops (all cities) — not running as of this snapshot.
+- Hand-built instead of joined: no — GTFS join worked once the route filter
+  was fixed. Session 2 took well under the 60-minute budget.
 
 ---
 

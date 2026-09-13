@@ -36,6 +36,15 @@ GTFS_ZIP = DATA_RAW / "gtfs.zip"
 # over the years, so do not trust this constant without looking.
 ROUTE_NAME_PATTERN = "1 Line"
 
+# GTFS abbreviates two station names in stop_name. Map them to the canonical
+# names used everywhere else (config.py, the ridership CSV you'll type in
+# Session 5) so the join key is consistent from here on - do not carry GTFS's
+# abbreviations forward.
+GTFS_NAME_ALIASES = {
+    "Univ of Washington": "University of Washington",
+    "Int'l Dist/Chinatown": "International District/Chinatown",
+}
+
 
 def load_gtfs_table(zip_path, filename):
     """Read one .txt table out of a GTFS zip into a DataFrame."""
@@ -60,12 +69,12 @@ def main():
     print(routes[["route_id", "route_short_name", "route_long_name"]].to_string())
     print()
 
-    name_cols = [c for c in ("route_short_name", "route_long_name") if c in routes]
-    mask = pd.Series(False, index=routes.index)
-    for col in name_cols:
-        mask |= routes[col].fillna("").str.contains(ROUTE_NAME_PATTERN, case=False)
-
-    link_routes = routes[mask]
+    # Match route_short_name EXACTLY, not a substring search across both name
+    # columns. This feed also has a "1 Line Shuttle Bus" replacement service
+    # (route_id "1-SHUTTLE") whose route_long_name contains "1 Line" too - a
+    # substring match on route_long_name pulls in its street-level bus stops
+    # alongside the real train stations. We want only the train.
+    link_routes = routes[routes["route_short_name"].fillna("") == ROUTE_NAME_PATTERN]
     if link_routes.empty:
         sys.exit(
             f"No route matched {ROUTE_NAME_PATTERN!r}. Check the printout above "
@@ -85,6 +94,7 @@ def main():
     link_stops = stops[stops["stop_id"].isin(link_stop_ids)].copy()
     link_stops["stop_lat"] = link_stops["stop_lat"].astype(float)
     link_stops["stop_lon"] = link_stops["stop_lon"].astype(float)
+    link_stops["stop_name"] = link_stops["stop_name"].replace(GTFS_NAME_ALIASES)
 
     print(f"Found {len(link_stops)} stops on the 1 Line (all cities):")
     print(link_stops["stop_name"].to_string())
