@@ -755,6 +755,33 @@ Consolidated from several separate decisions made across the session - the
   across neighbourhoods with no station nearby (Magnolia, West Seattle,
   far North Seattle).
 
+**Post-Session-7, same day: an opt-in "all Seattle businesses" heat toggle**
+
+- The user's idea, immediately after the ring-only filter above: keep the
+  ring-only view as the default, but add back a way to see the citywide
+  picture on request, as its own checkbox rather than replacing the
+  default.
+- Implemented as a second `HeatMap` layer plotting the full unfiltered
+  11,409-business set, `show=False` by default, alongside
+  the within-rings layer (`show=True`). Both use identical
+  radius/blur/min_opacity tuning so they're visually comparable, not
+  independently tuned versions that could mislead by tuning alone. Two
+  lines in the layer control: "Commercial density (within station rings)"
+  and "Commercial density (all Seattle businesses)," togglable
+  independently of each other.
+- Pin layers were deliberately NOT duplicated for the citywide set -
+  doubling all 15 business-pin layers would double an already-large
+  layer-control menu for a detail view of businesses outside the
+  project's actual analysis scope. The heat-layer toggle covers the
+  "what does citywide context look like" need well enough on its own
+  without that cost.
+- Verified visually: toggled on with the within-rings layer also on, the
+  heat signature visibly widens beyond the tight rail-corridor ribbon into
+  a broader citywide spread (checked zoomed out, city-wide view); toggled
+  off, returns to exactly the tight ribbon from the previous fix, with the
+  layer-control checkbox state (checked/unchecked) matching what's
+  actually drawn in both cases.
+
 ---
 
 ## Observations
