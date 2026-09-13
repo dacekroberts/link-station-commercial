@@ -30,6 +30,7 @@ from config import (  # noqa: E402
     DATA_RAW,
     STATIONS_CSV,
     BUSINESSES_GEOCODED_CSV,
+    RIDERSHIP_CSV,
     HEATMAP_HTML,
     CRS_GEOGRAPHIC,
     CRS_PROJECTED,
@@ -230,15 +231,36 @@ def main():
             ).add_to(layer)
         layer.add_to(m)
 
+    # Ridership (Session 5: 2025 average of monthly totals - see
+    # DECISIONS.md for why that metric, not "average weekday boardings").
+    # Left join, not inner: a station missing from the CSV should still get
+    # a marker, just with no ridership figure, rather than vanish silently.
+    if RIDERSHIP_CSV.exists():
+        ridership = pd.read_csv(RIDERSHIP_CSV)
+        stations = stations.merge(ridership, on="station", how="left")
+        no_ridership = stations["avg_monthly_boardings"].isna().sum()
+        if no_ridership:
+            print(f"WARNING: {no_ridership} station(s) have no ridership match - "
+                  "station names must agree between stations.csv and ridership_by_station.csv")
+    else:
+        stations["avg_monthly_boardings"] = None
+        print(f"No ridership file at {RIDERSHIP_CSV} - station tooltips will omit it.")
+
     station_layer = folium.FeatureGroup(name="Stations")
     for _, station in stations.iterrows():
+        boardings = station["avg_monthly_boardings"]
+        ridership_line = (
+            f"{boardings:,.0f} avg. monthly boardings (2025)"
+            if pd.notna(boardings) else "No ridership data"
+        )
+        tooltip_html = f"<b>{station['station']}</b><br>{ridership_line}"
         folium.CircleMarker(
             location=[station["latitude"], station["longitude"]],
             radius=5,
             color="#1a5490",
             fill=True,
             fill_opacity=0.9,
-            popup=folium.Popup(station["station"], max_width=200),
+            tooltip=folium.Tooltip(tooltip_html, sticky=True),
         ).add_to(station_layer)
     station_layer.add_to(m)
 
