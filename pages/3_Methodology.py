@@ -171,9 +171,16 @@ weekends better matches the discretionary, retail-adjacent trips this
 project cares about, at the cost of not being directly comparable to
 published "average weekday boardings" figures elsewhere. A same-shaped
 "average daily boardings" figure also appears on Sound Transit's dashboard
-but was not used or transcribed — it is `total monthly boardings ÷ days in
-that month`, arithmetically dependent on the figure already used here, not
-independent information.
+(also weekend-inclusive) but was not transcribed. It is not a simple
+derivation of the monthly total — checked directly against all 192
+station-months, it matches neither `total ÷ calendar days` nor
+`total ÷ weekdays` (off by roughly +9% and −22% respectively, on average),
+so Sound Transit is applying some service-day weighting of its own. What
+was checked instead: averaged to one figure per station across 2025, the
+two metrics correlate at **r = 0.998** across the sixteen stations. For a
+cross-station comparison, which is what this analysis does, that is close
+enough to redundant that transcribing both would not have changed anything
+— confirmed empirically, not assumed.
 
 **Access mode is the substantive problem.** A large share of riders at some
 stations arrive by car or connecting bus and board directly. Sound Transit's

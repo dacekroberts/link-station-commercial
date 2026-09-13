@@ -78,11 +78,16 @@ Averaging a full year smooths out any single month's seasonality — more
 robust than the single-month figure the schema below originally assumed.
 
 The dashboard's tables also show an "average boardings per day" figure per
-month, but that includes weekends — it is `total monthly boardings ÷ days in
-that month`, not the industry-standard *weekday* boardings figure, and not
-independent information. It was **not** transcribed: deriving it later from
-the monthly total (`÷ ~30.44`) is exact and avoids a second number that has
-to agree with the first.
+month (also weekend-inclusive, so not the industry-standard *weekday*
+figure either). It was checked, not just assumed, before deciding to skip
+it: month by month it is *not* a simple derivation of the total — it
+matches neither `total ÷ calendar days` nor `total ÷ weekdays` (off by
+roughly +9% and −22% on average across all 192 station-months), so Sound
+Transit applies some service-day weighting of its own. But averaged to one
+figure per station across the year, the two metrics correlate at
+**r = 0.998** across all sixteen stations — close enough to redundant for a
+cross-station comparison that transcribing both would not have changed
+anything. Not transcribed, on that evidence.
 
 **Schema** — station names must match `data/processed/stations.csv` exactly,
 or the join in step 4 silently drops rows. One row per station, holding the

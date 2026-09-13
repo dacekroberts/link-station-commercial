@@ -13,26 +13,45 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
-### 2026-09-13 — Session 5 (in progress)
+### 2026-09-13 — Session 5
 
-- **Ridership reconfigured from one month to twelve.** Rather than a single
-  Power BI export/transcription, all twelve months of 2025 were captured as
-  screenshots, collected in a Google Doc, and will be transcribed and
-  averaged into `avg_monthly_boardings`. Still fully manual - no automation
-  added, just more manual reads. `RIDERSHIP_SNAPSHOT` changed from
-  `"May 2025"` to `"Jan-Dec 2025 (average of monthly totals)"`.
-- **Deliberately weekend-inclusive, not weekday-only.** The dashboard's
-  "average boardings per day" figure (which includes weekends, so it's not
-  the standard weekday metric anyway) was not transcribed - it's
-  arithmetically derivable from the monthly total and would add transcription
-  risk for zero independent signal. Using a weekend-inclusive figure over a
-  weekday-only one is a considered choice: weekday ridership is
-  commute-skewed and may understate exposure to the retail/food storefronts
-  this project measures.
+- **Ridership reconfigured from one month to twelve.** All twelve months of
+  2025 captured as screenshots, collected in a Google Doc (16 stations x 12
+  months, PDF export, read via PyMuPDF since Read's PDF path needed
+  `poppler`, not installed), transcribed and averaged into
+  `avg_monthly_boardings`. Still fully manual — no automation added, just
+  more manual reads. `RIDERSHIP_SNAPSHOT` changed from `"May 2025"` to
+  `"Jan-Dec 2025 (average of monthly totals)"`.
+- **Weekend-inclusive, not weekday-only — and the "redundant column" claim
+  was checked, not assumed, and corrected once checked.** Initially assumed
+  the dashboard's "average boardings per day" figure was simply
+  `total monthly ÷ days in month`. Checked directly against all 192
+  station-months: **false** — it matches neither `total ÷ calendar days`
+  nor `total ÷ weekdays` (off by roughly +9% and −22% on average
+  respectively), so Sound Transit applies some service-day weighting of its
+  own; it is a genuinely separate calculation. However, averaged to one
+  figure per station across the year, the two metrics correlate at
+  **r = 0.998** across all 16 stations (0.998 excluding Stadium too) — for
+  the cross-station comparison this project does, close enough to redundant
+  that transcribing both would not have changed anything. Not transcribed,
+  on that corrected evidence. (The three files that stated the wrong
+  "simple derivation" claim before this check — `data/raw/README.md`,
+  `pages/3_Methodology.py` — were fixed in this same session.)
+- **Found while transcribing: Stadium's April 2025 is a real, large
+  outlier** — 193,465 total boardings vs. 21k-95k every other month
+  (roughly 3-9x). Very likely a Mariners early-season/home-opener surge
+  (Stadium sits at T-Mobile Park/Lumen Field). Kept in the mean like every
+  other month — no station gets special-cased — but it pulls Stadium's
+  12-month average up substantially above what a "typical" month looks
+  like. Worth checking against the Session 6 findings, alongside Rainier
+  Beach and SODO (both already flagged with independent explanations).
+- `data/raw/ridership_by_station.csv` written: 16 of 16 station names
+  matched `stations.csv` exactly on the first try (zero missing, zero
+  extra) — no silent join failure.
 - Touched: `config.py` (RIDERSHIP_SNAPSHOT), `data/raw/README.md` (schema +
-  reasoning), `PLAN.md` (Session 5 rewritten), `pages/2_Findings.py` (chart
-  label), `pages/3_Methodology.py` (temporal-misalignment reframed for a
-  year-average; new paragraph on the weekday/weekend choice).
+  reasoning, corrected), `PLAN.md` (Session 5 rewritten), `pages/2_Findings.py`
+  (chart label), `pages/3_Methodology.py` (temporal-misalignment reframed for
+  a year-average; weekday/weekend paragraph corrected with the real numbers).
 
 ### 2026-09-13 — Session 4
 
@@ -163,24 +182,36 @@ empty states with no exceptions (checked via `streamlit.testing`).
   not the primary source.
 
 **Ridership**
-- Accessed: _[date - pending, screenshots captured, CSV not yet built]_
+- Accessed: _[date the user pulled the dashboard screenshots - ask before
+  closing out Session 5]_
 - Months shown: **Jan-Dec 2025 (all twelve)**, revised from the original
   single-month plan mid-Session-5 — see "Changes" above and
   `data/raw/README.md`.
 - Metric: **total boardings per month**, averaged across the twelve months
   into `avg_monthly_boardings`. Deliberately *not* the standard "average
   weekday boardings" — see reasoning below.
-- Obtained by: manual screenshots of the Sound Transit dashboard tables,
-  collected into a Google Doc by the user, transcribed from there. Still
-  fully manual (no Power BI automation) — just twelve months of manual
-  reading instead of one.
-- **Metric decision:** the dashboard tables also show "average boardings per
-  day" per month, but that figure includes weekends
-  (`total monthly ÷ days in month`) — it is not the weekday-filtered
-  industry-standard figure, and it is arithmetically dependent on the
-  monthly total, not independent information. Not transcribed; derivable
-  later (`÷ ~30.44`) if a "typical day" display figure is ever wanted.
-  Using the weekend-inclusive monthly total instead of a weekday-only figure
+- Obtained by: manual screenshots of the Sound Transit dashboard tables (16
+  stations x 12 months), collected into a Google Doc by the user, exported
+  as PDF, transcribed from there (PyMuPDF rendering, since the standard PDF
+  read path needed `poppler`, not installed on this machine). Still fully
+  manual — no Power BI automation — just twelve months of manual reading
+  instead of one.
+- **Metric decision, checked not assumed:** the dashboard tables also show
+  an "average boardings per day" figure per month (also weekend-inclusive).
+  First assumed to be `total monthly ÷ days in month` and therefore
+  redundant with the total - **checked against all 192 station-months and
+  that assumption was wrong**: it matches neither `total ÷ calendar days`
+  nor `total ÷ weekdays` (off by roughly +9% and −22% on average
+  respectively), so Sound Transit applies some service-day weighting of its
+  own. It *is* still a defensible thing to skip, but on different grounds:
+  averaged to one figure per station across the year, the two metrics
+  correlate at **r = 0.998** across all 16 stations — for the cross-station
+  comparison this project does, close enough to redundant that transcribing
+  both would not have changed the analysis. Not transcribed, on that
+  evidence. Full verification script and its output are reproducible from
+  the raw 192-row table (kept in this session's scratch files, not the
+  repo).
+- Using the weekend-inclusive monthly total instead of a weekday-only figure
   is a deliberate choice, not just convenience: weekday ridership is
   disproportionately commute-driven (passing through, not stopping to shop),
   so it would arguably understate pedestrian exposure to the NAICS-filtered
@@ -191,6 +222,13 @@ empty states with no exceptions (checked via `streamlit.testing`).
   smooths seasonality, at the cost of the ridership window possibly spanning
   the Federal Way extension's late-2025 opening internally — also written up
   on the methodology page ("Temporal misalignment").
+- **Stadium's April 2025 (193,465 total boardings) is a large, genuine
+  outlier** — 3-9x every other month for that station. Very likely a
+  Mariners early-season surge (T-Mobile Park/Lumen Field adjacency), not a
+  transcription error. Included in the mean like any other month; worth
+  checking against the Session 6 ring results.
+- Station-name join: **16 of 16 matched `stations.csv` exactly**, zero
+  missing, zero extra, on the first attempt.
 
 **GTFS**
 - Downloaded: 2026-09-06 (feed dated 2026-08-28 internally)
@@ -325,7 +363,7 @@ empty states with no exceptions (checked via `streamlit.testing`).
   source).
 - Businesses in final geocoded dataset: **11,409** (of 11,466 cleaned, of
   84,390 originally loaded).
-- Stations with no ridership match: _[not yet - Session 5]_
+- Stations with no ridership match: **none** — 16 of 16 matched exactly.
 
 ---
 
