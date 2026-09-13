@@ -249,8 +249,15 @@ def main():
     station_layer = folium.FeatureGroup(name="Stations")
     for _, station in stations.iterrows():
         boardings = station["avg_monthly_boardings"]
+        # Label first, value second - matches the business tooltip's
+        # "NAICS code: 722513" convention, not "722513 NAICS code". Spells
+        # out "average of monthly totals" rather than just "avg. monthly
+        # boardings" - this project deliberately is NOT average WEEKDAY or
+        # average DAILY boardings (see DECISIONS.md, Session 5), and a
+        # label ambiguous between those and this metric is exactly the kind
+        # of mislabeling this project has been careful to avoid elsewhere.
         ridership_line = (
-            f"{boardings:,.0f} avg. monthly boardings (2025)"
+            f"Avg. monthly boardings (2025 avg. of monthly totals): {boardings:,.0f}"
             if pd.notna(boardings) else "No ridership data"
         )
         tooltip_html = f"<b>{station['station']}</b><br>{ridership_line}"
