@@ -182,8 +182,8 @@ empty states with no exceptions (checked via `streamlit.testing`).
   not the primary source.
 
 **Ridership**
-- Accessed: _[date the user pulled the dashboard screenshots - ask before
-  closing out Session 5]_
+- Accessed: 2026-09-13. No filters beyond Link / 1 Line and year = 2025
+  (evident from the data itself — twelve rows, Jan-Dec 2025, per station).
 - Months shown: **Jan-Dec 2025 (all twelve)**, revised from the original
   single-month plan mid-Session-5 — see "Changes" above and
   `data/raw/README.md`.

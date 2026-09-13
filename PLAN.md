@@ -113,7 +113,7 @@ beats a higher unreported one.
 
 ---
 
-## Session 5 — Ridership by hand (revised: 12 months, not 1)
+## Session 5 — Ridership by hand (revised: 12 months, not 1) — DONE 2026-09-13
 
 Reconfigured mid-session from the original one-month plan: all twelve months
 of 2025 captured by hand as dashboard screenshots (total boardings per
@@ -124,14 +124,21 @@ See `data/raw/README.md` and `DECISIONS.md` for the reasoning.
 
 - [x] Screenshots captured for all 16 stations x 12 months (Jan-Dec 2025),
       total boardings per month
-- [ ] Transcribe into `data/raw/ridership_by_station.csv` with columns
+- [x] Transcribed into `data/raw/ridership_by_station.csv` with columns
       `station,avg_monthly_boardings` (average of the twelve monthly totals)
-- [ ] **Match station names to `data/processed/stations.csv` exactly** — this
-      is the single most common silent failure in the pipeline
-- [ ] Record the months covered, any filters, and the access date in
-      `DECISIONS.md`
-- [ ] Set `RIDERSHIP_SNAPSHOT` in `config.py`
-- [ ] Commit
+- [x] **Station names matched `data/processed/stations.csv` exactly** — 16 of
+      16, zero missing, zero extra, on the first attempt
+- [x] Months covered, filters (none beyond Link/1 Line/2025), and access date
+      (2026-09-13) recorded in `DECISIONS.md`
+- [x] Set `RIDERSHIP_SNAPSHOT` in `config.py`
+- [x] Commit
+
+**Bonus, not originally planned:** verified rather than assumed whether the
+dashboard's second metric ("average boardings per day") was redundant with
+the total — it isn't a simple derivation, but correlates at r = 0.998 with
+the total at the station level, so skipping it was still right. Also caught
+a genuine outlier (Stadium, April 2025) while transcribing. Both in
+`DECISIONS.md`.
 
 ---
 
