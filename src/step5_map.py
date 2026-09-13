@@ -16,22 +16,37 @@ Run:  python src/step5_map.py
 """
 
 import sys
+import zipfile
 from pathlib import Path
 
 import folium
+import geopandas as gpd
+import numpy as np
 import pandas as pd
 from folium.plugins import HeatMap, FastMarkerCluster
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (  # noqa: E402
+    DATA_RAW,
     STATIONS_CSV,
     BUSINESSES_GEOCODED_CSV,
     HEATMAP_HTML,
+    CRS_GEOGRAPHIC,
+    CRS_PROJECTED,
     RING_EDGES_METERS,
     RING_LABELS,
 )
 
 SEATTLE_CENTER = [47.6062, -122.3321]
+
+GTFS_ZIP = DATA_RAW / "gtfs.zip"
+# route_id 100479 is the real 1 Line (exact match on route_short_name - see
+# step1_stations.py for why substring matching pulled in the shuttle
+# bus-bridge route instead). N23:S07 is that route's most-used shape
+# (2,815 of 5,404 trips, Session 7 check) - one full-line direction, not a
+# short-turn variant. The two directions are near-mirror images, so either
+# would do; this one was simply more common.
+RAIL_LINE_SHAPE_ID = "N23:S07"
 
 # Heat layer tuning (Session 7). Leaflet.heat pixel-space params, not a
 # statistical bandwidth - chosen by eye across a few candidates for legibility
@@ -114,6 +129,64 @@ def naics_group(code: str):
     return None, None
 
 
+def load_rail_line_shape():
+    """Real 1 Line route geometry from GTFS shapes.txt - the actual rail
+    alignment (curves and all), not a straight line drawn between stations.
+    """
+    if not GTFS_ZIP.exists():
+        print(f"No GTFS feed at {GTFS_ZIP} - skipping the rail line layer.")
+        return None
+    with zipfile.ZipFile(GTFS_ZIP) as z, z.open("shapes.txt") as f:
+        shapes = pd.read_csv(f, dtype=str)
+    pts = shapes[shapes["shape_id"] == RAIL_LINE_SHAPE_ID].copy()
+    if pts.empty:
+        print(f"WARNING: shape_id {RAIL_LINE_SHAPE_ID!r} not in this GTFS feed - "
+              "check trips.txt for route 100479's current most-used shape_id.")
+        return None
+    pts["shape_pt_sequence"] = pts["shape_pt_sequence"].astype(int)
+    pts = pts.sort_values("shape_pt_sequence")
+    return list(zip(pts["shape_pt_lat"].astype(float), pts["shape_pt_lon"].astype(float)))
+
+
+def nearest_station_and_ring(businesses: pd.DataFrame, stations: pd.DataFrame):
+    """For each business: its nearest station (straight-line) and which ring
+    band that distance falls in relative to THAT station specifically.
+
+    Deliberately separate from step4_rings.py's ring_stats: that analysis
+    assigns a business to every station whose buffer contains it (including
+    downtown overlap, on purpose - see DECISIONS.md). This is a single
+    nearest-station view, built only for the pin tooltip, not a
+    re-derivation of the ring analysis or a replacement for it.
+    """
+    biz_gdf = gpd.GeoDataFrame(
+        businesses,
+        geometry=gpd.points_from_xy(businesses["longitude"], businesses["latitude"]),
+        crs=CRS_GEOGRAPHIC,
+    ).to_crs(CRS_PROJECTED)
+    sta_gdf = gpd.GeoDataFrame(
+        stations,
+        geometry=gpd.points_from_xy(stations["longitude"], stations["latitude"]),
+        crs=CRS_GEOGRAPHIC,
+    ).to_crs(CRS_PROJECTED)
+
+    biz_xy = np.column_stack([biz_gdf.geometry.x, biz_gdf.geometry.y])
+    sta_xy = np.column_stack([sta_gdf.geometry.x, sta_gdf.geometry.y])
+    dist = np.sqrt(((biz_xy[:, None, :] - sta_xy[None, :, :]) ** 2).sum(axis=2))
+    nearest_idx = dist.argmin(axis=1)
+    nearest_dist = dist.min(axis=1)
+
+    def band(d):
+        for i, ring_label in enumerate(RING_LABELS):
+            if RING_EDGES_METERS[i] <= d < RING_EDGES_METERS[i + 1]:
+                return f"Ring {i + 1} ({ring_label})"
+        outer_mi = RING_EDGES_METERS[-1] / 1609.344
+        return f"Beyond ring 4 (>{outer_mi:.1f} mi)"
+
+    nearest_station = sta_gdf["station"].to_numpy()[nearest_idx]
+    ring_band = [band(d) for d in nearest_dist]
+    return nearest_station, ring_band
+
+
 def main():
     for path in (STATIONS_CSV, BUSINESSES_GEOCODED_CSV):
         if not path.exists():
@@ -169,6 +242,36 @@ def main():
         ).add_to(station_layer)
     station_layer.add_to(m)
 
+    # --- The rail line itself - important visual context, on by default ---
+    rail_coords = load_rail_line_shape()
+    if rail_coords:
+        rail_layer = folium.FeatureGroup(name="Link 1 Line route", show=True)
+        folium.PolyLine(
+            rail_coords, color="#0a7a3c", weight=5, opacity=0.85,
+        ).add_to(rail_layer)
+        # A large, high-contrast label - not a hover tooltip, always visible.
+        # Anchored at Othello, well south of downtown: checked visually, not
+        # assumed - a computed centroid of all 16 stations, and even Beacon
+        # Hill, both still landed under the (now quite tall) layer control
+        # panel at the default zoom, since the downtown station cluster
+        # pulls any average north and the panel has grown with each new
+        # layer added this session.
+        label_station = stations.loc[stations["station"] == "Othello"].iloc[0]
+        label_lat, label_lon = label_station["latitude"], label_station["longitude"]
+        folium.Marker(
+            location=[label_lat, label_lon],
+            icon=folium.DivIcon(html="""
+                <div style="
+                    font-size: 22px; font-weight: bold; color: #0a7a3c;
+                    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff,
+                                 -1px 1px 0 #fff, 1px 1px 0 #fff,
+                                 0 0 6px #fff;
+                    white-space: nowrap; pointer-events: none;
+                ">1 Line</div>
+            """),
+        ).add_to(rail_layer)
+        rail_layer.add_to(m)
+
     # --- Individual business pins, one clustered layer per NAICS group ----
     # 11,409 points is too many for plain (unclustered) markers - overlapping
     # dots at any zoom level a viewer would actually use, and a much heavier
@@ -185,11 +288,19 @@ def main():
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
 
+    # Nearest station + ring band, for the hover tooltip only - see
+    # nearest_station_and_ring()'s docstring for why this is a separate,
+    # simpler computation from step4's overlap-aware ring_stats.
+    businesses["nearest_station"], businesses["ring_band"] = nearest_station_and_ring(
+        businesses, stations
+    )
+
     def add_pin_layer(rows, sublabel, group_name, color):
         """One toggleable, clustered, coloured pin layer - the one pattern
         reused for every business layer below, broad or fine-grained."""
         data = [
-            [row.latitude, row.longitude, row.business_name]
+            [row.latitude, row.longitude, row.business_name, row.naics,
+             row.nearest_station, row.ring_band]
             for row in rows.itertuples()
         ]
         if not data:
@@ -200,7 +311,11 @@ def main():
                     radius: 5, color: '{color}', fillColor: '{color}',
                     fillOpacity: 0.85, weight: 1
                 }});
-                marker.bindPopup(row[2]);
+                var html = '<b>' + row[2] + '</b><br>' +
+                    'NAICS code: ' + row[3] + '<br>' +
+                    'Nearest station: ' + row[4] + '<br>' +
+                    row[5];
+                marker.bindTooltip(html, {{sticky: true}});
                 return marker;
             }}
         """

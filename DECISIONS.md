@@ -15,6 +15,12 @@ each; detail lives in the sections below.
 
 ### 2026-09-13 — Session 7
 
+- **Also added this session:** finer per-category pin toggle layers (12,
+  reusing the proven pattern rather than a dynamic filter — considered and
+  declined as out of proportion this late); the real 1 Line rail alignment
+  from GTFS `shapes.txt`, on by default, with a large always-visible label;
+  and richer hover tooltips (name, NAICS code, nearest station, ring band).
+  Full account in "Map rendering" below.
 - **CartoDB Positron (the originally intended basemap) is dead** — now
   requires an API key, silently fails to load. Switched to OpenStreetMap
   tiles, which are busier but have a long, stable free-use track record.
@@ -579,6 +585,46 @@ Consolidated from several separate decisions made across the session - the
   one specific sub-category). Verified: layer control shows all 15 with
   correct counts, toggling a sub-layer (tested: "Full-service restaurants")
   shows a visibly smaller, correctly-filtered cluster set, console clean.
+
+**Same session, final round: the rail line itself, and richer pin tooltips**
+
+- **Considered and declined a dynamic, code-based map-reconfiguration
+  control** (a JS filter UI letting a viewer pick any NAICS code on the
+  fly) before any of this round's work. Technically possible - fully
+  client-side, no backend needed - but judged out of proportion this late:
+  new, untested interactive JS in a file that had already needed two real
+  bug fixes this session, for a polish feature on what the plan calls
+  "illustration," while Session 8's write-up is the actual highest-value
+  time left. The finer static toggle layers (above) were built instead, as
+  the cheaper version of the same idea.
+- **Added the actual rail line**, at the user's request - real GTFS route
+  geometry (`shapes.txt`, shape_id `N23:S07`, 1,204 points, the most-used
+  shape on route_id 100479 - 2,815 of 5,404 trips), not a straight line
+  drawn between the 16 station points. Solid green, weight 5, on by
+  default (unlike the detail pin layers) since this is core visual context,
+  not a detail to opt into.
+- **Added a large, high-contrast "1 Line" label**, not a hover tooltip -
+  always visible, white-haloed bold text. Took two attempts to place
+  correctly: a computed centroid of all 16 stations, and then Beacon Hill
+  specifically, both still landed under the layer control panel (which has
+  grown tall over the course of this session's additions) - checked
+  visually both times rather than assumed correct. Settled on Othello,
+  confirmed clear of both the layer control and the legend.
+- **Enriched the pin hover tooltip** (switched from click-`popup` to
+  hover-`tooltip`, per the request) to show business name, NAICS code,
+  nearest station, and which ring band that business falls in relative to
+  its nearest station. The nearest-station/ring computation is deliberately
+  separate from step4_rings.py's `ring_stats` - that analysis assigns a
+  business to *every* station whose buffer contains it (downtown overlap,
+  on purpose), which has no single answer for "the" nearest station or
+  ring. This is a simpler, single-nearest-station view built only for the
+  tooltip, not a re-derivation of or replacement for the ring analysis.
+  Verified directly: hovering a business named "Chai Sutra" showed
+  `NAICS code: 722513 / Nearest station: Westlake / Ring 3 (0.2-0.3 mi)`,
+  and manually confirmed that reads as correct for its location.
+- File grew again with the extra tooltip fields: ~1.98 MB -> ~3.23 MB.
+  Console clean throughout; verified with the browser's own error log, not
+  just "it looks fine."
 
 ---
 
