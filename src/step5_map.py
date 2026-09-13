@@ -47,11 +47,20 @@ HEAT_MIN_OPACITY = 0.35
 # exactly one, so no "Other" bucket is needed. Colors from the Cove
 # categorical palette (blue/orange/aqua), chosen for mutual distinguishability
 # rather than picked arbitrarily.
+#
+# name / prefixes / color. Labels spell out "NAICS Code:" rather than just
+# putting the digits in parens - "Retail (44/45)" sat right next to a
+# business COUNT in parens too (e.g. "(5,221)") in the layer control,
+# and the two different kinds of number were easy to mistake for each other.
 NAICS_GROUPS = [
-    ("Retail (44/45)", ("44", "45"), "#2a78d6"),
-    ("Food service (722)", ("722",), "#eb6834"),
-    ("Personal services (812)", ("812",), "#1baf7a"),
+    ("Retail", ("44", "45"), "#2a78d6"),
+    ("Food service", ("722",), "#eb6834"),
+    ("Personal services", ("812",), "#1baf7a"),
 ]
+
+
+def naics_label(name: str, prefixes: tuple) -> str:
+    return f"{name} — NAICS Code: {'/'.join(prefixes)}"
 
 LEGEND_HTML = """
 <div style="
@@ -75,9 +84,9 @@ LEGEND_ROW = """
 
 def naics_group(code: str):
     code = str(code)
-    for label, prefixes, color in NAICS_GROUPS:
+    for name, prefixes, color in NAICS_GROUPS:
         if code.startswith(prefixes):
-            return label, color
+            return name, color
     return None, None
 
 
@@ -148,8 +157,8 @@ def main():
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
 
-    for label, _prefixes, color in NAICS_GROUPS:
-        rows = businesses[businesses["_group"] == label]
+    for name, prefixes, color in NAICS_GROUPS:
+        rows = businesses[businesses["_group"] == name]
         data = [
             [row.latitude, row.longitude, row.business_name]
             for row in rows.itertuples()
@@ -169,16 +178,20 @@ def main():
         # FastMarkerCluster's own `show` param is not reliable for hiding it
         # at load - wrap it in a FeatureGroup instead, the same mechanism the
         # ring layers above use, which does respect show=False.
+        # Business COUNT goes in its own parens, separate from the NAICS
+        # code (spelled out in naics_label) - the two numbers sitting next
+        # to each other in parens was the exact confusion being fixed.
         group = folium.FeatureGroup(
-            name=f"Businesses: {label} ({len(data):,})", show=False
+            name=f"Businesses: {naics_label(name, prefixes)} ({len(data):,})",
+            show=False,
         )
         FastMarkerCluster(data, callback=callback).add_to(group)
         group.add_to(m)
 
     m.get_root().html.add_child(folium.Element(
         LEGEND_HTML.format(rows="".join(
-            LEGEND_ROW.format(color=color, label=label)
-            for label, _prefixes, color in NAICS_GROUPS
+            LEGEND_ROW.format(color=color, label=naics_label(name, prefixes))
+            for name, prefixes, color in NAICS_GROUPS
         ))
     ))
 
