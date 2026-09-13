@@ -13,7 +13,19 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
-### 2026-09-13 — Session 3 (in progress)
+### 2026-09-13 — Session 4
+
+- Wired the GIS donor join scoped back in Session 1: `step3_geocode.py` now
+  joins geometry by City Account Number first (EPSG:2926 -> EPSG:4326,
+  90.2% matched), then sends only the unmatched remainder to the Census
+  geocoder (94.9% of that remainder). Overall 99.5% geocoded, no bail-out
+  needed. Both figures now live in `config.py` (`GEOCODE_*` constants) and
+  render on the methodology page — replaced the `[FILL IN]%` placeholder.
+- Also resolved a second stale placeholder found in the same file while
+  there: "On survival" `[Confirm which applies.]` — already answered in
+  Session 1 (active-only, no status column), just never written back.
+
+### 2026-09-13 — Session 3
 
 - Wired the deferred step-2 work: Seattle filter (84,390 -> 58,774), dedupe on
   City Account Number instead of UBI, carried account number + license start
@@ -250,10 +262,25 @@ empty states with no exceptions (checked via `streamlit.testing`).
 
 ## Quality metrics
 
-- Geocoder match rate: _[%]_
-- Points dropped by bounding box: _[n]_
-- Businesses in final dataset: _[n]_
-- Stations with no ridership match: _[list, or none]_
+- **Geocoding (Session 4, 2026-09-13), two passes:**
+  - GIS donor join (City Account Number against
+    `business_licenses_geocoded.geojson`, EPSG:2926 -> EPSG:4326): **90.2%**
+    (10,345 of 11,466). 1,405 duplicate donor account numbers dropped first
+    (exact-coordinate repeats, not distinct locations).
+  - Census bulk geocoder, on the 1,121-row remainder only: **94.9%**
+    (1,064 of 1,121). Well above the 80% comfort line and the 75% bail-out —
+    no `usaddress` parsing needed.
+  - **Overall: 99.5%** (11,409 of 11,466). 57 businesses (0.5%) failed both
+    passes and are dropped from the geocoded set.
+  - Spot-checked 5 points from each source (donor and Census) against
+    Google Maps — both look right for their stated address/neighborhood.
+  - `geocode_source` column carried into `businesses_geocoded.csv` so the
+    two populations stay distinguishable downstream if needed.
+- Points dropped by King County bounding-box sanity check: 0 (from either
+  source).
+- Businesses in final geocoded dataset: **11,409** (of 11,466 cleaned, of
+  84,390 originally loaded).
+- Stations with no ridership match: _[not yet - Session 5]_
 
 ---
 

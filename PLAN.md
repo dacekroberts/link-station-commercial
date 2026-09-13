@@ -65,39 +65,46 @@ defensible and cost you nothing analytically.
 
 ---
 
-## Session 3 — Clean the business data (2 h)
+## Session 3 — Clean the business data (2 h) — DONE 2026-09-13
 
 - [x] Fill in `COLUMN_MAP` in `src/step2_clean_businesses.py` (done Session 1)
-- [ ] Wire the deferred step-2 work: filter to `City == "SEATTLE"` (~30% of
-      rows are out-of-city), carry `City Account Number` + `License Start
-      Date`, dedupe on account number not UBI (UBI is 8% blank)
-- [ ] `python src/step2_clean_businesses.py`
-- [ ] Read the drop counts at each filter stage. A stage that drops 90% of
-      rows is a bug, not a filter — investigate before continuing
-- [ ] Sample 20 surviving rows by hand. Do they read like storefronts, or are
-      you looking at consultants at home addresses?
-- [ ] Adjust `NAICS_STOREFRONT_PREFIXES` if the sample says so, and record
-      both the final list and your reasoning in `DECISIONS.md`
-- [ ] Commit
+- [x] Wired the deferred step-2 work: `City == "SEATTLE"` filter, carried
+      `City Account Number` + `License Start Date`, dedupe on account number
+- [x] `python src/step2_clean_businesses.py` — clean cascade, no 90%-cliff
+      stages: 84,390 -> 58,774 (Seattle) -> 14,728 (NAICS) -> 11,466 (final)
+- [x] Sampled 20+ rows by hand across two categories (see below)
+- [x] Individually excluded two NAICS catch-alls after sampling: `812930`
+      Parking Lots and Garages, `812990` All Other Personal Services.
+      Reviewed a third (`459999`, retail's catch-all) and kept it — opposite
+      profile. All three reasoned in `config.py`
+      (`NAICS_STOREFRONT_EXCLUDE` / `NAICS_STOREFRONT_REVIEWED_KEPT`),
+      rendered on the methodology page, recorded in `DECISIONS.md`
+- [x] Also fixed two data-quality bugs found during review: blank
+      `business_name` (fell back to Legal Name, 22 rows) and a `19000101`
+      null-date sentinel in `license_start_date` (nulled, 5 rows)
+- [x] Commits (five, one per decision)
 
 This filter is the most consequential choice in the project. Everything
 downstream inherits it. Spend the time here rather than regretting it later.
 
 ---
 
-## Session 4 — Geocode (1.5 h, likely less)
+## Session 4 — Geocode (1.5 h, likely less) — DONE 2026-09-13
 
-- [ ] Wire the donor join in step 3: left-join geometry from
-      `business_licenses_geocoded.geojson` on `City Account Number`
-      (reproject `EPSG:2926` → `EPSG:32610`), send only the unmatched
-      remainder to the Census geocoder
-- [ ] `python src/step3_geocode.py`
-- [ ] Note **both** figures in `DECISIONS.md`: donor-join coverage (~90%
-      expected) and Census match rate on the remainder
-- [ ] If the remainder's Census rate is poor: add `usaddress` parsing to
-      `normalize_address` in step 2, re-run (batches are cached)
-- [ ] Spot-check five points from each source against a map
-- [ ] Commit
+- [x] Wired the donor join in step 3: left-join geometry from
+      `business_licenses_geocoded.geojson` on `City Account Number`,
+      reprojecting `EPSG:2926` directly to `EPSG:4326` (matches the output
+      CSV's existing lat/lon convention — the 32610 projection is for
+      step 4's distance math, not point storage), only the unmatched
+      remainder goes to the Census geocoder
+- [x] `python src/step3_geocode.py`
+- [x] Both figures noted in `DECISIONS.md` and rendered on the methodology
+      page (replacing the `[FILL IN]%` placeholder): donor-join coverage
+      **90.2%**, Census match rate on the 1,121-row remainder **94.9%**,
+      overall **99.5%**
+- [x] Well above 80% — no `usaddress` parsing needed
+- [x] Spot-checked 5 points from each source against Google Maps
+- [x] Commit
 
 **Bail:** the donor join alone should clear ~90% with authoritative City
 coordinates, so overall coverage is not the risk it was. Accept the Census

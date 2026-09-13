@@ -19,6 +19,15 @@ from config import (
     RIDERSHIP_SNAPSHOT,
     RIDERSHIP_SOURCE,
     DOWNTOWN_CLUSTER,
+    GEOCODE_DONOR_MATCHED,
+    GEOCODE_CENSUS_MATCHED,
+    GEOCODE_CENSUS_REMAINDER,
+    GEOCODE_DONOR_RATE,
+    GEOCODE_CENSUS_RATE,
+    GEOCODE_OVERALL_RATE,
+    GEOCODE_TOTAL,
+    GEOCODE_TOTAL_FAILED,
+    GEOCODE_FAILED_RATE,
 )
 
 st.set_page_config(page_title="Methodology", page_icon="📋", layout="wide")
@@ -36,8 +45,14 @@ averaged to a single point.
 
 **Commercial spaces** — {LICENSE_SOURCE}, downloaded {LICENSE_SNAPSHOT}.
 Filtered to NAICS prefixes {', '.join(NAICS_STOREFRONT_PREFIXES)}
-(retail, food service, personal services). Addresses geocoded with the
-U.S. Census Bureau bulk geocoder; match rate [FILL IN]%.
+(retail, food service, personal services). Addresses geocoded in two passes:
+a join against the City's own GIS geometry by account number matched
+{GEOCODE_DONOR_RATE:.1%} of businesses ({GEOCODE_DONOR_MATCHED:,} of
+{GEOCODE_DONOR_MATCHED + GEOCODE_CENSUS_REMAINDER:,}) directly; the
+remaining {GEOCODE_CENSUS_REMAINDER:,} went to the U.S. Census Bureau bulk
+geocoder, which matched {GEOCODE_CENSUS_RATE:.1%} of those
+({GEOCODE_CENSUS_MATCHED:,} of {GEOCODE_CENSUS_REMAINDER:,}). Overall:
+{GEOCODE_OVERALL_RATE:.1%} of businesses geocoded.
 
 **Ridership** — {RIDERSHIP_SOURCE}, {RIDERSHIP_SNAPSHOT}, exported by hand
 from the published Power BI dashboard.
@@ -103,7 +118,7 @@ st.header("Limitations")
 st.subheader("What \"commercial space\" means here")
 
 st.markdown(
-    """
+    f"""
 Business license records are a registry of legal entities, not a survey of
 storefronts. Home-based sole proprietors and businesses listed at
 registered-agent addresses appear identically to physical retail; the NAICS
@@ -115,13 +130,21 @@ than commercial floor area.
 
 Geocoding failures are not randomly distributed — addresses with unusual
 formatting fail more often, and those may differ systematically from
-addresses that match cleanly.
+addresses that match cleanly. Two sources are stacked here: a business
+missing from the GIS donor layer isn't necessarily a hard address — it may
+simply postdate that snapshot, or not have carried over for an unrelated
+reason — but the City's layer only includes businesses it successfully
+geocoded, so donor-absence could also skew toward the same hard-to-place
+addresses Census then struggles with. The {GEOCODE_TOTAL_FAILED} businesses
+({GEOCODE_FAILED_RATE:.1%}) that failed both passes are too few to
+characterise confidently, but are unlikely to be a random sample of the
+whole.
 
-**On survival.** [Confirm which applies.] If this export contains only
-currently-active licenses, survival rates cannot be computed: there is no
-record of businesses that closed, and therefore no denominator. Tenure
-figures in that case describe the distribution among survivors, not
-survival itself.
+**On survival.** This export contains only currently-active licenses — there
+is no status or expiration column, confirmed by inspection (Session 1).
+Survival rates cannot be computed: there is no record of businesses that
+closed, and therefore no denominator. Tenure figures describe the
+distribution among survivors, not survival itself.
 """
 )
 

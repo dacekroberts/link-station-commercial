@@ -181,6 +181,22 @@ KING_COUNTY_BBOX = {
     "lon_max": -121.05,
 }
 
+# --- Geocoding results (Session 4, 2026-09-13) --------------------------
+# Recorded here rather than computed at app runtime: the app only reads
+# outputs/, and data/processed/businesses_geocoded.csv (where these come
+# from) is local-only, regenerable, gitignored. Re-run step3_geocode.py and
+# update these by hand if the source data changes. Full detail in
+# DECISIONS.md.
+GEOCODE_DONOR_MATCHED = 10345
+GEOCODE_CENSUS_MATCHED = 1064
+GEOCODE_TOTAL = 11466
+GEOCODE_DONOR_RATE = GEOCODE_DONOR_MATCHED / GEOCODE_TOTAL
+GEOCODE_CENSUS_REMAINDER = GEOCODE_TOTAL - GEOCODE_DONOR_MATCHED
+GEOCODE_CENSUS_RATE = GEOCODE_CENSUS_MATCHED / GEOCODE_CENSUS_REMAINDER
+GEOCODE_OVERALL_RATE = (GEOCODE_DONOR_MATCHED + GEOCODE_CENSUS_MATCHED) / GEOCODE_TOTAL
+GEOCODE_TOTAL_FAILED = GEOCODE_TOTAL - GEOCODE_DONOR_MATCHED - GEOCODE_CENSUS_MATCHED
+GEOCODE_FAILED_RATE = GEOCODE_TOTAL_FAILED / GEOCODE_TOTAL
+
 # --- Provenance --------------------------------------------------------
 
 # These strings are printed on the methodology page. Keep them accurate;
