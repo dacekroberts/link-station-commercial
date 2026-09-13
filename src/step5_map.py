@@ -197,27 +197,29 @@ def main():
     businesses = pd.read_csv(BUSINESSES_GEOCODED_CSV, dtype={"naics": str})
     businesses = businesses.dropna(subset=["latitude", "longitude"])
 
-    # Restrict the whole map - heat layer and every pin layer - to
-    # businesses that actually fall within some station's outer ring
-    # (0.6 mi). Nearest-station distance is used rather than a fresh
+    # `businesses` (all 11,409, citywide) stays the full set throughout -
+    # kept around so the "all Seattle businesses" heat toggle below has
+    # something to draw from. `businesses_in_rings` is the subset that
+    # actually falls within some station's outer ring (0.6 mi), and is
+    # what the map opens on by default and what every pin layer uses.
+    # Nearest-station distance is used rather than a fresh
     # union-of-buffers computation: if a business's CLOSEST station is
     # already farther than the outer ring edge, every other station is
     # farther still, so "nearest station within 0.6 mi" and "inside at
-    # least one station's buffer" are the same condition. Without this,
-    # the map silently included every Seattle business regardless of
-    # distance from a station - inconsistent with step4_rings.py, which
-    # only ever counts businesses inside a station's buffer, and
-    # misleading for a map titled "commercial density around station
-    # areas." Computed once here, up front, so both the heat layer below
-    # and the per-business pin layers later use the identical filtered set.
+    # least one station's buffer" are the same condition. Defaulting to
+    # the ring-only view matters because step4_rings.py's actual
+    # gradient/chain analysis only ever counts ring-bounded businesses -
+    # a map that opened on the unbounded citywide picture would be the
+    # odd one out and overstate how spread out the analysis's universe is.
     businesses["nearest_station"], businesses["ring_band"] = nearest_station_and_ring(
         businesses, stations
     )
-    total_before = len(businesses)
-    businesses = businesses[~businesses["ring_band"].str.startswith("Beyond")].copy()
-    print(f"{total_before - len(businesses):,} of {total_before:,} businesses fall "
-          f"outside every station's ring and are excluded from the map "
-          f"({len(businesses):,} remain).")
+    businesses_in_rings = businesses[
+        ~businesses["ring_band"].str.startswith("Beyond")
+    ].copy()
+    print(f"{len(businesses) - len(businesses_in_rings):,} of {len(businesses):,} "
+          f"businesses fall outside every station's ring "
+          f"({len(businesses_in_rings):,} remain within a ring).")
 
     m = folium.Map(
         location=SEATTLE_CENTER,
@@ -231,13 +233,26 @@ def main():
         name="Seattle 1 Line Business Density Heatmap",
     ).add_to(m)
 
-    heat_points = businesses[["latitude", "longitude"]].dropna().values.tolist()
+    # Two heat layers, same tuning, different universe. Within-rings is the
+    # default (matches what the rest of the project actually analyzes - see
+    # DECISIONS.md); all-Seattle is an explicit opt-in for citywide context,
+    # off by default so the map opens on the same scope as the Findings
+    # page rather than the broader, less-meaningful citywide picture.
     HeatMap(
-        heat_points,
+        businesses_in_rings[["latitude", "longitude"]].values.tolist(),
         radius=HEAT_RADIUS,
         blur=HEAT_BLUR,
         min_opacity=HEAT_MIN_OPACITY,
-        name="Commercial density",
+        name="Commercial density (within station rings)",
+        show=True,
+    ).add_to(m)
+    HeatMap(
+        businesses[["latitude", "longitude"]].values.tolist(),
+        radius=HEAT_RADIUS,
+        blur=HEAT_BLUR,
+        min_opacity=HEAT_MIN_OPACITY,
+        name="Commercial density (all Seattle businesses)",
+        show=False,
     ).add_to(m)
 
     # Ring circles, each toggleable so the map is not overwhelming at load.
@@ -334,15 +349,22 @@ def main():
     # point. Off by default (show=False): this is a detail layer, not what
     # a first-time viewer should load into.
     #
+    # Pins stay ring-only even though the heat layer now offers an
+    # all-Seattle toggle - doubling all 15 pin layers to cover the citywide
+    # set too would double an already-large layer-control menu for a detail
+    # view few viewers will open, for businesses outside this project's
+    # actual analysis scope. The heat toggle above covers the "what does
+    # citywide context look like" need on its own.
+    #
     # nearest_station / ring_band (used below for the hover tooltip) were
     # already computed above, on the full pre-filter set, to do the ring
     # filtering itself - see nearest_station_and_ring()'s docstring for why
     # this is a separate, simpler computation from step4's overlap-aware
     # ring_stats.
-    businesses["_group"], businesses["_color"] = zip(
-        *businesses["naics"].map(naics_group)
+    businesses_in_rings["_group"], businesses_in_rings["_color"] = zip(
+        *businesses_in_rings["naics"].map(naics_group)
     )
-    unmatched = businesses["_group"].isna().sum()
+    unmatched = businesses_in_rings["_group"].isna().sum()
     if unmatched:
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
@@ -383,7 +405,7 @@ def main():
         fg.add_to(m)
 
     for name, prefixes, color in NAICS_GROUPS:
-        group_rows = businesses[businesses["_group"] == name]
+        group_rows = businesses_in_rings[businesses_in_rings["_group"] == name]
 
         # The broad group as a whole, toggleable on its own. sublabel is
         # just the code, not naics_label(name, prefixes) - add_pin_layer
@@ -438,7 +460,8 @@ def main():
     HEATMAP_HTML.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(HEATMAP_HTML))
     print(f"Wrote {HEATMAP_HTML}")
-    print(f"{len(heat_points):,} points plotted across {len(stations)} stations")
+    print(f"{len(businesses_in_rings):,} points plotted (within-ring default) / "
+          f"{len(businesses):,} available (all-Seattle toggle), across {len(stations)} stations")
 
 
 if __name__ == "__main__":
