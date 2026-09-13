@@ -243,7 +243,7 @@ def main():
         radius=HEAT_RADIUS,
         blur=HEAT_BLUR,
         min_opacity=HEAT_MIN_OPACITY,
-        name="Commercial density (within station rings)",
+        name="Commercial Density (Within Station Proximity)",
         show=True,
     ).add_to(m)
     HeatMap(
@@ -251,7 +251,7 @@ def main():
         radius=HEAT_RADIUS,
         blur=HEAT_BLUR,
         min_opacity=HEAT_MIN_OPACITY,
-        name="Commercial density (all Seattle businesses)",
+        name="Commercial Density (All Seattle Businesses)",
         show=False,
     ).add_to(m)
 
