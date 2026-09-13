@@ -151,6 +151,28 @@ NAICS_STOREFRONT_EXCLUDE = {
     ),
 }
 
+# Catch-all NAICS codes reviewed for the same reason as the exclusions above
+# (their prefix match sweeps in a large, undifferentiated bucket) but kept
+# after a hand sample showed a different profile. Recorded here, rendered
+# juxtaposed with NAICS_STOREFRONT_EXCLUDE on the methodology page, so
+# "checked and fine" is as visible a decision as "checked and dropped."
+NAICS_STOREFRONT_REVIEWED_KEPT = {
+    "459999": (
+        "All Other Miscellaneous Retailers",
+        "Retail's own catch-all, structurally identical in shape to 812990 "
+        "above — but a hand sample of 25 of the 1,190 rows found the "
+        "opposite profile. Roughly 70% were plausible walk-in storefronts: "
+        "niche independent shops uncommon enough that they don't have their "
+        "own NAICS code (a violin shop, a comic shop, a record store, a "
+        "coin shop, a distillery tasting room), against a minority of "
+        "non-storefront rows (an industrial gas supplier, a houseboat-"
+        "owners' advocacy nonprofit, a couple of vague-named LLCs). Kept: "
+        "unlike the personal-services catch-all, this bucket's residue is "
+        "dominated by real, if uncommon, retail rather than professional or "
+        "home-based operations.",
+    ),
+}
+
 # Sanity bounds for geocoder output. Anything outside this is a bad match.
 KING_COUNTY_BBOX = {
     "lat_min": 47.15,

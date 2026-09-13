@@ -30,6 +30,12 @@ each; detail lives in the sections below.
   plausible-storefront minority is already substantially covered under other
   dedicated codes. Clean dataset now 11,466 rows (was 13,887 before this
   exclusion, 14,728 before any individual exclusions).
+- **Reviewed, not excluded:** `459999` "All Other Miscellaneous Retailers"
+  (1,190 rows) — same catch-all shape as `812990`, checked the same way,
+  opposite result: ~70% plausible storefronts (niche independent shops
+  without their own NAICS code), kept. Methodology page now juxtaposes the
+  two catch-alls so "checked and fine" is as visible as "checked and
+  dropped."
 
 ### 2026-09-13 — Session 2
 
@@ -207,6 +213,19 @@ empty states with no exceptions (checked via `streamlit.testing`).
   remaining hours, and the storefront types in its minority are already
   substantially represented under their own dedicated codes elsewhere — so
   this is a bounded, characterized undercount, not a silent gap.
+- **Reviewed and kept: NAICS `459999` "All Other Miscellaneous Retailers"
+  (1,190 rows).** Retail's own catch-all, same shape as 812990 above, so
+  checked the same way rather than assumed clean. A hand sample of 25 of the
+  1,190 rows found the opposite profile: ~70% plausible walk-in storefronts —
+  niche independent shops uncommon enough to lack their own NAICS code (a
+  violin shop, a comic shop, a record store, a coin shop, a distillery
+  tasting room) — against a minority of non-storefront rows (an industrial
+  gas supplier, a houseboat-owners' advocacy nonprofit, a couple of
+  vague-named LLCs). Kept, unlike 812990: this catch-all's residue is
+  dominated by real, if uncommon, retail rather than professional or
+  home-based operations. Also on the methodology page, juxtaposed with the
+  exclusions — both read from `config.py`
+  (`NAICS_STOREFRONT_REVIEWED_KEPT`).
 - Effect: NAICS prefix filter 58,774 -> 14,728; parking exclusion
   14,728 -> 13,902; personal-services exclusion 13,902 -> 11,478; final
   clean count after dedup/address validity: **11,466**.
@@ -262,3 +281,13 @@ Worth keeping. A limitations section written by someone who hit real
 problems reads differently from one assembled from a template.
 
 - _[...]_
+
+## Open items (small, not yet actioned)
+
+- **2 rows have a blank `business_name`** (`FLORECER URBANO`,
+  `PUDDLE WOOD TURNING LLC`) — Trade Name was empty but Business Legal Name
+  was populated. Step 2 only reads Trade Name. Fix: fall back to Legal Name
+  when Trade Name is blank. Not done yet - decide before Session 4.
+- **1 row has an `1900-01-01` `license_start_date`** — a null-date sentinel,
+  not a real business age. Doesn't affect density counts; will need
+  filtering before any tenure calculation in Session 6.

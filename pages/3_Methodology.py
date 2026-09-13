@@ -13,6 +13,7 @@ from config import (
     RING_EDGES_MILES,
     NAICS_STOREFRONT_PREFIXES,
     NAICS_STOREFRONT_EXCLUDE,
+    NAICS_STOREFRONT_REVIEWED_KEPT,
     LICENSE_SNAPSHOT,
     LICENSE_SOURCE,
     RIDERSHIP_SNAPSHOT,
@@ -56,19 +57,33 @@ st.markdown(
 The NAICS prefix filter above is broad by design — it is meant to catch
 retail, food service, and personal services in one pass, not to hand-pick
 categories. That breadth pulls in a few things that don't belong for
-specific reasons. Rather than narrow the prefix list itself (and lose
-categories it correctly keeps), individual NAICS codes are excluded one at a
-time, each with its reasoning recorded here so the choice is checkable
-rather than silent.
+specific reasons, including a couple of NAICS "catch-all" codes (labelled
+"All Other...") broad enough that they needed a closer look before deciding
+either way. Rather than narrow the prefix list itself — and lose categories
+it correctly keeps — individual NAICS codes are excluded one at a time, each
+with its reasoning recorded here so the choice is checkable rather than
+silent.
 """
 )
 
 if NAICS_STOREFRONT_EXCLUDE:
     for code, (label, reason) in NAICS_STOREFRONT_EXCLUDE.items():
-        st.markdown(f"**{label}** (NAICS `{code}`)")
+        st.markdown(f"**Excluded — {label}** (NAICS `{code}`)")
         st.markdown(reason)
 else:
     st.markdown("*No categories excluded yet.*")
+
+if NAICS_STOREFRONT_REVIEWED_KEPT:
+    st.markdown(
+        "**Reviewed the same way, kept.** Not every catch-all code turned "
+        "out to be a problem — one looked identical in shape to the "
+        "exclusions above and was checked anyway, precisely so \"we looked "
+        "and it's fine\" is recorded as deliberately as \"we looked and "
+        "dropped it,\" rather than the category just quietly staying in."
+    )
+    for code, (label, reason) in NAICS_STOREFRONT_REVIEWED_KEPT.items():
+        st.markdown(f"**Kept — {label}** (NAICS `{code}`)")
+        st.markdown(reason)
 
 st.header("Method")
 
