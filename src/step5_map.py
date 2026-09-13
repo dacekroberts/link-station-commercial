@@ -335,9 +335,12 @@ def main():
     for name, prefixes, color in NAICS_GROUPS:
         group_rows = businesses[businesses["_group"] == name]
 
-        # The broad group as a whole, toggleable on its own - unchanged
-        # from before.
-        add_pin_layer(group_rows, naics_label(name, prefixes), name, color)
+        # The broad group as a whole, toggleable on its own. sublabel is
+        # just the code, not naics_label(name, prefixes) - add_pin_layer
+        # already prefixes group_name, so passing the full "{name} — NAICS
+        # Code: ..." label here doubled the name
+        # ("Retail — Retail — NAICS Code: 44/45"), caught by the user.
+        add_pin_layer(group_rows, f"NAICS Code: {'/'.join(prefixes)}", name, color)
 
         # Finer splits within it (Session 7 add-on, cheap reuse of the same
         # pattern): a few specific NAICS codes by count, plus "Other" for
