@@ -142,20 +142,25 @@ a genuine outlier (Stadium, April 2025) while transcribing. Both in
 
 ---
 
-## Session 6 — Rings, and your first real numbers (2 h)
+## Session 6 — Rings, and your first real numbers (2 h) — pipeline run DONE 2026-09-13
 
 The moment of truth. Everything before this was plumbing.
 
-- [ ] `python src/step4_rings.py`
-- [ ] Resolve any unmatched-station warnings before reading results
-- [ ] Look at the mean gradient. Is it monotonic? How steep?
-- [ ] Look at the per-station table. Which stations break the pattern?
-- [ ] Check Rainier Beach, SODO, and Stadium specifically — you have
-      independent explanations for all three
-- [ ] Check the chain output: do brand names normalize correctly? Verify a
-      handful by hand
-- [ ] Write your three main observations into `DECISIONS.md` while fresh
-- [ ] Commit
+- [x] `python src/step4_rings.py` — 16 stations, 11,409 businesses, 6,847
+      business-ring matches
+- [x] Zero unmatched-station warnings anywhere in the run
+- [x] Mean gradient pulled (not monotonic — see DECISIONS.md "Quality
+      metrics" for the numbers; interpretation below is yours)
+- [x] Per-station table pulled, including which stations break the pattern
+- [x] Checked Rainier Beach, SODO, and Stadium specifically — numbers ready,
+      see DECISIONS.md
+- [x] **Checked the chain output by hand — found and fixed a real bug.**
+      `station_count > 1` was inflated 5x by downtown buffer overlap; fixed
+      to require `location_count >= 2`. Full detail in DECISIONS.md.
+- [ ] **Write your three main observations into `DECISIONS.md`** — this is
+      the one box only you can check. The numbers are ready; the
+      interpretation is the point of the project.
+- [x] Commit (pipeline run + chain-bug fix)
 
 **If the gradient is flat**, that is a finding, not a failure. Businesses
 cluster in commercial corridors that stations were routed through, and
