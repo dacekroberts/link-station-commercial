@@ -13,6 +13,20 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-13 — Session 6
+
+- Ran `step4_rings.py` end to end: 6,847 business-ring matches, 16 of 16
+  stations resolved with zero unmatched-name warnings anywhere.
+- **Fixed a chain-analysis validity bug found during the plan's required
+  hand-check:** `station_count > 1` (the original chain definition) is
+  inflated by the same downtown buffer overlap already known for density —
+  a single location can touch 4 stations without being a chain. Real cost:
+  reported 45.7% of locations as chains instead of the true 8.8%. Fixed in
+  `step4_rings.py` and `pages/2_Findings.py` to require `location_count >=
+  2`. Written up on the methodology page.
+- Gradient and per-station results ready for review — not summarized here,
+  since the "Observations" section below is the user's to write.
+
 ### 2026-09-13 — Session 5
 
 - **Ridership reconfigured from one month to twelve.** All twelve months of
@@ -364,6 +378,29 @@ empty states with no exceptions (checked via `streamlit.testing`).
 - Businesses in final geocoded dataset: **11,409** (of 11,466 cleaned, of
   84,390 originally loaded).
 - Stations with no ridership match: **none** — 16 of 16 matched exactly.
+- **Rings (Session 6, 2026-09-13):** 6,847 business-ring matches from 11,409
+  geocoded businesses across 16 stations x 4 rings. No unmatched-station
+  warnings anywhere in the run (stations.csv, businesses_geocoded.csv, and
+  ridership_by_station.csv all agree on names).
+- **Chain analysis validity bug, caught and fixed (Session 6):** the chain
+  metric's `station_count` can be inflated by the same downtown buffer
+  overlap already disclosed for density — one physical location inside the
+  4-station overlap zone can register as "present at 4 stations" without
+  being a chain at all. Verified by hand (the plan's required step):
+  PU POWDER and Saigon Drip Kitchen, each with exactly one real location,
+  both initially showed up in the "top chains" table. Checked systematically:
+  **1,589 of 3,907 normalized brands (41%)** touch >1 station from a single
+  location. The bug's real cost: defining "chain" as `station_count > 1`
+  (the first version) reported **45.7%** of locations as chains;
+  requiring `location_count >= 2` — the only definition consistent with
+  what "chain" means — puts the true figure at **8.8%**, a >5x difference.
+  Fixed in `src/step4_rings.py` (chain_stats now sorted so real chains float
+  to the top; console output explicitly separates "touches >1 station from
+  1 location" from genuine multi-location chains) and
+  `pages/2_Findings.py` (the `multi = chains[...]` filter now reads
+  `location_count > 1`, not `station_count > 1`). Written up on the
+  methodology page under "Spatial interpretation," next to the density
+  overlap disclosure it's the sibling of.
 
 ---
 
@@ -390,7 +427,22 @@ Write these down in session 6, while the numbers are in front of you.
 Worth keeping. A limitations section written by someone who hit real
 problems reads differently from one assembled from a template.
 
-- _[...]_
+- **The chain analysis's headline number was wrong by >5x before the
+  required hand-check caught it.** `station_count > 1` looked like a
+  reasonable definition of "chain" until two single-location businesses
+  (PU POWDER, Saigon Drip Kitchen) showed up in the top-15 "most stations"
+  table. The downtown buffer overlap — already known and disclosed for
+  density — turned out to inflate the chain metric far more severely, in a
+  way nothing upstream would have flagged on its own. Full detail under
+  "Quality metrics." Lesson: "verify a handful by hand" isn't a formality —
+  it's the step that actually catches this class of bug, and a plausible-
+  looking top-15 list is not the same as a correct one.
+- Earlier in the project: the same lesson showed up with the GTFS route
+  match (Session 2) and the "average boardings per day" redundancy claim
+  (Session 5) — both were assumed correct until actually checked, and both
+  turned out to need correction. Pattern worth remembering for Session 8's
+  write-up: check claims against the data before stating them, even ones
+  that feel obviously true.
 
 ## Open items
 

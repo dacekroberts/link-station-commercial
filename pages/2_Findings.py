@@ -97,7 +97,11 @@ st.header("Which brands bet on transit adjacency?")
 
 if CHAIN_STATS_CSV.exists():
     chains = pd.read_csv(CHAIN_STATS_CSV)
-    multi = chains[chains["station_count"] > 1]
+    # "Chain" means 2+ real physical locations - NOT station_count > 1. A
+    # single location inside the downtown buffer overlap (Westlake/Symphony/
+    # Pioneer Square/International District) can touch up to 4 stations on
+    # its own; that's the overlap, not a chain. Verified by hand in Session 6.
+    multi = chains[chains["location_count"] > 1]
 
     left, right = st.columns(2)
     left.metric("Brands at more than one station", len(multi))

@@ -240,6 +240,19 @@ isolated stations. This is disclosed rather than corrected: assigning each
 business to its nearest station would understate how many stations genuinely
 serve a downtown block.
 
+**That same overlap distorts the chain analysis more severely, and was
+corrected there rather than merely disclosed.** A single physical location
+inside the four-station overlap can touch multiple stations on its own —
+verified by hand: a one-location shop with no other branches showed up
+"present at 4 stations," indistinguishable from a real chain. Checked
+across every normalized brand, **1,589 of 3,907 (41%)** touch more than one
+station from exactly one physical location. Defining "chain" as
+`station_count > 1` — the first version of this analysis — would have
+reported **45.7%** of locations as chains; correctly requiring 2+ real
+locations puts the true figure at **8.8%**. The chain statistics used
+throughout this project require `location_count >= 2`, never station
+count alone.
+
 Ring boundaries are analyst-chosen. Different cutpoints would produce a
 different gradient.
 

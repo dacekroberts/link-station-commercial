@@ -177,10 +177,33 @@ def main():
                 location_count=("record_id", "nunique"),
             )
             .reset_index()
-            .sort_values("station_count", ascending=False)
+            # Real chains float to the top; single-location noise (see below)
+            # sorts to the bottom without needing a separate filter downstream.
+            .sort_values(["location_count", "station_count"], ascending=False)
         )
-        print("\nBrands present at the most stations:")
-        print(chain_stats.head(15).to_string(index=False))
+
+        # A brand's station_count can be inflated by the downtown overlap
+        # alone: one physical location inside the Westlake/Symphony/Pioneer
+        # Square/International District overlap zone can touch up to 4
+        # stations without being a chain at all - it made one lease
+        # decision, not four. "Chain" is therefore defined as
+        # location_count >= 2, never station_count > 1. Verified by hand
+        # (Session 6): PU POWDER and Saigon Drip Kitchen, each one real
+        # location, both showed up at 4 stations before this was caught.
+        overlap_noise = (
+            (chain_stats["location_count"] == 1) & (chain_stats["station_count"] > 1)
+        ).sum()
+        print(f"\n{overlap_noise:,} of {len(chain_stats):,} normalized brands touch "
+              ">1 station from a single physical location (downtown buffer "
+              "overlap, not a chain) - excluded from the chain count below.")
+
+        true_chains = chain_stats[chain_stats["location_count"] > 1]
+        print(f"{len(true_chains):,} brands have 2+ real locations. "
+              "Present at the most stations:")
+        print(
+            true_chains.sort_values("station_count", ascending=False)
+            .head(15).to_string(index=False)
+        )
         chain_stats.to_csv(CHAIN_STATS_CSV, index=False)
     else:
         print("\nNo business_name column - skipping chain analysis.")
