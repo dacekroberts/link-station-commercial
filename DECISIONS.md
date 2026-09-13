@@ -643,6 +643,13 @@ Consolidated from several separate decisions made across the session - the
   state plus a CSS max-height/scroll cap instead - zero new JS. Verified:
   collapsed by default, map fully visible; expand and collapse both work;
   console clean.
+- **Fixed a doubled name the user caught by reading the actual layer
+  control text**: the three whole-group business layers read "Businesses:
+  Retail — Retail — NAICS Code: 44/45" (name repeated). `add_pin_layer()`
+  already prefixes `group_name` onto the label; passing the full
+  `naics_label()` string (which also has the name) as the sublabel for
+  just that one call site doubled it - the 12 finer sub-category layers
+  were already clean. One-line fix.
 
 ---
 
