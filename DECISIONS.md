@@ -73,6 +73,12 @@ each; detail lives in the sections below.
   always fit). Fixed by reading the file as UTF-8 explicitly and moving
   the control to top-left, where it's always visible. Full detail in "Map
   rendering" below.
+- **Also post-Session-7, same day:** the heat layer and every pin layer
+  now only plot businesses that fall inside some station's ring (4,120 of
+  11,409) instead of all Seattle businesses citywide - the user's idea,
+  and a real consistency fix: the Findings-page analysis already only ever
+  counts ring-bounded businesses, so the map showing unbounded citywide
+  data was the odd one out. Full detail in "Map rendering" below.
 
 ### 2026-09-13 — Session 6
 
@@ -706,6 +712,39 @@ Consolidated from several separate decisions made across the session - the
   800px width; legend and all 15 business-layer names render with correct
   em dashes; regenerated `outputs/heatmap.html` and re-checked inside
   Streamlit, not just the standalone file.
+
+**Post-Session-7, same day: restricted the map to businesses within a station's ring**
+
+- The user's idea: the heat layer and pin layers had been plotting all
+  11,409 businesses in the cleaned dataset, with no distance limit at all -
+  a business in, say, Ballard (nowhere near a station) showed up exactly
+  like one across the street from a platform.
+- This was a real inconsistency, not just a display preference:
+  `step4_rings.py`'s ring/chain analysis - the numbers actually reported
+  on the Findings page - only ever counts a business if it falls inside at
+  least one station's buffer. The map was the one place in the project
+  still showing the unbounded citywide picture, understating how
+  concentrated the analysis's actual universe is.
+- Implemented as a filter on nearest-station distance: a business's ring
+  band was already being computed (`nearest_station_and_ring()`, used for
+  the pin hover tooltip) as one of the four ring bands or "Beyond ring 4."
+  Dropping the "Beyond ring 4" rows before building the heat layer and
+  pin layers is equivalent to "inside at least one station's 0.6 mi outer
+  buffer," because nearest-station distance is a lower bound on distance
+  to every other station - if the closest one is already past 0.6 mi,
+  every other station is farther. No new spatial computation needed;
+  moved the existing one earlier in `main()` so both the heat layer and
+  the pin layers draw from one shared filtered set instead of computing
+  it separately or drifting out of sync.
+- Result: 4,120 of 11,409 businesses (36%) fall within some station's
+  ring; the other 7,289 (64%) are now excluded from the map. Printed to
+  console on every run for visibility, the same convention as the
+  project's other warning/count lines.
+- Verified visually: at city-wide zoom, the heat signature is now a tight
+  ribbon following the rail alignment itself, with no citywide wash -
+  compared directly against the prior screenshot showing heat spread
+  across neighbourhoods with no station nearby (Magnolia, West Seattle,
+  far North Seattle).
 
 ---
 
