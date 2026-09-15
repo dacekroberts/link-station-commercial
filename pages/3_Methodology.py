@@ -127,16 +127,9 @@ the closest matches to this project's food-service and retail categories —
 are 0.6 miles or less. Recreation, the longest-distance purpose in that
 study, is the outlier at only ~50% within 0.6 miles, which is the pattern
 this project needed to see, not a convenient coincidence of picking a
-lenient category. Applying the same distance-decay parameters to a
-round-trip framing (a spontaneous visitor has to walk back to the platform
-to reach their real destination, so the relevant time budget is
-there-and-back) puts roughly three-quarters of one-way meal- and shopping-purpose
-trips under 15 minutes — inside a 30-minute round trip. That figure
-describes a threshold most such trips fall under, not a typical duration:
-the study's own all-purpose average is much shorter (mean 14.9 minutes,
-median 10). This is general U.S. walking behavior, not a study of transit
-riders in Seattle specifically, so it supports the ring choice rather than
-proving it.
+lenient category. This is general U.S. walking behavior, not a study of
+transit riders in Seattle specifically, so it supports the ring choice
+rather than proving it.
 """
 )
 
