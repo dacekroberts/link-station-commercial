@@ -85,14 +85,22 @@ st.subheader("What's here")
 
 st.markdown(
     """
-**Heatmap** — commercial density across the station areas, with the ring
-boundaries drawn on.
-
-**Findings** — the distance gradient, the relationship with station
-ridership, and which brands appear at the most stations.
-
-**Methodology** — where the data comes from, and what it cannot support.
-Worth reading before the findings.
+This project centers around a concentric ring analysis of commercial
+density surrounding the city of Seattle's Link rail 1 line service area,
+conducted across all 16 stations that fall within official Seattle city
+limits. Business-license data, sourced directly from the City of Seattle's
+own published open data, forms the commercial backbone of the analysis,
+categorized by NAICS code. Additionally, ridership data per station is
+included as a proxy for foot traffic levels around each station to
+provide insights on potential commercial value. Lastly, chain analysis
+was done to determine the level of chain presence within transit hub
+localities. Concentric ring analysis has been visually published as a
+dynamic heatmap viewable on the corresponding page. Resulting findings &
+EDA, as well as Methodology & Limitations are similarly featured on their
+own pages. Further analysis of 1 line stations outside of Seattle city
+limits or the newer 2 line are not included at this time as an
+appropriate scope limitation, though I am not discounting their addition
+at a future time.
 """
 )
 
