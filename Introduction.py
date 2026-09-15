@@ -37,6 +37,49 @@ concentrate closest.
 """
 )
 
+st.subheader("Why Seattle?")
+
+st.markdown(
+    """
+I have chosen to center on the Seattle area for this case study not only
+because it is where I have been born, raised, and have become accustomed
+to. More so, the city has several factors that make it an intriguing
+option to explore this particular topic within. Firstly, the unparalleled
+growth of the city, centered around its burgeoning tech sector has created
+a slew of both exciting opportunities and concerns about existing
+infrastructure's capacity for growth accommodation. Those concerns lean
+into the second factor, which is a severe lack of centralized public
+transit removed from privatized commuting costs. Before 2009, Seattle's
+public transit was largely constrained to bus systems serving the wider
+area, with only a select few downtown attractions housing fully integrated
+transit networks. With buses as the legacy primary option for public
+transit, the negative externalities of increased urban density on
+transportation have uniformly affected all residents, whether or not they
+own their own vehicle. Buses get stuck in traffic just as much as a
+private vehicle, save for bus-only lanes which are not prevalent enough to
+fully circumvent the high-density downsides. The end result is city
+residents being stuck in a lose-lose situation: Either you brave the
+traffic and put up with vehicle ownership or you budget an increased share
+of time to afford walking to bus stops from your residence, waiting for
+the bus, and dealing with the traffic's impacts regardless.
+
+As a result, the introduction of the Link rail to the city's transit
+infrastructure — first opened in 2009 and significantly expanded this
+decade — has begun to change that equation. Starting with the subject of
+this paper, the 1 Line serves the main network servicing the primary
+north-south urban corridor. At the time of writing, the city has already
+expanded into a 2nd line that serves an east-west area connecting the
+greater King county's east side to the city of Seattle itself, suggesting
+the local government is keen on furthering the reach and utility of the
+Link rail. This firm stance should indicate to business owners that
+support for the link rail, including attempts to increase ridership and
+accessibility, are only set to continue on a positive, upwards trajectory.
+Therefore, how can a business make informed decisions about their
+locational choice in Seattle with this transit-oriented roadmap put in
+place?
+"""
+)
+
 st.subheader("What's here")
 
 st.markdown(
