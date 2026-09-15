@@ -52,8 +52,14 @@ if RING_STATS_CSV.exists():
         return "Standard pattern"
 
     station_group = station_pivot.apply(_classify, axis=1)
+    # "Ring 1: 0-0.1 mi" etc. for this chart's axis/tooltip only - RING_LABELS
+    # itself stays plain since the bar chart and per-station table above/below
+    # reuse it as-is.
+    numbered_ring_labels = [f"Ring {i + 1}: {label}" for i, label in enumerate(RING_LABELS)]
+    ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
     long = rings[["station", "ring", "density_per_sq_mi"]].assign(
-        group=lambda d: d["station"].map(station_group)
+        group=lambda d: d["station"].map(station_group),
+        ring_label=lambda d: d["ring"].map(ring_number_map),
     )
     n_standard = int((station_group == "Standard pattern").sum())
     n_against = int((station_group == "Against the pattern").sum())
@@ -69,7 +75,7 @@ if RING_STATS_CSV.exists():
         alt.Chart(long)
         .mark_line(point=True)
         .encode(
-            x=alt.X("ring:N", sort=RING_LABELS, title="Ring"),
+            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Ring"),
             y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
             detail="station:N",
             color=alt.Color(
@@ -87,8 +93,8 @@ if RING_STATS_CSV.exists():
             ),
             tooltip=[
                 alt.Tooltip("station:N", title="Station"),
-                alt.Tooltip("ring:N", title="Ring"),
-                alt.Tooltip("density_per_sq_mi:Q", title="Density/sq mi", format=".0f"),
+                alt.Tooltip("ring_label:N", title="Ring"),
+                alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
         .properties(height=360)
