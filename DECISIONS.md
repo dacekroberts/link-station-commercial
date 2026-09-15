@@ -496,6 +496,26 @@ empty states with no exceptions (checked via `streamlit.testing`).
       the stronger, more directly relevant claim, not diluted by a
       secondary point that needs more caveats to hold up. Process
       documented here; final write-up simplified there.
+    - **Two final small additions from re-reading the sources in full,
+      2026-09-14 - the last pass before tabling source mining:**
+      1. Yang and Diez-Roux also note that most travel datasets record
+         only trip start/end points, not the route walked, and that
+         street-network distance is the more accurate but rarely
+         available alternative to straight-line distance - the same gap
+         this project's own "Spatial interpretation" limitation already
+         disclosed independently (I-5, the Montlake Cut, and grade
+         separate a straight-line buffer from a true walkshed). Added as
+         a second citation strengthening that existing disclosure, not a
+         new limitation - this project's own version is more specific to
+         Seattle than the source is.
+      2. The same study found 65% of U.S. walking trips exceed the
+         conventional 0.25-mile planning assumption, arguing against a
+         single flat cutoff generally. Added as explicit support for
+         using four ring tiers rather than one boundary, not just for the
+         0.6 mi outer edge specifically - a design-level point the
+         earlier citation only implicitly covered.
+      Both written into `pages/3_Methodology.py`'s Method section
+      alongside the existing citation.
 - Alternatives tested: none. Unlike the heat radius/blur tuning (Session
   7, a real 3-way visual comparison), the ring edges were set once in
   `config.py` before Session 6's analysis ran and never revisited against
