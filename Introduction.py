@@ -134,9 +134,14 @@ if STATION_STATS_CSV.exists():
     else:
         mid.metric("Businesses within concentric ring area of Link stations", "—")
     right.metric("Data Retrieved on", LICENSE_SNAPSHOT)
+    # Self-contained rather than "the two dates" - no metric above actually
+    # shows a ridership figure (only the business-license date does), so a
+    # caption that assumed a nearby ridership number to compare against had
+    # nothing to point at. States both dates directly instead.
     st.caption(
-        f"Ridership figures reflect {RIDERSHIP_SNAPSHOT}. The gap between the "
-        "two dates is discussed on the methodology page."
+        f"Business data was retrieved {LICENSE_SNAPSHOT}. Ridership figures "
+        f"reflect {RIDERSHIP_SNAPSHOT} - a different window, discussed on "
+        "the methodology page."
     )
 else:
     st.info(
