@@ -291,6 +291,7 @@ if STATION_STATS_CSV.exists():
                 (points + trend).properties(height=420),
                 use_container_width=True,
             )
+            st.subheader("Correlation")
             st.markdown(f"**r = {r:.3f}**")
 
         st.markdown(
