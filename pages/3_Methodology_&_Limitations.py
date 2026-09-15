@@ -33,7 +33,7 @@ from config import (
 
 st.set_page_config(page_title="Methodology", page_icon="📋", layout="wide")
 
-st.title("Methodology and limitations")
+st.title("Methodology & Limitations")
 
 st.header("Data sources")
 

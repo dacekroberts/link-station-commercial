@@ -28,8 +28,9 @@ Introductory Python, no GIS background. Explain geospatial concepts as they
 come up rather than only producing working code.
 
 Do not write the prose in the `TODO — write this up` blocks in
-`pages/2_Findings.py`. That analysis is the user's and is the point of the
-project. Discuss the numbers with them; let them write the interpretation.
+`pages/2_Findings_&_EDA.py`. That analysis is the user's and is the point
+of the project. Discuss the numbers with them; let them write the
+interpretation.
 
 Scope is locked (see `initialscript.md`). Flag scope additions rather than
 building them.

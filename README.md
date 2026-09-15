@@ -29,10 +29,10 @@ src/step3_geocode.py         GIS geometry join, Census geocoder for the rest
 src/step4_rings.py           buffers, spatial join, three analyses
 src/step5_map.py             Folium -> outputs/heatmap.html
 
-Introduction.py               Streamlit entry
-pages/1_Heatmap.py           embeds the saved map
-pages/2_Findings.py          gradient, ridership, chains
-pages/3_Methodology.py       sources and limitations
+Introduction.py                        Streamlit entry
+pages/1_Heatmap.py                     embeds the saved map
+pages/2_Findings_&_EDA.py              gradient, ridership, chains
+pages/3_Methodology_&_Limitations.py   sources and limitations
 
 data/raw/                    manual downloads (gitignored, see its README)
 data/processed/              intermediate CSVs (gitignored, regenerable)
@@ -94,4 +94,4 @@ license data, and chasing seven more municipal datasets is out of scope here.
 (Seattle's export does list some businesses located outside the city — those
 are filtered out in step 2.)
 
-Read `pages/3_Methodology.py` before drawing conclusions from any of this.
+Read `pages/3_Methodology_&_Limitations.py` before drawing conclusions from any of this.
