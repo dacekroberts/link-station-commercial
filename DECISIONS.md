@@ -480,9 +480,22 @@ empty states with no exceptions (checked via `streamlit.testing`).
       specific and not Seattle-specific. Cited as supporting context for
       the ring boundary choice, not as a claim about how people actually
       behave at these sixteen stations.
-    - Now written up on the methodology page (`pages/3_Methodology.py`,
-      "Method" section) with this citation - see that page for the
-      reader-facing version.
+    - **Editorial call, 2026-09-14: the round-trip/~30-minute point
+      (item 2 above) is kept here in full as the record of how the
+      reasoning actually developed, but is deliberately NOT carried into
+      `pages/3_Methodology.py`.** The user's original "~30-minute
+      discretionary event" recollection was the seed that led to finding
+      and reading the Yang and Diez-Roux source in the first place - a
+      good brainstorming starting point - but once checked, it turned out
+      to be the weaker of the two findings (a threshold most trips fall
+      under, not a typical duration, and reliant on an extra
+      round-trip-behavior assumption the distance check doesn't need).
+      The methodology page now leads with, and rests on, only the
+      **distance-based validation** (item 1: ~77%/72% of purpose-matched
+      one-way trips within 0.6 mi, recreation correctly the outlier) -
+      the stronger, more directly relevant claim, not diluted by a
+      secondary point that needs more caveats to hold up. Process
+      documented here; final write-up simplified there.
 - Alternatives tested: none. Unlike the heat radius/blur tuning (Session
   7, a real 3-way visual comparison), the ring edges were set once in
   `config.py` before Session 6's analysis ran and never revisited against
