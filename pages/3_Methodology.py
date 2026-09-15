@@ -14,6 +14,7 @@ from config import (
     NAICS_STOREFRONT_PREFIXES,
     NAICS_STOREFRONT_EXCLUDE,
     NAICS_STOREFRONT_REVIEWED_KEPT,
+    CHAIN_ANALYSIS_EXCLUDE_BRANDS,
     LICENSE_SNAPSHOT,
     LICENSE_SOURCE,
     RIDERSHIP_SNAPSHOT,
@@ -98,6 +99,32 @@ if NAICS_STOREFRONT_REVIEWED_KEPT:
     )
     for code, (label, reason) in NAICS_STOREFRONT_REVIEWED_KEPT.items():
         st.markdown(f"**Kept — {label}** (NAICS `{code}`)")
+        st.markdown(reason)
+
+if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
+    st.markdown(
+        "**A separate, narrower exclusion — chain analysis only, not "
+        "density.** These are real businesses. Nothing about their "
+        "filtering, geocoding, or counting was wrong, and they still "
+        "count fully toward the density, gradient, and ridership figures "
+        "elsewhere on this site. They worked their way into apparent "
+        "relevance for one specific piece of analysis — which brands "
+        "cluster near stations — for a reason that has nothing to do "
+        "with transit: each is a corporate food-service **contractor** "
+        "(NAICS `722310`, \"Food Service Contractors\"), not an "
+        "independent chain. One vendor operating cafeterias inside "
+        "however many buildings its client company occupies looks "
+        "identical, in a brand-name count, to a coffee chain that made "
+        "eight separate real-estate decisions to be near a platform — "
+        "but it isn't the same kind of \"chain,\" and averaging it in "
+        "would credit one company's office-campus footprint as evidence "
+        "about transit-adjacency site selection. This is a limitation of "
+        "the approach, not an error in it: name-based brand grouping "
+        "cannot distinguish \"repeated deliberate choice\" from \"one "
+        "vendor, many kitchens\" on its own."
+    )
+    for brand, (label, reason) in CHAIN_ANALYSIS_EXCLUDE_BRANDS.items():
+        st.markdown(f"**Excluded from chain analysis — {label}**")
         st.markdown(reason)
 
 st.header("Method")

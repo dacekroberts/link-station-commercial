@@ -173,6 +173,47 @@ NAICS_STOREFRONT_REVIEWED_KEPT = {
     ),
 }
 
+# Chain-analysis-only exclusions (post-Session-7, 2026-09-15). These are
+# real, correctly-geocoded, correctly-counted businesses - nothing wrong
+# with the filtering or computation that produced them. They still count
+# fully toward density, gradient, and ridership analyses (step4_rings.py's
+# ring_stats/station_stats). Excluded only from the brand/chain grouping,
+# because each is a corporate food-service CONTRACTOR - one vendor
+# operating internal cafeterias wherever its client company already has
+# office buildings, not an independent chain making its own repeated,
+# deliberate bet on transit adjacency the way a Subway or a Caffe Ladro
+# does. Identified via NAICS 722310 (Food Service Contractors)
+# co-occurrence - but not by filtering that NAICS code directly: it alone
+# only tags 1 of Compass One's 24 records (the other 23 are 722514,
+# "Cafeterias, Grill Buffets, and Buffets"), and 722514 alone would also
+# wrongly catch ~30 genuine independent small cafes (Boon Boona Coffee,
+# Turtle Coffee, Tea Addicts, and others) that share that code. NAICS
+# 722310 is disclosed on the methodology page as the identifying signal;
+# these three specific brand names are the actual filter.
+CHAIN_ANALYSIS_EXCLUDE_BRANDS = {
+    "COMPASS ONE": (
+        "Compass One LLC",
+        "23 of its 24 licensed locations use NAICS 722514, not 722310 - "
+        "but all 24 cluster in South Lake Union under addresses that read "
+        "as office-campus buildings (Terry Ave N, Boren Ave N, Fairview "
+        "Ave N), not walk-in storefronts. Compass Group is a real, large "
+        "contract food-service company; \"11 locations\" in the raw chain "
+        "count reflected one vendor's footprint across a single client's "
+        "campus, not 11 independent site-selection decisions.",
+    ),
+    "BON APPETIT MANAGEMENT": (
+        "Bon Appétit Management Company",
+        "NAICS 722310 (Food Service Contractors) throughout - another "
+        "national contract caterer, same pattern as Compass One at a "
+        "smaller scale in this dataset (4 locations).",
+    ),
+    "FLIK INTERNATIONAL": (
+        "Flik International",
+        "NAICS 722310 (Food Service Contractors) throughout - a third "
+        "national contract caterer (3 locations), same pattern.",
+    ),
+}
+
 # Sanity bounds for geocoder output. Anything outside this is a bad match.
 KING_COUNTY_BBOX = {
     "lat_min": 47.15,

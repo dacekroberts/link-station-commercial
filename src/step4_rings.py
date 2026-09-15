@@ -40,6 +40,7 @@ from config import (  # noqa: E402
     RING_STATS_CSV,
     STATION_STATS_CSV,
     CHAIN_STATS_CSV,
+    CHAIN_ANALYSIS_EXCLUDE_BRANDS,
 )
 
 LEGAL_SUFFIXES = r"\b(LLC|L\.L\.C\.|INC|INCORPORATED|CORP|CORPORATION|CO|LTD|LP|LLP|PLLC)\b"
@@ -189,8 +190,21 @@ def main():
     name_col = "business_name" if "business_name" in joined.columns else None
     if name_col:
         joined["brand"] = joined[name_col].apply(normalize_brand)
+        # Corporate food-service contractors (Compass One, Bon Appetit
+        # Management, Flik International) excluded here only - real
+        # businesses, still counted fully in ring_stats/station_stats
+        # above. Each is one vendor's footprint across a single client's
+        # office campus, not independent chain site-selection. See
+        # CHAIN_ANALYSIS_EXCLUDE_BRANDS in config.py for the full
+        # reasoning and why NAICS 722310 alone doesn't cleanly separate
+        # these from legitimate small chains.
+        excluded = joined["brand"].isin(CHAIN_ANALYSIS_EXCLUDE_BRANDS)
+        if excluded.any():
+            print(f"{excluded.sum():,} business-ring rows excluded from chain "
+                  f"analysis only (contractor brands): "
+                  f"{sorted(joined.loc[excluded, 'brand'].unique())}")
         chain_stats = (
-            joined[joined["brand"] != ""]
+            joined[(joined["brand"] != "") & ~excluded]
             .groupby("brand")
             .agg(
                 station_count=("station", "nunique"),
