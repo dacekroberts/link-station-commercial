@@ -40,6 +40,7 @@ from config import (  # noqa: E402
     RING_STATS_CSV,
     STATION_STATS_CSV,
     CHAIN_STATS_CSV,
+    CHAIN_RING_STATS_CSV,
     CHAIN_ANALYSIS_EXCLUDE_BRANDS,
 )
 
@@ -239,6 +240,35 @@ def main():
             .head(15).to_string(index=False)
         )
         chain_stats.to_csv(CHAIN_STATS_CSV, index=False)
+
+        # --- 3b. Chain share by ring -------------------------------------
+        # Does chain presence concentrate near the platform, same question
+        # the gradient does for density generally? Same counting
+        # convention as ring_stats above - every business-ring-per-station
+        # match counts, including downtown-overlap duplicates - so the two
+        # are directly comparable rather than computed on different bases.
+        # Denominator is the full joined set (all businesses, matching
+        # ring_stats' own population), not just brand-matched rows -
+        # blank/unparseable names still count as "not a chain," they just
+        # can't be excluded from the denominator too or the share would be
+        # inflated.
+        real_chain_brands = set(true_chains["brand"])
+        joined["is_chain"] = joined["brand"].isin(real_chain_brands)
+        chain_ring_stats = (
+            joined.groupby("ring")
+            .agg(
+                total_matches=("record_id", "size"),
+                chain_matches=("is_chain", "sum"),
+            )
+            .reindex(RING_LABELS)
+        )
+        chain_ring_stats["chain_share"] = (
+            chain_ring_stats["chain_matches"] / chain_ring_stats["total_matches"]
+        )
+        chain_ring_stats = chain_ring_stats.reset_index()
+        chain_ring_stats.to_csv(CHAIN_RING_STATS_CSV, index=False)
+        print("\nChain share by ring:")
+        print(chain_ring_stats.to_string(index=False))
     else:
         print("\nNo business_name column - skipping chain analysis.")
 

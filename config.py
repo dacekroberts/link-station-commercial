@@ -19,6 +19,7 @@ HEATMAP_HTML = OUTPUTS / "heatmap.html"
 STATION_STATS_CSV = OUTPUTS / "station_stats.csv"
 RING_STATS_CSV = OUTPUTS / "ring_stats.csv"
 CHAIN_STATS_CSV = OUTPUTS / "chain_stats.csv"
+CHAIN_RING_STATS_CSV = OUTPUTS / "chain_ring_stats.csv"
 
 STATIONS_CSV = DATA_PROCESSED / "stations.csv"
 BUSINESSES_CLEAN_CSV = DATA_PROCESSED / "businesses_clean.csv"
