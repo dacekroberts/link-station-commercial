@@ -203,6 +203,23 @@ That gap is a sourced way to frame why the ring-3 anomaly deserves
 explaining rather than being waved off as noise. Full detail in
 `DECISIONS.md` under "Observations" > "Gradient."
 
+**Second candidate framing for the gradient section, flagged post-
+Session-7:** Hoyt's Sector Model (Cultural Geography, 10.10) - commercial
+activity distorting into wedges along transit corridors instead of clean
+circles - names the same corridor-bleed pattern the Westlake/Symphony
+spacing mechanism already explains. Use it to explain the distortion;
+don't lean on Burgess's Concentric Ring Model (same source) to validate
+the ring methodology itself - that model is explicitly single-CBD, not
+multi-station. Full detail in `DECISIONS.md` under "Observations" >
+"Gradient."
+
+**Candidate framing for the not-yet-checked chain-by-ring question,
+flagged post-Session-7:** Central Place Theory's *range* and *threshold
+population* (Cultural Geography, 10.9) give vocabulary for whether chain
+share rises toward the platform, if that check gets run - a hypothesis,
+not backing for the 8.9%/155-brand figure already on record. Full detail
+in `DECISIONS.md` under "Observations" > "Chains."
+
 - [ ] Fill the three `TODO` blocks in `pages/2_Findings.py`
 - [ ] Fill `[FILL IN]` and `[Confirm which applies]` in `pages/3_Methodology.py`
 - [ ] Transfer everything from `DECISIONS.md` into the methodology page
