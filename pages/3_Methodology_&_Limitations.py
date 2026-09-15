@@ -174,8 +174,18 @@ st.markdown(
     """
 A few claims on this page lean on outside research, not just this
 project's own data — cited here in full; referenced by author and year
-where they're used above.
+where they're used above. Not every source below is cited inline yet —
+one is background reading that shaped how this project's author thinks
+about the subject, kept on record for a future write-up rather than
+backing a specific claim today.
 """
+)
+
+st.markdown(
+    "Merilus, Jean-Yves. \"10: Urbanization.\" *Cultural Geography "
+    "(C-ID GEOG 120)*, LibreTexts, "
+    "socialsci.libretexts.org/Courses/Coalinga_College/Cultural_Geography__"
+    "(C-ID_GEOG_120)/10:_Urbanization/. Accessed 14 Sept. 2026."
 )
 
 st.markdown(
