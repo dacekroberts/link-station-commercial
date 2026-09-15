@@ -225,7 +225,7 @@ in `DECISIONS.md` under "Observations" > "Chains."
 - [ ] Transfer everything from `DECISIONS.md` into the methodology page
 - [ ] Trim the limitations to what's true for your actual run — remove any
       that don't apply, keep access mode, the temporal gap, and siting
-- [ ] Rewrite the intro on `app.py` to state what you actually found
+- [ ] Rewrite the intro on `Introduction.py` to state what you actually found
 - [ ] Commit
 
 Write claims you can defend. "Density declines 40% between the inner and
@@ -238,7 +238,7 @@ them survives a follow-up question.
 
 - [ ] Push to a public GitHub repo
 - [ ] Confirm `outputs/` is committed and `requirements.txt` is the lean one
-- [ ] Deploy on Streamlit Community Cloud, pointing at `app.py`
+- [ ] Deploy on Streamlit Community Cloud, pointing at `Introduction.py`
 - [ ] Watch the build log. If it fails, it is almost always a dependency that
       leaked into `requirements.txt`
 - [ ] Open every page on the deployed URL

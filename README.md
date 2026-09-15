@@ -10,8 +10,8 @@ closest.
 Two halves that share nothing but a directory.
 
 The **pipeline** (`src/`) does the geospatial work locally and writes to
-`outputs/`. The **app** (`app.py`, `pages/`) reads `outputs/` and displays it.
-Nothing else crosses that boundary.
+`outputs/`. The **app** (`Introduction.py`, `pages/`) reads `outputs/` and
+displays it. Nothing else crosses that boundary.
 
 This split is deliberate. Streamlit Cloud installs from `requirements.txt`,
 and keeping geopandas out of it avoids the compiled GDAL/GEOS/PROJ
@@ -29,7 +29,7 @@ src/step3_geocode.py         GIS geometry join, Census geocoder for the rest
 src/step4_rings.py           buffers, spatial join, three analyses
 src/step5_map.py             Folium -> outputs/heatmap.html
 
-app.py                       Streamlit entry
+Introduction.py               Streamlit entry
 pages/1_Heatmap.py           embeds the saved map
 pages/2_Findings.py          gradient, ridership, chains
 pages/3_Methodology.py       sources and limitations
@@ -66,7 +66,7 @@ python src/step3_geocode.py
 python src/step4_rings.py
 python src/step5_map.py
 
-streamlit run app.py
+streamlit run Introduction.py
 ```
 
 Each step writes a CSV checkpoint, so a failure costs you one step rather
