@@ -76,3 +76,42 @@ else:
         "python src/step5_map.py\n"
         "```"
     )
+
+st.divider()
+st.subheader("Starting Assumptions")
+st.caption(
+    "Framing, not findings - my own lens coming in, not a claim this "
+    "project's data backs up. See Methodology for what the data actually "
+    "supports."
+)
+
+st.markdown(
+    """
+Through my relevant education and research, I've come to believe
+contemporary relocation trends increasingly suggest a rural exodus amongst
+young people in developed nations. These trends point towards an inevitable
+outcome of increased urban density, and all the logistical changes that
+follow that outcome. American cities long-defined by the private vehicle as
+a mode of transport have been forced to consider adaptation strategies to
+counteract increases in road traffic and a general decrease in desirability
+to manage car ownership in urban environments. One such adaptation strategy
+is large-scale investment and development of modern public transit hubs to
+better accommodate new urban residents. Lowering the barrier to entry for
+these prospective residents by removing the absolute need of a private
+vehicle is a great way to encourage continued population growth without
+maximally straining existing transit infrastructure.
+
+After studying these concepts in my collegiate Urban Economics and
+Philosophy of Economics courses, I felt compelled to drive an investigation
+into the commercial opportunities one could find out of newly established
+transit hubs in a built-out urban environment. On top of the
+near-irreplacable natural foot traffic stemming from these transit hubs,
+nearby mixed-use or high-density housing developments typically follow
+public transit developments. It is no secret that land and rent prices
+increase when a neighborhood receives a convenient, well-connected hub to
+the greater metro area. With those positive factors on valuation
+established, a case can be made for furthering our understanding of
+commercial density in relation to this increasingly popular transit
+infrastructure phenomenon.
+"""
+)
