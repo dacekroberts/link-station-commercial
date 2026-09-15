@@ -1081,8 +1081,17 @@ Consolidated from several separate decisions made across the session - the
   Salad (7/5), Caffe Ladro (5/5), Westman's Bagels, Metro by T-Mobile,
   Great State Burger, Just Poke, Dough Zone Dumpling House — all real,
   checkable Seattle/PNW brands, not overlap artifacts.
-- Whether chain share rises toward the platform (ring 1 vs. ring 4) not yet
-  checked — worth doing before the findings write-up.
+- **Checked, Session 8 (2026-09-15): chain share does rise toward the
+  platform.** 11.0% (ring 1) -> 10.1% (ring 2) -> 8.3% (ring 3) -> 8.5%
+  (ring 4) - a cleaner, more monotonic pattern than the main density
+  gradient's own ring-3 spike. New pipeline output
+  `outputs/chain_ring_stats.csv` (step4_rings.py), same counting
+  convention as `ring_stats.csv` (every business-ring-per-station match
+  counts, including downtown-overlap duplicates, so the two are directly
+  comparable). Denominator is the full joined set, not just brand-matched
+  rows, so blank/unparseable names count toward "total businesses"
+  without being excluded from both numerator and denominator. Rendered
+  as Graph 4 / Table 4 on the Findings page.
 - **Candidate framing for that open question, marked 2026-09-14, not
   written up - a hypothesis to test against the data, not evidence that
   already backs a number:** Central Place Theory's *range* (the maximum
