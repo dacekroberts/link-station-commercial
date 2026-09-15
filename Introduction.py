@@ -12,6 +12,7 @@ import streamlit as st
 
 from config import (
     STATION_STATS_CSV,
+    CITYWIDE_COVERAGE_CSV,
     LICENSE_SNAPSHOT,
     RIDERSHIP_SNAPSHOT,
 )
@@ -99,10 +100,16 @@ if STATION_STATS_CSV.exists():
     stats = pd.read_csv(STATION_STATS_CSV)
     left, mid, right = st.columns(3)
     left.metric("Stations", len(stats))
-    mid.metric(
-        "Businesses within 0.3 mi",
-        f"{int(stats['businesses_within_0_3mi'].sum()):,}",
-    )
+    if CITYWIDE_COVERAGE_CSV.exists():
+        coverage = pd.read_csv(CITYWIDE_COVERAGE_CSV).iloc[0]
+        in_rings = int(coverage["businesses_in_rings"])
+        citywide = int(coverage["businesses_citywide"])
+        mid.metric(
+            "Businesses within concentric ring area of Link stations",
+            f"{in_rings:,} / {citywide:,} ({in_rings / citywide:.1%})",
+        )
+    else:
+        mid.metric("Businesses within concentric ring area of Link stations", "—")
     right.metric("Business data", LICENSE_SNAPSHOT)
     st.caption(
         f"Ridership figures reflect {RIDERSHIP_SNAPSHOT}. The gap between the "

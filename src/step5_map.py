@@ -32,6 +32,7 @@ from config import (  # noqa: E402
     BUSINESSES_GEOCODED_CSV,
     RIDERSHIP_CSV,
     HEATMAP_HTML,
+    CITYWIDE_COVERAGE_CSV,
     CRS_GEOGRAPHIC,
     CRS_PROJECTED,
     RING_EDGES_METERS,
@@ -229,6 +230,18 @@ def main():
     print(f"{len(businesses) - len(businesses_in_rings):,} of {len(businesses):,} "
           f"businesses fall outside every station's ring "
           f"({len(businesses_in_rings):,} remain within a ring).")
+
+    # Persisted for the intro page's "citywide coverage" metric - this count
+    # was previously console-only (see above). Deliberately the deduplicated
+    # nearest-station figure, not step4_rings.py's business-ring MATCH count
+    # (6,847, which double-counts a business once per overlapping station's
+    # buffer): a business is either within walking distance of the network
+    # or it isn't, so a citywide "how much of Seattle's commercial footprint
+    # is within reach of a station" stat should count it once.
+    pd.DataFrame([{
+        "businesses_in_rings": len(businesses_in_rings),
+        "businesses_citywide": len(businesses),
+    }]).to_csv(CITYWIDE_COVERAGE_CSV, index=False)
 
     m = folium.Map(
         location=SEATTLE_CENTER,
