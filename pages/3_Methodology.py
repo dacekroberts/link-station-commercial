@@ -211,12 +211,11 @@ enough to redundant that transcribing both would not have changed anything
 — confirmed empirically, not assumed.
 
 **Access mode is the substantive problem.** A large share of riders at some
-stations arrive by car or connecting bus and board directly. Sound Transit's
-garage at Lynnwood City Center accounts for roughly 40% of that station's
-riders, and much of Northgate's ridership transfers in from the adjacent
-transit center. Those passengers never pass a storefront. Ridership
-therefore overstates pedestrian exposure at park-and-ride and transfer-heavy
-stations and understates it at walk-up stations.
+stations arrive by car or connecting bus and board directly. Much of
+Northgate's ridership transfers in from the adjacent transit center, for
+example. Those passengers never pass a storefront. Ridership therefore
+overstates pedestrian exposure at park-and-ride and transfer-heavy stations
+and understates it at walk-up stations.
 
 **On directional figures.** Sound Transit's raw per-direction data has no
 expansion method applied and does not reconcile with published totals.
