@@ -8,7 +8,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from config import RING_STATS_CSV, STATION_STATS_CSV, CHAIN_STATS_CSV, RING_LABELS
+from config import RING_STATS_CSV, STATION_STATS_CSV, CHAIN_STATS_CSV, RING_LABELS, STATIONS_CSV
 
 st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
 
@@ -144,26 +144,47 @@ if RING_STATS_CSV.exists():
         detail = (
             rings.pivot(index="station", columns="ring", values="density_per_sq_mi")
             .reindex(columns=RING_LABELS)
-            .round(1)
+            .round(0)
+        )
+        # North-to-south within each group, not alphabetical - Link 1 Line
+        # runs roughly north-south, so this reads as a trip down the line
+        # rather than an arbitrary A-Z list. Real station coordinates, not
+        # a guessed geographic order.
+        station_order = (
+            pd.read_csv(STATIONS_CSV).sort_values("latitude", ascending=False)["station"].tolist()
         )
         ordered_index = (
-            station_group[station_group == "Standard pattern"].sort_index().index.tolist()
-            + station_group[station_group == "Against the pattern"].sort_index().index.tolist()
+            [s for s in station_order if station_group.get(s) == "Standard pattern"]
+            + [s for s in station_order if station_group.get(s) == "Against the pattern"]
         )
         # station moved out of the index into a plain column - Streamlit's
         # dataframe grid doesn't forward Styler.map_index() colour to the
         # index column (tried it, confirmed via direct DOM inspection: text
         # stayed default white), but does respect column-cell styling via
         # Styler.map() on a regular column.
-        detail = detail.reindex(ordered_index).reset_index()
+        detail = (
+            detail.reindex(ordered_index)
+            .reset_index()
+            .rename(columns={"station": "Station Name", **ring_number_map})
+        )
 
         def _highlight_against(station_name):
             if station_group.get(station_name) == "Against the pattern":
                 return "color: #e45756; font-weight: 600;"
             return ""
 
+        # na_rep isn't honoured by Streamlit's dataframe grid for missing
+        # values (tested directly against pandas' own HTML output: the
+        # substitution works at the pandas level, Streamlit's canvas-
+        # rendered grid just doesn't use it) - null cells show as "None"
+        # rather than an em dash. Converting the column to pre-formatted
+        # strings would fix that but make column-sort lexicographic
+        # instead of numeric (e.g. "900" sorting after "1000"), not worth
+        # trading for a cosmetic nicety.
         st.dataframe(
-            detail.style.map(_highlight_against, subset=["station"]),
+            detail.style
+            .map(_highlight_against, subset=["Station Name"])
+            .format("{:.0f}", subset=numbered_ring_labels),
             use_container_width=True,
             hide_index=True,
         )
