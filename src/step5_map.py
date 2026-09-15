@@ -393,9 +393,14 @@ def main():
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
 
-    def add_pin_layer(rows, sublabel, group_name, color):
+    def add_pin_layer(rows, sublabel, group_name, color, bold=False):
         """One toggleable, clustered, coloured pin layer - the one pattern
-        reused for every business layer below, broad or fine-grained."""
+        reused for every business layer below, broad or fine-grained.
+
+        bold=True marks a macro (whole-NAICS-group) layer in the layer
+        control, distinguishing it from the finer subcategory splits below
+        it - Leaflet renders a layer control's name as HTML, so a literal
+        <b> tag in the string is enough, no extra styling needed."""
         data = [
             [row.latitude, row.longitude, row.business_name, row.naics,
              row.nearest_station, row.ring_band]
@@ -424,6 +429,8 @@ def main():
         # code mentioned in the label - two numbers sitting next to each
         # other in parens was the exact confusion fixed earlier.
         layer_name = f"Businesses: {group_name} — {sublabel} ({len(data):,})"
+        if bold:
+            layer_name = f"<b>{layer_name}</b>"
         fg = folium.FeatureGroup(name=layer_name, show=False)
         FastMarkerCluster(data, callback=callback).add_to(fg)
         fg.add_to(m)
@@ -436,7 +443,7 @@ def main():
         # already prefixes group_name, so passing the full "{name} — NAICS
         # Code: ..." label here doubled the name
         # ("Retail — Retail — NAICS Code: 44/45"), caught by the user.
-        add_pin_layer(group_rows, f"NAICS Code: {'/'.join(prefixes)}", name, color)
+        add_pin_layer(group_rows, f"NAICS Code: {'/'.join(prefixes)}", name, color, bold=True)
 
         # Finer splits within it (Session 7 add-on, cheap reuse of the same
         # pattern): a few specific NAICS codes by count, plus "Other" for
