@@ -275,6 +275,26 @@ if STATION_STATS_CSV.exists():
             Northgate is the one to look at closely.
             """
         )
+
+        with st.expander("Per-station ridership detail"):
+            ridership_detail = (
+                stats[["station", col, "businesses_within_0_3mi"]]
+                .rename(columns={
+                    "station": "Station Name",
+                    col: "Avg. Monthly Boardings",
+                    "businesses_within_0_3mi": "Businesses Within 0.3mi",
+                })
+                .sort_values("Avg. Monthly Boardings", ascending=False)
+                .reset_index(drop=True)
+            )
+            ridership_detail.index += 1
+            ridership_detail.index.name = "Rank"
+            st.dataframe(
+                ridership_detail.style.format(
+                    "{:,.0f}", subset=["Avg. Monthly Boardings", "Businesses Within 0.3mi"]
+                ),
+                use_container_width=True,
+            )
     else:
         st.info(
             "No ridership column found. Export station boardings from Sound "
