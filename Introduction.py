@@ -117,7 +117,7 @@ if STATION_STATS_CSV.exists():
     # equal-thirds column still clipped it with an ellipsis even at this
     # project's standard 1280px test width, confirmed by screenshot.
     left, mid, right = st.columns([1, 2, 1])
-    left.metric("Stations", len(stats))
+    left.metric("Number of Stations Analyzed", len(stats))
     if CITYWIDE_COVERAGE_CSV.exists():
         coverage = pd.read_csv(CITYWIDE_COVERAGE_CSV).iloc[0]
         in_rings = int(coverage["businesses_in_rings"])
@@ -133,7 +133,7 @@ if STATION_STATS_CSV.exists():
         mid.caption(f"of {citywide:,} citywide ({in_rings / citywide:.1%})")
     else:
         mid.metric("Businesses within concentric ring area of Link stations", "—")
-    right.metric("Business data", LICENSE_SNAPSHOT)
+    right.metric("Data Retrieved on", LICENSE_SNAPSHOT)
     st.caption(
         f"Ridership figures reflect {RIDERSHIP_SNAPSHOT}. The gap between the "
         "two dates is discussed on the methodology page."
