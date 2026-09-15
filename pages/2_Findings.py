@@ -408,7 +408,13 @@ if CHAIN_STATS_CSV.exists():
         if len(chains) else "—",
     )
 
-    st.dataframe(chains.head(25), use_container_width=True, hide_index=True)
+    st.markdown("**Brands/Franchises with High Concentration near Link Stations**")
+    chains_display = chains.head(25).rename(columns={
+        "brand": "Brand Name",
+        "station_count": "# of Stations within Proximity",
+        "location_count": "# of Locations within Station Proximity",
+    })
+    st.dataframe(chains_display, use_container_width=True, hide_index=True)
 
     st.markdown(
         """
