@@ -1084,14 +1084,32 @@ Consolidated from several separate decisions made across the session - the
 - **Checked, Session 8 (2026-09-15): chain share does rise toward the
   platform.** 11.0% (ring 1) -> 10.1% (ring 2) -> 8.3% (ring 3) -> 8.5%
   (ring 4) - a cleaner, more monotonic pattern than the main density
-  gradient's own ring-3 spike. New pipeline output
-  `outputs/chain_ring_stats.csv` (step4_rings.py), same counting
-  convention as `ring_stats.csv` (every business-ring-per-station match
-  counts, including downtown-overlap duplicates, so the two are directly
-  comparable). Denominator is the full joined set, not just brand-matched
-  rows, so blank/unparseable names count toward "total businesses"
-  without being excluded from both numerator and denominator. Rendered
-  as Graph 4 / Table 4 on the Findings page.
+  gradient's own ring-3 spike, though not perfectly monotonic itself (see
+  below). New pipeline output `outputs/chain_ring_stats.csv`
+  (step4_rings.py), same counting convention as `ring_stats.csv` (every
+  business-ring-per-station match counts, including downtown-overlap
+  duplicates, so the two are directly comparable). Denominator is the
+  full joined set, not just brand-matched rows, so blank/unparseable
+  names count toward "total businesses" without being excluded from both
+  numerator and denominator. Rendered as Graph 4 / Table 4 on the
+  Findings page.
+- **Session 8 (2026-09-15), same-day follow-up: the ring-3-to-4 chain-share
+  tick-up (8.3% -> 8.5%) is the same neighbor-sampling mechanism as the
+  gradient's ring-3 spike, one ring later and a different station pair.**
+  Checked by re-running the join with a per-station breakdown (not
+  persisted as a pipeline output - one-off verification, not a reusable
+  stat): SODO and Stadium, two of the four against-the-pattern stations
+  already named in the gradient's ring-3 breakdown, are what flips ring 4
+  from a continued decline into a small rise. Stadium's ring 4 (0.3-0.6mi)
+  carries 31 chain matches out of 373 businesses - consistent with the
+  existing "largely borrowed [from International District/Chinatown]"
+  finding above, not businesses in Stadium's own walkshed. SODO's ring 4
+  carries 18 of 149, consistent with its own "real commerce only appearing
+  toward Pioneer Square at the buffer's edge" finding. Remove just those
+  two stations and the aggregate ring-3-to-4 move reverts to a clean
+  decline (8.7% -> 8.4%). Added as a caption directly below Graph 4 on the
+  Findings page, tying the two reversals together for the reader before
+  the chains TODO.
 - **Candidate framing for that open question, marked 2026-09-14, not
   written up - a hypothesis to test against the data, not evidence that
   already backs a number:** Central Place Theory's *range* (the maximum
