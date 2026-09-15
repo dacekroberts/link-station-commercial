@@ -430,26 +430,35 @@ empty states with no exceptions (checked via `streamlit.testing`).
     derives specifically *from the station* should be expected to have
     already dropped off relative to ring 1, even if the business is
     still "walkable" in an absolute sense.
-  - **Extension of the same reasoning, also the user's own (2026-09-14),
-    PENDING A SOURCE - do not cite as fact until verified:** the ring
-    values are meant to reflect a real person's average willingness to
-    walk for an unplanned stop, tied to a recalled (unverified) claim
-    that humans experience events in roughly 30-minute time frames, with
-    walking past some outer distance starting to exceed that window at a
-    normal (non-exercise) pace. **Flagged, not yet reconciled:** the
-    project's actual outer ring edge is 0.6 mi, not the 1 mi the reasoning
-    referenced from memory - and at a normal walking pace (~3 mph, 20
-    min/mile), even a full mile is only ~20 minutes, with 0.6 mi at ~12
-    minutes; a brisk pace (~3.5-4 mph) puts 1 mi at ~15-17 minutes. Neither
-    the real 0.6 mi boundary nor the hypothetical 1 mi one reaches ~30
-    minutes at either pace, so if a real source supports a ~30-minute
-    figure, it likely bounds a different question (e.g. total one-way
-    commute tolerance, commonly cited around 20-30 minutes in transit
-    research) rather than "how far someone will detour on foot for an
-    unplanned stop" specifically. **Action for the user:** locate an
-    actual source (or confirm the reasoning holds without one) before
-    this goes into the methodology page - currently marker-only, not
-    written up there.
+  - **Extension of the same reasoning, revised by the user (2026-09-14),
+    STILL PENDING A SOURCE for the core 30-minute claim - do not cite as
+    fact until verified:** reconfigured as a **round-trip** budget, not a
+    one-way distance - a spontaneous visitor has to walk back to the
+    platform to reach their actual destination, so the relevant walking
+    time is there-and-back, not one-way. Explicit stated assumption: the
+    visitor's real destination is reached via the station, i.e. the
+    detour is a there-and-back loop off the commute, not a one-way trip
+    that continues from the business itself. Under that framing, ~30
+    minutes round-trip leaves **~15 minutes one-way**, which resolves the
+    earlier mile-mismatch (this entry previously flagged that the 1 mi /
+    30-minute one-way framing didn't fit the project's real 0.6 mi
+    boundary at any normal pace):
+    - Leisurely/strolling (~2.5 mph, 24 min/mile): 0.625 mi one-way
+    - Normal walking (~3.0 mph, 20 min/mile): 0.750 mi one-way
+    - Brisk (~3.5 mph, 17.1 min/mile): 0.875 mi one-way
+    - Brisk (~4.0 mph, 15 min/mile): 1.000 mi one-way
+    A leisurely pace lands almost exactly on the project's actual 0.6 mi
+    outer ring edge (0.625 mi); the user judged the 15-17 (up to ~20 at a
+    slower pace) minute one-way range a reasonable approximate match to
+    that boundary without needing exact precision. **What's resolved vs.
+    still open:** the arithmetic mismatch (1 mi vs. 0.6 mi, one-way vs.
+    round-trip) is reconciled - a leisurely one-way walk is a defensible
+    reading of "0.6 mi." The underlying behavioral claim itself (that
+    people experience discretionary events in ~30-minute frames) is
+    still an unverified recalled statistic - **action for the user
+    unchanged: locate an actual source, or confirm the reasoning stands
+    as common-sense reasoning without one, before this goes into the
+    methodology page.** Not written up there yet.
 - Alternatives tested: none. Unlike the heat radius/blur tuning (Session
   7, a real 3-way visual comparison), the ring edges were set once in
   `config.py` before Session 6's analysis ran and never revisited against
