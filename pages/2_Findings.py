@@ -97,7 +97,7 @@ if RING_STATS_CSV.exists():
                 alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
-        .properties(height=360)
+        .properties(height=720)
     )
     st.altair_chart(per_station_chart, use_container_width=True)
 
