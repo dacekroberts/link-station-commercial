@@ -282,7 +282,9 @@ if STATION_STATS_CSV.exists():
             trend = base.transform_regression(
                 col, "businesses_within_0_3mi"
             ).mark_line(strokeDash=[4, 4], strokeWidth=3, opacity=1).encode(
-                color=alt.value("#4c78a8")
+                x=alt.X(f"{col}:Q"),
+                y=alt.Y("businesses_within_0_3mi:Q"),
+                color=alt.value("#4c78a8"),
             )
             st.altair_chart(
                 (points + trend).properties(height=420),
