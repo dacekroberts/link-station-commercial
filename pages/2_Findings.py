@@ -415,7 +415,7 @@ if CHAIN_STATS_CSV.exists():
         if len(chains) else "—",
     )
 
-    st.markdown("**Table 3: Brands/Franchises with High Concentration near Link Stations**")
+    st.markdown("**Table 3: Brands with High Concentration near Link Stations**")
     chains_display = chains.head(25).rename(columns={
         "brand": "Brand Name",
         "station_count": "# of Stations within Proximity",
