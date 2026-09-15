@@ -31,7 +31,7 @@ if RING_STATS_CSV.exists():
     numbered_ring_labels = [f"Ring {i + 1}: {label}" for i, label in enumerate(RING_LABELS)]
     ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
 
-    st.markdown("**Average businesses/sq mi per Concentric Ring**")
+    st.markdown("**Graph 1: Average businesses/sq mi per Concentric Ring**")
     gradient_df = gradient.rename("density_per_sq_mi").reset_index()
     gradient_df["ring_label"] = gradient_df["ring"].map(ring_number_map)
     # Built directly in Altair, not st.bar_chart - st.bar_chart's y_label
