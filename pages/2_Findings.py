@@ -339,6 +339,46 @@ if STATION_STATS_CSV.exists():
                 ),
                 use_container_width=True,
             )
+
+        # UW and Northgate: high ridership rank, disproportionately low
+        # density - not a downtown-overlap effect (neither is in the
+        # cluster), consistent instead with the access-mode limitation
+        # already documented in Methodology (park-and-ride, transfers).
+        ridership_rank = clean[col].rank(ascending=False)
+        density_rank = clean["businesses_within_0_3mi"].rank(ascending=False)
+        uw = clean[clean["station"] == "University of Washington"].iloc[0]
+        northgate = clean[clean["station"] == "Northgate"].iloc[0]
+        uw_r_rank = int(ridership_rank[clean["station"] == "University of Washington"].iloc[0])
+        uw_d_rank = int(density_rank[clean["station"] == "University of Washington"].iloc[0])
+        northgate_r_rank = int(ridership_rank[clean["station"] == "Northgate"].iloc[0])
+        northgate_d_rank = int(density_rank[clean["station"] == "Northgate"].iloc[0])
+        st.caption(
+            f"University of Washington (ridership rank {uw_r_rank} of 16, but density "
+            f"rank {uw_d_rank} of 16 - only {uw['businesses_within_0_3mi']:.0f} businesses "
+            f"within 0.3mi) and Northgate (ridership rank {northgate_r_rank}, density rank "
+            f"{northgate_d_rank}, {northgate['businesses_within_0_3mi']:.0f} businesses) are "
+            "the sharpest mismatches in this direction - high ridership without matching "
+            "commercial density nearby."
+        )
+
+        # Symphony and Pioneer Square are the inverse of UW/Northgate above:
+        # solidly mid-pack on ridership but 2nd/3rd-highest density of all
+        # 16 stations. Computed from the same ridership-rank basis as the
+        # rest of this section, not hardcoded.
+        symphony = clean[clean["station"] == "Symphony"].iloc[0]
+        pioneer = clean[clean["station"] == "Pioneer Square"].iloc[0]
+        symphony_rank = int(ridership_rank[clean["station"] == "Symphony"].iloc[0])
+        pioneer_rank = int(ridership_rank[clean["station"] == "Pioneer Square"].iloc[0])
+        st.caption(
+            f"Symphony (ridership rank {symphony_rank} of 16) and Pioneer Square "
+            f"(ridership rank {pioneer_rank} of 16) stand out in the opposite direction "
+            f"from UW/Northgate above - {symphony['businesses_within_0_3mi']:.0f} and "
+            f"{pioneer['businesses_within_0_3mi']:.0f} businesses within 0.3mi "
+            "respectively, the 2nd- and 3rd-highest density of all 16 stations despite "
+            "solidly mid-pack ridership. Both are part of the downtown ring-overlap "
+            "cluster already documented in Methodology, so some of that density is "
+            "inflated by buffer overlap rather than purely organic."
+        )
     else:
         st.info(
             "No ridership column found. Export station boardings from Sound "
