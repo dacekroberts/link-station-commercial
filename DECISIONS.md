@@ -964,6 +964,18 @@ Consolidated from several separate decisions made across the session - the
   like a genuine siting effect — its commercial core sitting slightly off
   from the platform — left as an open question, not folded into the
   overlap explanation.
+- **Candidate framing for the write-up, marked 2026-09-14, not written
+  up - the user's interpretation to make:** Yang and Diez-Roux's own
+  model (already cited above for the ring-distance rationale) describes
+  walking behavior as a smooth, continuous distance decay. This project's
+  actual gradient is a discrete 4-ring step function, and it isn't
+  smooth - it dips then spikes at ring 3 before falling again. The gap
+  between "what a smooth decay process would predict" and "what the
+  4-ring data actually shows" is a sourced way to frame *why* the ring-3
+  anomaly is worth explaining (the Westlake/Symphony spacing mechanism
+  above) rather than waved off as noise - contrasting an expected smooth
+  baseline against an observed irregular one, not claiming the irregular
+  shape disproves the decay model.
 
 **Stations against the pattern**
 - **Rainier Beach** (13 businesses within 0.3mi): literal zero in the

@@ -195,6 +195,14 @@ geocoded businesses citywide (36%) fall within any station's ring at all.
 Full number and how it was computed in `DECISIONS.md` under "Quality
 metrics."
 
+**Candidate framing for the gradient section, flagged post-Session-7:** the
+sourced walking-trip distance-decay model (Yang & Diez-Roux, already cited
+for the ring-distance rationale in Methodology) describes a smooth decay;
+this project's actual 4-ring gradient isn't smooth - it spikes at ring 3.
+That gap is a sourced way to frame why the ring-3 anomaly deserves
+explaining rather than being waved off as noise. Full detail in
+`DECISIONS.md` under "Observations" > "Gradient."
+
 - [ ] Fill the three `TODO` blocks in `pages/2_Findings.py`
 - [ ] Fill `[FILL IN]` and `[Confirm which applies]` in `pages/3_Methodology.py`
 - [ ] Transfer everything from `DECISIONS.md` into the methodology page
