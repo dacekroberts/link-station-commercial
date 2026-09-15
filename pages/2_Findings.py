@@ -97,18 +97,22 @@ if RING_STATS_CSV.exists():
                 alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
-        .properties(height=720, width=1200)
+        .properties(height=504, width=900)
     )
-    # Fixed width (not container-filling) so the 1.5x-wider gaps between
-    # ring positions are real pixels, not just a proportional stretch of
-    # whatever the container happens to be. Tried scoping the resulting
-    # overflow to just this chart via a wrapping unsafe_allow_html div (the
-    # same idea as the heatmap iframe's own scrolling=True) - doesn't work
-    # in this Streamlit version, since every st.markdown/st.altair_chart
-    # call gets its own isolated element container rather than nesting
-    # inside a shared open tag. On a narrower browser window this chart can
-    # make the whole page scroll horizontally, not just itself - acceptable
-    # here since most screens are wider than 1200px, but worth knowing.
+    # Fixed width (not container-filling), capped at 900px deliberately -
+    # measured (not guessed) that Streamlit's main content container caps
+    # out at 970px on a 1280px-wide window with the sidebar expanded;
+    # anything wider than that drags the whole page into horizontal
+    # scroll, not just this chart, since a scoped-scroll wrapper (tried via
+    # unsafe_allow_html, the same idea as the heatmap iframe's own
+    # scrolling=True) doesn't work in this Streamlit version - each
+    # st.markdown/st.altair_chart call gets its own isolated element
+    # container rather than nesting inside a shared open tag. 900px leaves
+    # a margin under the measured ceiling and is still meaningfully wider
+    # than the ~810px this chart rendered at under container-fill, short of
+    # the originally-requested 1.5x (which would need ~1200px) - traded
+    # off in favor of a page that doesn't scroll sideways on a normal
+    # laptop window.
     st.altair_chart(per_station_chart, use_container_width=False)
 
     st.markdown(
