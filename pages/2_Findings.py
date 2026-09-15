@@ -4,6 +4,7 @@ The charts are scaffolding. The prose sections marked TODO are the part a
 reviewer actually reads; the numbers only set up what you argue.
 """
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -26,6 +27,73 @@ if RING_STATS_CSV.exists():
         .reindex(RING_LABELS)
     )
     st.bar_chart(gradient, y_label="Businesses per square mile")
+
+    # Per-station view: which stations follow the expected declining
+    # pattern, and which run against it. Classification rule, computed
+    # from the data rather than picked by eye: a station counts as
+    # "standard" if its density never climbs back above its own ring-1
+    # level after the first ring - one minor up-tick along the way still
+    # counts as this pattern (real noise), but a station that re-exceeds
+    # its own ring-1 density, or starts at zero there, counts as against
+    # the pattern. The two groups happen to split the sixteen stations
+    # exactly in half.
+    station_pivot = (
+        rings.pivot(index="station", columns="ring", values="density_per_sq_mi")
+        .reindex(columns=RING_LABELS)
+    )
+
+    def _classify(row):
+        vals = row.to_numpy()
+        first = vals[0]
+        if pd.isna(first) or first == 0:
+            return "Against the pattern"
+        if any(pd.notna(v) and v > first for v in vals[1:]):
+            return "Against the pattern"
+        return "Standard pattern"
+
+    station_group = station_pivot.apply(_classify, axis=1)
+    long = rings[["station", "ring", "density_per_sq_mi"]].assign(
+        group=lambda d: d["station"].map(station_group)
+    )
+    n_standard = int((station_group == "Standard pattern").sum())
+    n_against = int((station_group == "Against the pattern").sum())
+
+    st.caption(
+        f"{n_standard} of 16 stations never climb back above their own "
+        f"ring-1 density after the first ring (a single minor up-tick still "
+        f"counts as this pattern - a real reversal doesn't); the other "
+        f"{n_against} run against it. Hover a line for the station name."
+    )
+
+    per_station_chart = (
+        alt.Chart(long)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X("ring:N", sort=RING_LABELS, title="Ring"),
+            y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
+            detail="station:N",
+            color=alt.Color(
+                "group:N",
+                title=None,
+                scale=alt.Scale(
+                    domain=["Standard pattern", "Against the pattern"],
+                    range=["#4c78a8", "#e45756"],
+                ),
+            ),
+            opacity=alt.condition(
+                alt.datum.group == "Against the pattern",
+                alt.value(0.9),
+                alt.value(0.45),
+            ),
+            tooltip=[
+                alt.Tooltip("station:N", title="Station"),
+                alt.Tooltip("ring:N", title="Ring"),
+                alt.Tooltip("density_per_sq_mi:Q", title="Density/sq mi", format=".0f"),
+            ],
+        )
+        .properties(height=360)
+    )
+    st.altair_chart(per_station_chart, use_container_width=True)
 
     st.markdown(
         """
