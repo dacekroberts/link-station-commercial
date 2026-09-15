@@ -35,7 +35,48 @@ st.set_page_config(page_title="Methodology", page_icon="📋", layout="wide")
 
 st.title("Methodology & Limitations")
 
-st.header("Data sources")
+st.header("Method")
+
+st.markdown(
+    f"""
+Station points are projected from EPSG:4326 to EPSG:32610 (UTM zone 10N)
+so that distances are measured in metres, then buffered into concentric
+annuli at {', '.join(str(e) for e in RING_EDGES_MILES[1:])} miles. Each ring
+subtracts the disc inside it, so a business falls in exactly one ring per
+station. Businesses are assigned by spatial join, and counts are normalised
+by ring area to give density per square mile.
+
+**Why these particular distances.** The rings are meant to capture a
+*spontaneous* walkable detour off a rider's trip, not just physical
+nearness — a business at the outer edge may still see foot traffic from
+people walking to or from work or home, but that traffic is a commute
+passing by, not a station-driven impulse stop, so its benefit from the
+station specifically is expected to have already fallen off relative to
+the inner rings.
+
+The 0.6-mile outer edge is checked, not assumed, against purpose-matched
+national walking-trip data: using the distance-decay parameters fitted by
+Yang and Diez-Roux (2012) to 2009 National Household Travel Survey data,
+roughly 77% of one-way walking trips for *meals* and 72% for *shopping* —
+the closest matches to this project's food-service and retail categories —
+are 0.6 miles or less. Recreation, the longest-distance purpose in that
+study, is the outlier at only ~50% within 0.6 miles, which is the pattern
+this project needed to see, not a convenient coincidence of picking a
+lenient category. This is general U.S. walking behavior, not a study of
+transit riders in Seattle specifically, so it supports the ring choice
+rather than proving it.
+
+The same study is also part of why this project uses four tiers rather
+than a single cutoff: it found that 65% of U.S. walking trips exceed the
+0.25-mile distance conventionally assumed as the maximum in transportation
+planning, arguing against relying on one flat threshold at all. A single
+ring would have collapsed whatever internal structure exists between the
+platform and the outer edge into one undifferentiated number, rather than
+letting a gradient — or a departure from one — show up in the data at all.
+"""
+)
+
+st.header("Data Sources")
 
 st.markdown(
     f"""
@@ -66,7 +107,7 @@ authors' derived estimate, not an agency figure.
 """
 )
 
-st.header("What was filtered out")
+st.header("What Was Filtered Out")
 
 st.markdown(
     """
@@ -127,45 +168,20 @@ if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
         st.markdown(f"**Excluded from chain analysis — {label}**")
         st.markdown(reason)
 
-st.header("Method")
+st.header("Citations")
 
 st.markdown(
-    f"""
-Station points are projected from EPSG:4326 to EPSG:32610 (UTM zone 10N)
-so that distances are measured in metres, then buffered into concentric
-annuli at {', '.join(str(e) for e in RING_EDGES_MILES[1:])} miles. Each ring
-subtracts the disc inside it, so a business falls in exactly one ring per
-station. Businesses are assigned by spatial join, and counts are normalised
-by ring area to give density per square mile.
-
-**Why these particular distances.** The rings are meant to capture a
-*spontaneous* walkable detour off a rider's trip, not just physical
-nearness — a business at the outer edge may still see foot traffic from
-people walking to or from work or home, but that traffic is a commute
-passing by, not a station-driven impulse stop, so its benefit from the
-station specifically is expected to have already fallen off relative to
-the inner rings.
-
-The 0.6-mile outer edge is checked, not assumed, against purpose-matched
-national walking-trip data: using the distance-decay parameters fitted by
-Yang and Diez-Roux (2012) to 2009 National Household Travel Survey data,
-roughly 77% of one-way walking trips for *meals* and 72% for *shopping* —
-the closest matches to this project's food-service and retail categories —
-are 0.6 miles or less. Recreation, the longest-distance purpose in that
-study, is the outlier at only ~50% within 0.6 miles, which is the pattern
-this project needed to see, not a convenient coincidence of picking a
-lenient category. This is general U.S. walking behavior, not a study of
-transit riders in Seattle specifically, so it supports the ring choice
-rather than proving it.
-
-The same study is also part of why this project uses four tiers rather
-than a single cutoff: it found that 65% of U.S. walking trips exceed the
-0.25-mile distance conventionally assumed as the maximum in transportation
-planning, arguing against relying on one flat threshold at all. A single
-ring would have collapsed whatever internal structure exists between the
-platform and the outer edge into one undifferentiated number, rather than
-letting a gradient — or a departure from one — show up in the data at all.
+    """
+A few claims on this page lean on outside research, not just this
+project's own data — cited here in full; referenced by author and year
+where they're used above.
 """
+)
+
+st.markdown(
+    "Yang, Yong, and Ana V. Diez-Roux. \"Walking Distance by Trip Purpose "
+    "and Population Subgroups.\" *American Journal of Preventive Medicine*, "
+    "vol. 43, no. 1, 2012, pp. 11-19."
 )
 
 st.header("Limitations")
@@ -316,24 +332,14 @@ statistics used throughout this project require `location_count >= 2`,
 never station count alone.
 
 **Brand matching is exact, not fuzzy — a real limitation of this kind of
-project, not just this one.** Chain identification depends on normalizing
-business names (case, store numbers, legal suffixes, punctuation) to a
-comparable key, then grouping exact matches. That catches most chains but
-not all of them: two license records for the same brand, filed with
-different spacing or punctuation, become two different keys unless someone
-notices and patches it by hand. Two such cases were found and fixed here —
-"Rudy's Barbershop" and "Molly Moon's Homemade Ice Cream," each split
-across differently-formatted name variants — but the fix was a small,
-explicit lookup for known cases, not a general solution. Any other
-same-chain variant that wasn't spotted by eye still counts as two
-separate, smaller entities rather than one real chain. The chain-share
-figures above
-are therefore a **lower bound** on the true chain share, not an exact
-count — a limitation inherent to exact-match name matching on
-inconsistently-formatted administrative records, not something a bigger
-dataset or more careful coding alone would fix. A fuzzy-matching pass
-(e.g. `rapidfuzz`) could close some of the remaining gap, at the cost of
-needing every fuzzy match checked by hand before it's trusted.
+project, not just this one.** Name normalization catches most chains, but
+formatting variants (spacing, punctuation) of the same brand can still
+land on two different keys unless caught by hand — as happened here with
+"Rudy's Barbershop" and "Molly Moon's Homemade Ice Cream," patched as a
+small known-case lookup, not a general fix. The chain-share figures above
+are therefore a **lower bound**, not an exact count. A fuzzy-matching pass
+(e.g. `rapidfuzz`) could close some of that gap, at the cost of needing
+every match checked by hand.
 
 Ring boundaries are analyst-chosen. Different cutpoints would produce a
 different gradient.
