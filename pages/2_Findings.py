@@ -184,7 +184,7 @@ if RING_STATS_CSV.exists():
         st.dataframe(
             detail.style
             .map(_highlight_against, subset=["Station Name"])
-            .format("{:.0f}", subset=numbered_ring_labels),
+            .format("{:.0f} businesses/sq mi", subset=numbered_ring_labels),
             use_container_width=True,
             hide_index=True,
         )
