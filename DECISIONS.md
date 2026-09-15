@@ -413,12 +413,43 @@ empty states with no exceptions (checked via `streamlit.testing`).
 
 **Ring boundaries**
 - Used: 0.1 / 0.2 / 0.3 / 0.6 miles
-- Why 0.3 as the walkshed: recorded in `config.py`'s own comment on
-  `RING_EDGES_MILES` - "the 0.3 mile mark is the walkshed of interest;
-  0.3-0.6 is the comparison band that gives the gradient something to
-  decline against." A conventional ~5-6 minute walk radius, with the outer
-  band there specifically as a contrast baseline, not as a second walkshed
-  claim of its own.
+- Why 0.3 as the walkshed:
+  - **Mechanical reasoning** (recorded in `config.py`'s own comment on
+    `RING_EDGES_MILES`): "the 0.3 mile mark is the walkshed of interest;
+    0.3-0.6 is the comparison band that gives the gradient something to
+    decline against." A conventional ~5-6 minute walk radius, with the
+    outer band there specifically as a contrast baseline, not as a second
+    walkshed claim of its own.
+  - **Conceptual reasoning (the user's own, 2026-09-14):** the ring
+    system is measuring the feasibility of a *spontaneous* walkable
+    detour outward from the platform, not just physical nearness. A
+    business in ring 4 may still see real foot traffic from riders
+    walking to/from work or home, but that traffic is structurally
+    different from ring 1's - it's a commute passing by, not a
+    station-driven impulse stop - so the benefit a ring-4 business
+    derives specifically *from the station* should be expected to have
+    already dropped off relative to ring 1, even if the business is
+    still "walkable" in an absolute sense.
+  - **Extension of the same reasoning, also the user's own (2026-09-14),
+    PENDING A SOURCE - do not cite as fact until verified:** the ring
+    values are meant to reflect a real person's average willingness to
+    walk for an unplanned stop, tied to a recalled (unverified) claim
+    that humans experience events in roughly 30-minute time frames, with
+    walking past some outer distance starting to exceed that window at a
+    normal (non-exercise) pace. **Flagged, not yet reconciled:** the
+    project's actual outer ring edge is 0.6 mi, not the 1 mi the reasoning
+    referenced from memory - and at a normal walking pace (~3 mph, 20
+    min/mile), even a full mile is only ~20 minutes, with 0.6 mi at ~12
+    minutes; a brisk pace (~3.5-4 mph) puts 1 mi at ~15-17 minutes. Neither
+    the real 0.6 mi boundary nor the hypothetical 1 mi one reaches ~30
+    minutes at either pace, so if a real source supports a ~30-minute
+    figure, it likely bounds a different question (e.g. total one-way
+    commute tolerance, commonly cited around 20-30 minutes in transit
+    research) rather than "how far someone will detour on foot for an
+    unplanned stop" specifically. **Action for the user:** locate an
+    actual source (or confirm the reasoning holds without one) before
+    this goes into the methodology page - currently marker-only, not
+    written up there.
 - Alternatives tested: none. Unlike the heat radius/blur tuning (Session
   7, a real 3-way visual comparison), the ring edges were set once in
   `config.py` before Session 6's analysis ran and never revisited against
