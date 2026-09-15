@@ -15,7 +15,8 @@ st.title("Findings")
 
 # --- 1. Distance gradient ---------------------------------------------
 
-st.header("Does commercial density fall off with distance?")
+st.header("Concentric Ring Analysis")
+st.caption("Does commercial density fall off with distance?")
 
 if RING_STATS_CSV.exists():
     rings = pd.read_csv(RING_STATS_CSV)
