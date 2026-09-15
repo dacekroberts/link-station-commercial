@@ -8,6 +8,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
+from components import render_social_links
 from config import (
     RING_STATS_CSV,
     STATION_STATS_CSV,
@@ -18,6 +19,8 @@ from config import (
 )
 
 st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
+
+render_social_links()
 
 st.title("Findings & EDA")
 
