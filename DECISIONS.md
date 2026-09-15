@@ -47,6 +47,29 @@ each; detail lives in the sections below.
   earlier dated entries in this file alone - those are records of what
   was true when they were written, not living docs.
 
+- **New `outputs/citywide_coverage.csv`, and a metric-definition choice for
+  the intro page.** Rewriting "Businesses within 0.3 mi" surfaced that this
+  project already had two different, valid ways to count "businesses near a
+  Link station" on the books: `ring_stats.csv`'s business-ring MATCH count
+  (6,847 - a business inside multiple overlapping downtown stations' buffers
+  counts once per station, the convention every existing Findings-page stat
+  uses) and step5_map.py's unique nearest-station count (4,120 of 11,409,
+  36%, first computed and console-printed in the Session 7 heatmap-filter
+  work above), which counts each business once regardless of how many
+  stations it's near. Presented both to the user rather than picking
+  silently; they chose the deduplicated 4,120/11,409 figure as more
+  intuitive for a citywide headline stat, accepting the inconsistency with
+  the match-counted convention elsewhere on the site as a deliberate,
+  known tradeoff for this one number. That count was previously
+  console-only, so `step5_map.py` now also writes it to
+  `outputs/citywide_coverage.csv` (`businesses_in_rings`,
+  `businesses_citywide`) right where it's already computed, rather than
+  duplicating the nearest-station logic into `step4_rings.py`, which
+  deliberately keeps that computation separate from its own overlap-aware
+  ring analysis (see the `nearest_station_and_ring()` docstring). The
+  intro page's metric now reads "Businesses within concentric ring area of
+  Link stations: 4,120 / 11,409 (36.1%)".
+
 ### 2026-09-13 — Session 7
 
 - **Also added this session:** finer per-category pin toggle layers (12,
