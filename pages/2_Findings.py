@@ -249,7 +249,7 @@ else:
 
 # --- 2. Ridership ------------------------------------------------------
 
-st.header("Does station volume track commercial density?")
+st.header("Ridership Analysis")
 
 if STATION_STATS_CSV.exists():
     stats = pd.read_csv(STATION_STATS_CSV)
@@ -397,7 +397,7 @@ else:
 
 # --- 3. Chains ---------------------------------------------------------
 
-st.header("Which brands bet on transit adjacency?")
+st.header("Chain Analysis")
 
 if CHAIN_STATS_CSV.exists():
     chains = pd.read_csv(CHAIN_STATS_CSV)
