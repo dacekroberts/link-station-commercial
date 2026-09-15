@@ -110,6 +110,33 @@ annuli at {', '.join(str(e) for e in RING_EDGES_MILES[1:])} miles. Each ring
 subtracts the disc inside it, so a business falls in exactly one ring per
 station. Businesses are assigned by spatial join, and counts are normalised
 by ring area to give density per square mile.
+
+**Why these particular distances.** The rings are meant to capture a
+*spontaneous* walkable detour off a rider's trip, not just physical
+nearness — a business at the outer edge may still see foot traffic from
+people walking to or from work or home, but that traffic is a commute
+passing by, not a station-driven impulse stop, so its benefit from the
+station specifically is expected to have already fallen off relative to
+the inner rings.
+
+The 0.6-mile outer edge is checked, not assumed, against purpose-matched
+national walking-trip data: using the distance-decay parameters fitted by
+Yang and Diez-Roux (2012) to 2009 National Household Travel Survey data,
+roughly 77% of one-way walking trips for *meals* and 72% for *shopping* —
+the closest matches to this project's food-service and retail categories —
+are 0.6 miles or less. Recreation, the longest-distance purpose in that
+study, is the outlier at only ~50% within 0.6 miles, which is the pattern
+this project needed to see, not a convenient coincidence of picking a
+lenient category. Applying the same distance-decay parameters to a
+round-trip framing (a spontaneous visitor has to walk back to the platform
+to reach their real destination, so the relevant time budget is
+there-and-back) puts roughly three-quarters of one-way meal- and shopping-purpose
+trips under 15 minutes — inside a 30-minute round trip. That figure
+describes a threshold most such trips fall under, not a typical duration:
+the study's own all-purpose average is much shorter (mean 14.9 minutes,
+median 10). This is general U.S. walking behavior, not a study of transit
+riders in Seattle specifically, so it supports the ring choice rather than
+proving it.
 """
 )
 
@@ -326,5 +353,13 @@ st.markdown(
   in October 2021. License issue dates would support comparing business
   formation on either side of that opening — the strongest available version
   of this analysis, and the one that comes closest to a causal claim.
+- **Continuous distance-decay weighting instead of flat rings.** The current
+  four annuli treat every business within a band identically regardless of
+  exactly how close it is to the boundary. A negative exponential
+  decay function — `P(d) = e^(-βd)`, the same form Yang and Diez-Roux (2012)
+  fit to national walking-trip data, and Zhao et al. (2003) apply directly to
+  transit walk accessibility as an alternative to flat buffers — would model
+  pedestrian attenuation continuously rather than as four discrete steps,
+  at the cost of real added complexity this project's scope didn't call for.
 """
 )

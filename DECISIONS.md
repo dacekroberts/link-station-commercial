@@ -413,7 +413,7 @@ empty states with no exceptions (checked via `streamlit.testing`).
 
 **Ring boundaries**
 - Used: 0.1 / 0.2 / 0.3 / 0.6 miles
-- Why 0.3 as the walkshed:
+- Why 0.3 (and 0.6) as the walkshed - three layers, oldest first:
   - **Mechanical reasoning** (recorded in `config.py`'s own comment on
     `RING_EDGES_MILES`): "the 0.3 mile mark is the walkshed of interest;
     0.3-0.6 is the comparison band that gives the gradient something to
@@ -429,36 +429,60 @@ empty states with no exceptions (checked via `streamlit.testing`).
     station-driven impulse stop - so the benefit a ring-4 business
     derives specifically *from the station* should be expected to have
     already dropped off relative to ring 1, even if the business is
-    still "walkable" in an absolute sense.
-  - **Extension of the same reasoning, revised by the user (2026-09-14),
-    STILL PENDING A SOURCE for the core 30-minute claim - do not cite as
-    fact until verified:** reconfigured as a **round-trip** budget, not a
-    one-way distance - a spontaneous visitor has to walk back to the
-    platform to reach their actual destination, so the relevant walking
-    time is there-and-back, not one-way. Explicit stated assumption: the
-    visitor's real destination is reached via the station, i.e. the
-    detour is a there-and-back loop off the commute, not a one-way trip
-    that continues from the business itself. Under that framing, ~30
-    minutes round-trip leaves **~15 minutes one-way**, which resolves the
-    earlier mile-mismatch (this entry previously flagged that the 1 mi /
-    30-minute one-way framing didn't fit the project's real 0.6 mi
-    boundary at any normal pace):
-    - Leisurely/strolling (~2.5 mph, 24 min/mile): 0.625 mi one-way
-    - Normal walking (~3.0 mph, 20 min/mile): 0.750 mi one-way
-    - Brisk (~3.5 mph, 17.1 min/mile): 0.875 mi one-way
-    - Brisk (~4.0 mph, 15 min/mile): 1.000 mi one-way
-    A leisurely pace lands almost exactly on the project's actual 0.6 mi
-    outer ring edge (0.625 mi); the user judged the 15-17 (up to ~20 at a
-    slower pace) minute one-way range a reasonable approximate match to
-    that boundary without needing exact precision. **What's resolved vs.
-    still open:** the arithmetic mismatch (1 mi vs. 0.6 mi, one-way vs.
-    round-trip) is reconciled - a leisurely one-way walk is a defensible
-    reading of "0.6 mi." The underlying behavioral claim itself (that
-    people experience discretionary events in ~30-minute frames) is
-    still an unverified recalled statistic - **action for the user
-    unchanged: locate an actual source, or confirm the reasoning stands
-    as common-sense reasoning without one, before this goes into the
-    methodology page.** Not written up there yet.
+    still "walkable" in an absolute sense. This part needs no external
+    source - it's the analytical logic behind the ring system, not an
+    empirical claim.
+  - **Sourced, replacing the earlier unverified "~30-minute" recollection
+    (resolved 2026-09-14):** the user located Yang, Yong, and Ana V.
+    Diez-Roux, "Walking Distance by Trip Purpose and Population
+    Subgroups," *American Journal of Preventive Medicine*, vol. 43,
+    no. 1, 2012, pp. 11-19 - a real NHTS-based study of U.S. walking-trip
+    distance and duration by purpose, with fitted distance-decay
+    parameters `P(d > x) = e^(-βx)` per purpose. Read in full, not just
+    summarized. Two things checked directly against the paper's own
+    numbers (Table 2, Table 3), not assumed:
+    1. **The 0.6 mi outer edge, checked against purpose-matched
+       one-way distance decay** (β values for "meals" and "shopping,"
+       the closest matches to this project's food-service and retail
+       categories): `e^(-2.48*0.6) ≈ 0.226` for meals and
+       `e^(-2.14*0.6) ≈ 0.277` for shopping - meaning **~77% of one-way
+       meal-purpose walking trips and ~72% of one-way shopping-purpose
+       trips nationally are 0.6 mi or less.** Recreation, the purpose
+       with the longest trips in the paper, is the clear outlier at only
+       ~50% within 0.6 mi - the opposite of what this project needed, so
+       this isn't a coincidence of picking a lenient category. This is a
+       stronger, more directly relevant validation of the 0.6 mi edge
+       than either the original recalled statistic or the walking-speed
+       arithmetic below it once was: it's purpose-matched, distance-based
+       (not time-and-pace-derived), and sourced to fitted empirical
+       parameters rather than a recollection.
+    2. **The round-trip ~30-minute framing, checked against purpose-
+       matched one-way duration decay** (β for duration: meals = 0.1,
+       shopping = 0.087): `e^(-0.1*15) ≈ 0.223` and
+       `e^(-0.087*15) ≈ 0.271` - meaning **~78% (meals) and ~73%
+       (shopping) of one-way commercial-purpose walking trips are 15
+       minutes or less**, i.e. fit inside a 30-minute round trip under
+       the user's stated assumption that a spontaneous visitor returns to
+       the station to reach their real destination. **What this does NOT
+       support:** the original framing that people "naturally experience
+       events in ~30-minute time frames" as a typical/average duration.
+       The paper's actual all-purpose figures are far shorter - mean
+       walking duration 14.9 min, median 10 min - so ~30 minutes round
+       trip is better described as a threshold most (not average, not
+       all) commercial-purpose trips fall under, not a natural rhythm of
+       experience. The revised, defensible claim: **a ~30-minute
+       round-trip budget covers roughly three-quarters of real one-way
+       walking trips for meal- and shopping-purpose destinations**,
+       consistent with, not proof of, the project's ring choice.
+    - **Caveat carried forward into methodology, matching this project's
+      existing pattern of disclosing survey limitations:** NHTS is
+      general U.S. population walking behavior, not transit-station-
+      specific and not Seattle-specific. Cited as supporting context for
+      the ring boundary choice, not as a claim about how people actually
+      behave at these sixteen stations.
+    - Now written up on the methodology page (`pages/3_Methodology.py`,
+      "Method" section) with this citation - see that page for the
+      reader-facing version.
 - Alternatives tested: none. Unlike the heat radius/blur tuning (Session
   7, a real 3-way visual comparison), the ring edges were set once in
   `config.py` before Session 6's analysis ran and never revisited against
