@@ -38,6 +38,69 @@ concentrate closest.
 """
 )
 
+st.subheader("What's here")
+
+st.markdown(
+    """
+This project centers around a concentric ring analysis of commercial
+density surrounding the city of Seattle's Link rail 1 line service area,
+conducted across all 16 stations that fall within official Seattle city
+limits. Business-license data, sourced directly from the City of Seattle's
+own published open data, forms the commercial backbone of the analysis,
+categorized by NAICS code. Additionally, ridership data per station is
+included as a proxy for foot traffic levels around each station to
+provide insights on potential commercial value. Lastly, chain analysis
+was done to determine the level of chain presence within transit hub
+localities. Concentric ring analysis has been visually published as a
+dynamic heatmap viewable on the corresponding page. Resulting findings &
+EDA, as well as Methodology & Limitations are similarly featured on their
+own pages. Further analysis of 1 line stations outside of Seattle city
+limits or the newer 2 line are not included at this time as an
+appropriate scope limitation, though I am not discounting their addition
+at a future time.
+"""
+)
+
+if STATION_STATS_CSV.exists():
+    stats = pd.read_csv(STATION_STATS_CSV)
+    # Uneven ratio, not st.columns(3) - the middle metric's label ("Businesses
+    # within concentric ring area of Link stations") is long enough that an
+    # equal-thirds column still clipped it with an ellipsis even at this
+    # project's standard 1280px test width, confirmed by screenshot.
+    left, mid, right = st.columns([1, 2, 1])
+    left.metric("Stations", len(stats))
+    if CITYWIDE_COVERAGE_CSV.exists():
+        coverage = pd.read_csv(CITYWIDE_COVERAGE_CSV).iloc[0]
+        in_rings = int(coverage["businesses_in_rings"])
+        citywide = int(coverage["businesses_citywide"])
+        # Whole number as the headline value; fraction and percentage as a
+        # caption underneath rather than packed into the metric value
+        # itself - "4,120 / 11,409 (36.1%)" overflowed this column's width
+        # at the metric widget's fixed font size, visually truncating with
+        # an ellipsis (caught by screenshot, not by reading the DOM text -
+        # the full string was present in the DOM; the overflow was a
+        # rendering-only effect that a text-content check alone missed).
+        mid.metric("Businesses within concentric ring area of Link stations", f"{in_rings:,}")
+        mid.caption(f"of {citywide:,} citywide ({in_rings / citywide:.1%})")
+    else:
+        mid.metric("Businesses within concentric ring area of Link stations", "—")
+    right.metric("Business data", LICENSE_SNAPSHOT)
+    st.caption(
+        f"Ridership figures reflect {RIDERSHIP_SNAPSHOT}. The gap between the "
+        "two dates is discussed on the methodology page."
+    )
+else:
+    st.info(
+        "No results yet. Run the pipeline to generate them:\n\n"
+        "```\n"
+        "python src/step1_stations.py\n"
+        "python src/step2_clean_businesses.py\n"
+        "python src/step3_geocode.py\n"
+        "python src/step4_rings.py\n"
+        "python src/step5_map.py\n"
+        "```"
+    )
+
 st.subheader("Why Seattle?")
 
 st.markdown(
@@ -80,60 +143,6 @@ locational choice in Seattle with this transit-oriented roadmap put in
 place?
 """
 )
-
-st.subheader("What's here")
-
-st.markdown(
-    """
-This project centers around a concentric ring analysis of commercial
-density surrounding the city of Seattle's Link rail 1 line service area,
-conducted across all 16 stations that fall within official Seattle city
-limits. Business-license data, sourced directly from the City of Seattle's
-own published open data, forms the commercial backbone of the analysis,
-categorized by NAICS code. Additionally, ridership data per station is
-included as a proxy for foot traffic levels around each station to
-provide insights on potential commercial value. Lastly, chain analysis
-was done to determine the level of chain presence within transit hub
-localities. Concentric ring analysis has been visually published as a
-dynamic heatmap viewable on the corresponding page. Resulting findings &
-EDA, as well as Methodology & Limitations are similarly featured on their
-own pages. Further analysis of 1 line stations outside of Seattle city
-limits or the newer 2 line are not included at this time as an
-appropriate scope limitation, though I am not discounting their addition
-at a future time.
-"""
-)
-
-if STATION_STATS_CSV.exists():
-    stats = pd.read_csv(STATION_STATS_CSV)
-    left, mid, right = st.columns(3)
-    left.metric("Stations", len(stats))
-    if CITYWIDE_COVERAGE_CSV.exists():
-        coverage = pd.read_csv(CITYWIDE_COVERAGE_CSV).iloc[0]
-        in_rings = int(coverage["businesses_in_rings"])
-        citywide = int(coverage["businesses_citywide"])
-        mid.metric(
-            "Businesses within concentric ring area of Link stations",
-            f"{in_rings:,} / {citywide:,} ({in_rings / citywide:.1%})",
-        )
-    else:
-        mid.metric("Businesses within concentric ring area of Link stations", "—")
-    right.metric("Business data", LICENSE_SNAPSHOT)
-    st.caption(
-        f"Ridership figures reflect {RIDERSHIP_SNAPSHOT}. The gap between the "
-        "two dates is discussed on the methodology page."
-    )
-else:
-    st.info(
-        "No results yet. Run the pipeline to generate them:\n\n"
-        "```\n"
-        "python src/step1_stations.py\n"
-        "python src/step2_clean_businesses.py\n"
-        "python src/step3_geocode.py\n"
-        "python src/step4_rings.py\n"
-        "python src/step5_map.py\n"
-        "```"
-    )
 
 st.divider()
 st.subheader("Starting Assumptions")
