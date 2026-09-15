@@ -9,9 +9,12 @@ pan events flowing back into Python.
 import streamlit as st
 import streamlit.components.v1 as components
 
+from components import render_social_links
 from config import HEATMAP_HTML
 
 st.set_page_config(page_title="Heatmap", page_icon="🗺️", layout="wide")
+
+render_social_links()
 
 st.title("Commercial density around station areas")
 
