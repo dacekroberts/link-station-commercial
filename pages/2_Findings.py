@@ -302,7 +302,7 @@ if STATION_STATS_CSV.exists():
             """
         )
 
-        with st.expander("Per-station ridership detail"):
+        with st.expander("Table 2: Link Stations Ranked by Average Monthly Ridership"):
             ridership_detail = (
                 stats[["station", col, "businesses_within_0_3mi"]]
                 .rename(columns={
