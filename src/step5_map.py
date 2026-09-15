@@ -58,6 +58,15 @@ HEAT_RADIUS = 8
 HEAT_BLUR = 10
 HEAT_MIN_OPACITY = 0.35
 
+# Leaflet.heat's own default gradient runs blue -> cyan -> lime -> yellow ->
+# red - most of the visible area at typical densities reads as blue/cyan,
+# which several readers found counterintuitive for a "heat" map (blue reads
+# as cold, not low-but-nonzero). Replaced with a single-hue red ramp
+# (ColorBrewer "Reds," transparent-to-low-density through deep red at peak)
+# per that feedback - low to high density now reads as pale to saturated red
+# throughout, not a color-name change partway up the scale.
+HEAT_GRADIENT = {0.3: "#fee0d2", 0.5: "#fc9272", 0.7: "#fb6a4a", 0.85: "#de2d26", 1.0: "#a50f15"}
+
 # Same three groups NAICS_STOREFRONT_PREFIXES already defines in config.py
 # (retail, food service, personal services) - every kept business falls into
 # exactly one, so no top-level "Other" bucket is needed. Colors from the
@@ -243,6 +252,7 @@ def main():
         radius=HEAT_RADIUS,
         blur=HEAT_BLUR,
         min_opacity=HEAT_MIN_OPACITY,
+        gradient=HEAT_GRADIENT,
         name="Commercial Density (Within Station Proximity)",
         show=True,
     ).add_to(m)
@@ -251,6 +261,7 @@ def main():
         radius=HEAT_RADIUS,
         blur=HEAT_BLUR,
         min_opacity=HEAT_MIN_OPACITY,
+        gradient=HEAT_GRADIENT,
         name="Commercial Density (All Seattle Businesses)",
         show=False,
     ).add_to(m)
