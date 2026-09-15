@@ -976,6 +976,27 @@ Consolidated from several separate decisions made across the session - the
   above) rather than waved off as noise - contrasting an expected smooth
   baseline against an observed irregular one, not claiming the irregular
   shape disproves the decay model.
+- **Second candidate framing, marked 2026-09-14, not written up - the
+  user's interpretation to make:** Homer Hoyt's Sector Model (Merilus,
+  "10: Urbanization," *Cultural Geography (C-ID GEOG 120)*, LibreTexts,
+  10.10) describes commercial activity distorting into wedges along
+  transit/transportation corridors rather than declining in clean circles
+  from a single center. That's a conceptual match for what this project
+  found: density along the 1 Line doesn't radiate cleanly outward from
+  each station individually - it behaves more like a corridor effect,
+  with downtown stations bleeding into each other, which is exactly the
+  Westlake/Symphony spacing mechanism above in different language. Usable
+  as a name for the pattern, with a caveat that matters: Burgess's
+  Concentric Ring Model (the same chapter's own top-ranked concept for
+  this project, and the thing the ring methodology superficially
+  resembles) is explicitly a single-CBD, land-value/class model, not a
+  multi-station pedestrian-walkshed model - the chapter itself notes it
+  "accurately describes only a few American cities... most often found on
+  the flatlands of the Midwest" (Columbus, Indianapolis), not
+  hilly/coastal, single-corridor cities like Seattle. **Use Hoyt's
+  critique of pure concentric models to explain why this project's
+  gradient distorted; don't claim Burgess's model validates the ring
+  methodology itself.**
 
 **Stations against the pattern**
 - **Rainier Beach** (13 businesses within 0.3mi): literal zero in the
@@ -1017,6 +1038,19 @@ Consolidated from several separate decisions made across the session - the
   checkable Seattle/PNW brands, not overlap artifacts.
 - Whether chain share rises toward the platform (ring 1 vs. ring 4) not yet
   checked — worth doing before the findings write-up.
+- **Candidate framing for that open question, marked 2026-09-14, not
+  written up - a hypothesis to test against the data, not evidence that
+  already backs a number:** Central Place Theory's *range* (the maximum
+  distance customers will travel for a good or service) and *threshold
+  population* (the minimum customer base a business needs to survive)
+  (Merilus, "10: Urbanization," *Cultural Geography (C-ID GEOG 120)*,
+  LibreTexts, 10.9) give vocabulary for the ring-1-vs-ring-4 chain-share
+  question above, if it gets checked: chains generally need a larger
+  threshold population to sustain a location than an independent shop
+  does, which could predict a different distance-decay pattern for chains
+  vs. independents. This doesn't back up the 8.9%/155-brand figure
+  already on record - it's a lens for a question not yet answered, only
+  useful if that ring-by-ring chain check actually gets run.
 
 ---
 
