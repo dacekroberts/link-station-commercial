@@ -452,6 +452,35 @@ if CHAIN_STATS_CSV.exists():
         )
         st.altair_chart(chain_ring_chart, use_container_width=True)
 
+        # Ties this chart's own small ring-3-to-4 reversal (8.3% -> 8.5%) to
+        # the density gradient's already-documented ring-2-to-3 reversal
+        # above (Table 1's "Ring 3 uptick, broken down") - both are outer-
+        # ring upticks in what would otherwise be a clean decline, and both
+        # trace back to stations from that same against-the-pattern group.
+        # Verified against the pipeline's own joined business-ring data (not
+        # the aggregate chain_ring_stats.csv alone, which can't isolate
+        # individual stations): of that group, SODO and Stadium specifically
+        # drive this one - Stadium's ring 4 (0.3-0.6mi) carries 31 chain
+        # matches out of 373 businesses, largely borrowed from International
+        # District/Chinatown per the existing "largely borrowed" finding in
+        # DECISIONS.md; SODO's ring 4 carries 18 of 149, consistent with its
+        # own "real commerce only appearing toward Pioneer Square at the
+        # buffer's edge" finding. Removing just those two stations turns the
+        # aggregate ring-3-to-4 move back into a clean decline (8.7% -> 8.4%).
+        st.caption(
+            "Chain share's own small reversal at the last ring (8.3% to 8.5%, "
+            "rather than continuing to fall) traces to two of the same "
+            "against-the-pattern stations named in Table 1's ring-3 "
+            "breakdown above - SODO and Stadium. Their 0.3-0.6mi ring "
+            "reaches past their own light-industrial and stadium surroundings "
+            "into Chinatown-International District and the Pioneer Square "
+            "corridor: 31 of Stadium's 373 ring-4 businesses are chains, and "
+            "18 of SODO's 149. Pulling just those two stations out of the "
+            "chain data restores a clean decline through ring 4 (8.7% to "
+            "8.4%) - the same kind of outer-ring, neighbor-sampling effect "
+            "as the density gradient's ring-3 reversal, one ring further out."
+        )
+
     st.markdown(
         """
         **TODO — write this up.** A brand at eight stations has a real estate
