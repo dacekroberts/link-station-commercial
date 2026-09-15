@@ -437,13 +437,17 @@ empty states with no exceptions (checked via `streamlit.testing`).
   businesses.
 
 **Brand normalization**
-- Method: exact match after normalization only - confirmed directly from
-  `normalize_brand()` in `step4_rings.py`: uppercase, strip store numbers
-  (`#1234`), strip legal suffixes (LLC/INC/CORP/etc.), strip remaining
-  punctuation, collapse whitespace. The function's own docstring names
-  `rapidfuzz` as a possible follow-up for what exact matching misses, but
-  it was never implemented - every brand key in `chain_stats.csv` is an
-  exact-match key, not a fuzzy one.
+- Method: exact match after normalization, with two narrow, targeted
+  patches - confirmed directly from `normalize_brand()` in
+  `step4_rings.py`: uppercase, drop apostrophes outright (not replace with
+  a space), strip store numbers (`#1234`), strip legal suffixes
+  (LLC/INC/CORP/etc.), strip remaining punctuation, collapse whitespace,
+  then canonicalize known compound-word variants via a small
+  `BRAND_ALIASES` lookup (same pattern as `GTFS_NAME_ALIASES` in
+  step1_stations.py). The function's own docstring names `rapidfuzz` as a
+  possible follow-up for what exact matching still misses, but it was
+  never implemented - every brand key in `chain_stats.csv` is an
+  exact-match key (plus the two patches), not a fuzzy one.
 - Spot-checked: the two brands that originally surfaced the downtown-
   overlap chain bug (PU POWDER, Saigon Drip Kitchen - both real
   single-location businesses, confirmed by hand in Session 6), plus the
@@ -451,22 +455,51 @@ empty states with no exceptions (checked via `streamlit.testing`).
   actual checkable Seattle/PNW brands: Subway, Evergreens Salad, Caffe
   Ladro, Westman's Bagels, Metro by T-Mobile, Great State Burger, Just
   Poke, Dough Zone Dumpling House.
-- Known failures, found via a quick prefix-collision check against
-  `chain_stats.csv` just now (not an exhaustive audit): **"RUDYS BARBER
-  SHOP" vs. "RUDYS BARBERSHOP"** and **"MOLLY MOON S HOMEMADE ICE CREAM"
-  vs. "MOLLY MOONS HOMEMADE ICE CREAM"** are each almost certainly the
-  same real chain (Rudy's Barbershop; Molly Moon's Homemade Ice Cream),
-  split into two separate brand keys - the barbershop pair by a
-  "BARBER SHOP" vs. "BARBERSHOP" spacing difference the normalizer
-  doesn't merge, the ice cream pair by inconsistent source-record
-  apostrophe use ("Molly Moon's" vs. "Molly Moons") colliding with the
-  regex's punctuation-to-space rule. **Not yet corrected in
-  `chain_stats.csv` or the 153-brand / 8.8% headline figures** - open
-  question for you: patch `normalize_brand()` and re-run step 4 (would
-  shift those numbers slightly), or leave as a documented limitation of
-  exact-match normalization. Everything else the check surfaced (the
-  various "SEATTLE ___" / "PIKE PLACE ___" groups) was unrelated
-  businesses sharing a common word, not a normalization miss.
+- **Known failures, found and patched (post-Session-7, same day):** a
+  quick prefix-collision check against `chain_stats.csv` (not an
+  exhaustive audit) surfaced two brands split into separate keys that were
+  almost certainly the same real chain: **"RUDYS BARBER SHOP" vs. "RUDYS
+  BARBERSHOP"** (a compound-word spacing difference the normalizer didn't
+  merge) and **"MOLLY MOON S HOMEMADE ICE CREAM" vs. "MOLLY MOONS
+  HOMEMADE ICE CREAM"** (inconsistent source-record apostrophe use
+  colliding with the regex's punctuation-to-space rule). Confirmed as the
+  user's call to fix rather than just document, since the analysis should
+  reflect the real chain, not an artifact of how two different licenses
+  happened to be typed. Fixed generally, not by hardcoding these two
+  brands: apostrophes are now dropped outright (catches the Molly Moon's case
+  and any other apostrophe-inconsistent brand in the dataset, not just
+  this one). Checked precisely, not left as a guess: across the full
+  11,409-business dataset, 11 distinct brand-name pairs now merge that
+  didn't before, including MCDONALD'S/MCDONALDS and several others never
+  spot-checked by hand (Baker's, Corry's Fine Drycleaning, Ezell's Famous
+  Chicken, Frankie Jo's, Murphy's Pub, Scooter's Burgers). Of those 11,
+  only 4 have *both* spelling variants inside a station's ring - Molly
+  Moon's, Poquito's, Rudy's Barbershop, and Sam's Tavern - which is
+  exactly why the in-ring `chain_stats.csv` brand count dropped by 4
+  (3,907 -> 3,903), not 11 or 2; the other 7 pairs are real merges
+  citywide but don't affect any figure this project actually reports. The
+  compound-word spacing case went into
+  `BRAND_ALIASES`, a small explicit lookup rather than a general
+  space-stripping rule, since merging all spacing variants automatically
+  risks conflating genuinely unrelated brands. **Re-ran step 4 after the
+  patch; verified both brands now collapse to one row each**
+  (`RUDYS BARBERSHOP`: 5 locations/4 stations; `MOLLY MOONS HOMEMADE ICE
+  CREAM`: 3 locations/5 stations - both checked directly against
+  `chain_stats.csv`, not assumed from the fix alone). Headline figures
+  shifted accordingly: **153 -> 155 brands with 2+ locations, 8.8% -> 8.9%
+  chain share of all matched locations.** A small, expected move in the
+  more-accurate direction, not a correction of the earlier ~5x bug (that
+  fix and this one are unrelated - see "Things that went wrong" above).
+  Everything else the collision check surfaced (the various
+  "SEATTLE ___" / "PIKE PLACE ___" groups) was unrelated businesses
+  sharing a common word, not a normalization miss - left alone.
+  **Residual limitation, disclosed on the methodology page:** exact-match
+  normalization (even patched) still cannot catch every same-chain
+  variant a human would recognize - genuinely different spellings,
+  abbreviations, or naming conventions across separately filed licenses
+  will still split into different brand keys unless individually found
+  and added to `BRAND_ALIASES`. The chain-share figures are a lower
+  bound on the true chain share, not an exact count.
 
 ---
 
@@ -523,6 +556,12 @@ empty states with no exceptions (checked via `streamlit.testing`).
   `location_count > 1`, not `station_count > 1`). Written up on the
   methodology page under "Spatial interpretation," next to the density
   overlap disclosure it's the sibling of.
+  **Updated again, post-Session-7 same day:** a separate brand-
+  normalization patch (see "Analyst choices" > Brand normalization above)
+  moved these numbers to 3,903 brands and 8.9% chain share. The figures in
+  this entry (3,907 / 8.8%) are the Session-6 snapshot, not the current
+  one - kept as-is here since they're describing what that specific fix
+  found and changed at the time, not a live number.
 
 ---
 
@@ -876,9 +915,13 @@ Consolidated from several separate decisions made across the session - the
 
 **Chains**
 - After the `location_count >= 2` fix (see "Quality metrics" and "Things
-  that went wrong" above for the bug itself): **8.8%** of locations belong
-  to a real multi-location chain (153 brands). The pre-fix number would
-  have said 45.7% — over 5x too high.
+  that went wrong" above for the bug itself) and the later brand-
+  normalization patch (see "Analyst choices" > Brand normalization):
+  **8.9%** of locations belong to a real multi-location chain (155
+  brands). The original overlap-only bug would have said 45.7% — over 5x
+  too high; the normalization patch on top of that fix moved the number a
+  further 0.1 point (8.8% -> 8.9%), a small, expected correction in the
+  same direction, not a second version of the same bug.
 - Real top chains, verified: Subway (7 locations/8 stations), Evergreens
   Salad (7/5), Caffe Ladro (5/5), Westman's Bagels, Metro by T-Mobile,
   Great State Burger, Just Poke, Dough Zone Dumpling House — all real,

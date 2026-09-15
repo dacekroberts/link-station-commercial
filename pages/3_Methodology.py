@@ -238,20 +238,43 @@ Buffers around {', '.join(DOWNTOWN_CLUSTER)} overlap. Businesses in the
 overlap are counted for each station, inflating downtown density relative to
 isolated stations. This is disclosed rather than corrected: assigning each
 business to its nearest station would understate how many stations genuinely
-serve a downtown block.
+serve a downtown block. The overlap is not a marginal effect: of the 4,116
+businesses that fall within any station's ring at all, **1,767 (42.9%)**
+are claimed by more than one station's ring set — computed directly from
+the spatial join, not estimated.
 
 **That same overlap distorts the chain analysis more severely, and was
 corrected there rather than merely disclosed.** A single physical location
 inside the four-station overlap can touch multiple stations on its own —
 verified by hand: a one-location shop with no other branches showed up
 "present at 4 stations," indistinguishable from a real chain. Checked
-across every normalized brand, **1,589 of 3,907 (41%)** touch more than one
+across every normalized brand, **1,589 of 3,903 (41%)** touch more than one
 station from exactly one physical location. Defining "chain" as
 `station_count > 1` — the first version of this analysis — would have
 reported **45.7%** of locations as chains; correctly requiring 2+ real
-locations puts the true figure at **8.8%**. The chain statistics used
-throughout this project require `location_count >= 2`, never station
-count alone.
+locations puts the true figure at **8.9%** (155 brands). The chain
+statistics used throughout this project require `location_count >= 2`,
+never station count alone.
+
+**Brand matching is exact, not fuzzy — a real limitation of this kind of
+project, not just this one.** Chain identification depends on normalizing
+business names (case, store numbers, legal suffixes, punctuation) to a
+comparable key, then grouping exact matches. That catches most chains but
+not all of them: two license records for the same brand, filed with
+different spacing or punctuation, become two different keys unless someone
+notices and patches it by hand. Two such cases were found and fixed here —
+"Rudy's Barbershop" and "Molly Moon's Homemade Ice Cream," each split
+across differently-formatted name variants — but the fix was a small,
+explicit lookup for known cases, not a general solution. Any other
+same-chain variant that wasn't spotted by eye still counts as two
+separate, smaller entities rather than one real chain. The chain-share
+figures above
+are therefore a **lower bound** on the true chain share, not an exact
+count — a limitation inherent to exact-match name matching on
+inconsistently-formatted administrative records, not something a bigger
+dataset or more careful coding alone would fix. A fuzzy-matching pass
+(e.g. `rapidfuzz`) could close some of the remaining gap, at the cost of
+needing every fuzzy match checked by hand before it's trusted.
 
 Ring boundaries are analyst-chosen. Different cutpoints would produce a
 different gradient.

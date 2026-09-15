@@ -80,23 +80,43 @@ def build_rings(stations_gdf):
     return gpd.GeoDataFrame(rows, crs=CRS_PROJECTED)
 
 
+# Known same-chain name variants that exact-match-after-normalization still
+# can't merge on its own - a compound-word spacing difference in how the
+# license was filed, not a typo or a formatting quirk. Found via a
+# prefix-collision spot-check of chain_stats.csv (see DECISIONS.md), the same
+# kind of explicit lookup as GTFS_NAME_ALIASES in step1_stations.py, for the
+# same reason: safer than a general rule that would risk merging unrelated
+# brands. Keys and values are both already-normalized (post-regex) strings.
+BRAND_ALIASES = {
+    "RUDYS BARBER SHOP": "RUDYS BARBERSHOP",
+}
+
+
 def normalize_brand(name: str) -> str:
     """Collapse a business name to a comparable brand key.
 
     Strips legal suffixes, store numbers, and punctuation so that
     "STARBUCKS #1234" and "Starbucks Coffee LLC" resolve together.
+    Apostrophes are dropped outright, not turned into a space, so
+    "Molly Moon's" and "Molly Moons" - the same chain, filed inconsistently
+    across licenses - collapse to the same key instead of splitting on
+    whether a given record happened to include the apostrophe.
 
-    Exact matching after normalization catches most chains. If you have
-    time, `rapidfuzz` will catch the rest - but check its matches by hand
-    before trusting them.
+    Exact matching after normalization catches most chains. Known
+    compound-word variants that still fall through are patched via
+    BRAND_ALIASES above. Remaining gaps are a real, disclosed limitation of
+    this approach - see the methodology page - not something `rapidfuzz`
+    fuzzy matching was ever actually wired in to catch.
     """
     if not isinstance(name, str):
         return ""
     s = name.upper()
+    s = s.replace("'", "").replace("’", "")  # ASCII and curly apostrophe
     s = re.sub(r"#\s*\d+", "", s)          # store numbers
     s = re.sub(LEGAL_SUFFIXES, "", s)
     s = re.sub(r"[^A-Z0-9 ]", " ", s)
-    return " ".join(s.split())
+    s = " ".join(s.split())
+    return BRAND_ALIASES.get(s, s)
 
 
 def main():
