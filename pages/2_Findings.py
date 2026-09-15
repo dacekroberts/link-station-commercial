@@ -85,6 +85,11 @@ if RING_STATS_CSV.exists():
                     domain=["Standard pattern", "Against the pattern"],
                     range=["#4c78a8", "#e45756"],
                 ),
+                # Overlaid inside the plot near ring 1 instead of the
+                # default right-side panel, so the chart's total rendered
+                # width is just the plot area (no separate legend column
+                # padded on).
+                legend=alt.Legend(orient="bottom-left", fillColor="#0e1117", padding=8),
             ),
             opacity=alt.condition(
                 alt.datum.group == "Against the pattern",
