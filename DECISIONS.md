@@ -33,6 +33,20 @@ each; detail lives in the sections below.
   `config.py`'s `CHAIN_ANALYSIS_EXCLUDE_BRANDS` and on the methodology
   page.
 
+- **Renamed `app.py` to `Introduction.py`.** Streamlit's file-based
+  multipage nav derives each sidebar label straight from its filename
+  (the same mechanism that turns `pages/2_Findings.py` into "Findings"),
+  and there's no separate display-name setting under that scheme - only
+  `st.navigation()`/`st.Page()` (a bigger structural change, not needed
+  here) decouples the two. Renamed instead of migrating, since the ask
+  was just the one label. Updated everywhere the old filename was live
+  documentation: `CLAUDE.md`'s run command, `.claude/launch.json`,
+  `README.md` (file tree and run command), and the two still-open
+  `PLAN.md` checklist items that reference it (`app.py`'s intro rewrite,
+  the Streamlit Cloud deploy target). Left `Sessions 1-7 Context.md` and
+  earlier dated entries in this file alone - those are records of what
+  was true when they were written, not living docs.
+
 ### 2026-09-13 — Session 7
 
 - **Also added this session:** finer per-category pin toggle layers (12,

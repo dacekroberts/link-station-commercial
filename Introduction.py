@@ -4,7 +4,7 @@ Reads only from outputs/. Never runs the pipeline - that keeps the deployed
 app free of the compiled geospatial stack, which is the usual reason a
 Streamlit Cloud deploy fails.
 
-Run:  streamlit run app.py
+Run:  streamlit run Introduction.py
 """
 
 import pandas as pd
