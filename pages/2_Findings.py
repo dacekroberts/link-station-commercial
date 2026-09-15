@@ -85,11 +85,17 @@ if RING_STATS_CSV.exists():
                     domain=["Standard pattern", "Against the pattern"],
                     range=["#4c78a8", "#e45756"],
                 ),
-                # Overlaid inside the plot near ring 1 instead of the
-                # default right-side panel, so the chart's total rendered
-                # width is just the plot area (no separate legend column
-                # padded on).
-                legend=alt.Legend(orient="bottom-left", fillColor="#0e1117", padding=8),
+                legend=alt.Legend(
+                    orient="top-left",
+                    direction="vertical",
+                    fillColor="#0e1117",
+                    padding=4,
+                    offset=0,
+                    symbolSize=40,
+                    labelFontSize=9,
+                    labelLimit=90,
+                    rowPadding=1,
+                ),
             ),
             opacity=alt.condition(
                 alt.datum.group == "Against the pattern",
@@ -102,7 +108,7 @@ if RING_STATS_CSV.exists():
                 alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
-        .properties(height=504, width=900)
+        .properties(height=504, width=900, padding={"bottom": 90})
     )
     # Fixed width (not container-filling), capped at 900px deliberately -
     # measured (not guessed) that Streamlit's main content container caps
