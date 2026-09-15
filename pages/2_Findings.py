@@ -97,9 +97,19 @@ if RING_STATS_CSV.exists():
                 alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
-        .properties(height=720)
+        .properties(height=720, width=1200)
     )
-    st.altair_chart(per_station_chart, use_container_width=True)
+    # Fixed width (not container-filling) so the 1.5x-wider gaps between
+    # ring positions are real pixels, not just a proportional stretch of
+    # whatever the container happens to be. Tried scoping the resulting
+    # overflow to just this chart via a wrapping unsafe_allow_html div (the
+    # same idea as the heatmap iframe's own scrolling=True) - doesn't work
+    # in this Streamlit version, since every st.markdown/st.altair_chart
+    # call gets its own isolated element container rather than nesting
+    # inside a shared open tag. On a narrower browser window this chart can
+    # make the whole page scroll horizontally, not just itself - acceptable
+    # here since most screens are wider than 1200px, but worth knowing.
+    st.altair_chart(per_station_chart, use_container_width=False)
 
     st.markdown(
         """
