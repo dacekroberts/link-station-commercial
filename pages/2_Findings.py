@@ -84,7 +84,7 @@ if RING_STATS_CSV.exists():
     n_standard = int((station_group == "Standard pattern").sum())
     n_against = int((station_group == "Against the pattern").sum())
 
-    st.markdown("**Per-station Commercial Density by Concentric Ring**")
+    st.markdown("**Graph 2: Per-station Commercial Density by Concentric Ring**")
     st.caption(
         f"{n_standard} of 16 stations never climb back above their own "
         f"ring-1 density after the first ring (a single minor up-tick still "
