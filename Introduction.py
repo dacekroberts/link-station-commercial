@@ -71,9 +71,14 @@ st.caption("By Dace Roberts")
 
 st.markdown(
     """
-Businesses cluster near transit. Whether transit *causes* that clustering,
-or lines get built where commerce already is, is harder to answer than a
-map suggests.
+Businesses cluster near transit. In Seattle, much of that clustering
+likely predates the rail itself, as the 1 Line was largely routed through
+neighborhoods, like downtown and Capitol Hill, that already had commercial
+cores, rather than seeding new ones from nothing. Newer stations tell a
+different story — University of Washington, added in 2016, sits at the
+center of campus and hospital land rather than an established retail core
+the line reached. This project measures the resulting density pattern,
+not which came first at each station.
 
 This project measures commercial density in concentric rings around the
 sixteen Link 1 Line stations inside Seattle, tests whether density falls
