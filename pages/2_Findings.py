@@ -26,7 +26,32 @@ if RING_STATS_CSV.exists():
         .mean()
         .reindex(RING_LABELS)
     )
-    st.bar_chart(gradient, y_label="Businesses per square mile")
+    # "Ring 1: 0-0.1 mi" etc., shared by this chart, the per-station chart
+    # below, and the per-station table further down.
+    numbered_ring_labels = [f"Ring {i + 1}: {label}" for i, label in enumerate(RING_LABELS)]
+    ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
+
+    st.markdown("**Average businesses/sq mi per Concentric Ring**")
+    gradient_df = gradient.rename("density_per_sq_mi").reset_index()
+    gradient_df["ring_label"] = gradient_df["ring"].map(ring_number_map)
+    # Built directly in Altair, not st.bar_chart - st.bar_chart's y_label
+    # and the underlying column name each generate their own tooltip
+    # field, showing the same number twice under two different labels.
+    # Explicit tooltips here match the per-station line chart's exactly:
+    # Ring + Businesses/sq mi, same titles, same .0f rounding.
+    bar_chart = (
+        alt.Chart(gradient_df)
+        .mark_bar()
+        .encode(
+            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Ring"),
+            y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
+            tooltip=[
+                alt.Tooltip("ring_label:N", title="Ring"),
+                alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
+            ],
+        )
+    )
+    st.altair_chart(bar_chart, use_container_width=True)
 
     # Per-station view: which stations follow the expected declining
     # pattern, and which run against it. Classification rule, computed
@@ -52,11 +77,6 @@ if RING_STATS_CSV.exists():
         return "Standard pattern"
 
     station_group = station_pivot.apply(_classify, axis=1)
-    # "Ring 1: 0-0.1 mi" etc. for this chart's axis/tooltip only - RING_LABELS
-    # itself stays plain since the bar chart and per-station table above/below
-    # reuse it as-is.
-    numbered_ring_labels = [f"Ring {i + 1}: {label}" for i, label in enumerate(RING_LABELS)]
-    ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
     long = rings[["station", "ring", "density_per_sq_mi"]].assign(
         group=lambda d: d["station"].map(station_group),
         ring_label=lambda d: d["ring"].map(ring_number_map),
