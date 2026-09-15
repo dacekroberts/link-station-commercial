@@ -32,7 +32,14 @@ if HEATMAP_HTML.exists():
     # which mangles every multi-byte character (em dashes in particular) -
     # not a bug in the saved file, only in how it's read back here.
     heatmap_html = HEATMAP_HTML.read_text(encoding="utf-8")
-    components.html(heatmap_html, height=700, scrolling=True)
+    # Matches the Folium map's own fixed pixel size (width=1000, height=650
+    # in step5_map.py) exactly - the iframe previously had no explicit width
+    # (defaulting to the full page container, wider than the 1000px map) and
+    # a taller height=700 than the map's own 650, leaving dead white space
+    # to the right and below the map itself. scrolling stays on as a safety
+    # net against a stray pixel of overflow, not because it's expected to
+    # trigger.
+    components.html(heatmap_html, width=1000, height=650, scrolling=True)
     st.download_button(
         "Download the map",
         data=heatmap_html,
