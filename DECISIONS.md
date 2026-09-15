@@ -70,6 +70,24 @@ each; detail lives in the sections below.
   intro page's metric now reads "Businesses within concentric ring area of
   Link stations: 4,120 / 11,409 (36.1%)".
 
+- **Renamed `pages/2_Findings.py` to `pages/2_Findings_&_EDA.py`, and
+  `pages/3_Methodology.py` to `pages/3_Methodology_&_Limitations.py`.**
+  Same reasoning and mechanism as the earlier `app.py` -> `Introduction.py`
+  rename above: Streamlit's file-based nav takes each sidebar label
+  straight from its filename, so the labels became "Findings & EDA" and
+  "Methodology & Limitations" for free once the files moved, and each
+  page's own `st.title()` was updated to match. Live references updated:
+  `CLAUDE.md`'s and `initialscript.md`'s `TODO`-block rule (both point at
+  the exact path), `README.md` (file tree and the "read before drawing
+  conclusions" line), the two still-open `PLAN.md` checklist items, and
+  two code comments (`config.py`'s `NAICS_STOREFRONT_EXCLUDE` note,
+  `step1_stations.py`'s platform-offset note) that named the old path.
+  Left every mention in this file's own earlier dated entries, `Sessions
+  1-7 Context.md`, and `Development Process Insights.md` alone - same
+  "historical record, not a living doc" reasoning as before. Verified live:
+  both pages load at their new URLs (`/Findings_&_EDA`,
+  `/Methodology_&_Limitations`) with no exceptions, `&` and all.
+
 ### 2026-09-13 — Session 7
 
 - **Also added this session:** finer per-category pin toggle layers (12,

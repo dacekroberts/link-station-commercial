@@ -115,8 +115,9 @@ def main():
     # one row per station by averaging. Measured offset from platform to
     # averaged point: 14-72 m across the 16 stations (mean 48 m) - a small
     # fraction of the 0.3 mile ring radius (483 m) but a meaningful fraction
-    # of the innermost 0.1 mile ring width (161 m). See pages/3_Methodology.py
-    # "Spatial interpretation" for the write-up.
+    # of the innermost 0.1 mile ring width (161 m). See
+    # pages/3_Methodology_&_Limitations.py "Spatial interpretation" for the
+    # write-up.
     stations = (
         seattle.groupby("stop_name", as_index=False)
         .agg(latitude=("stop_lat", "mean"), longitude=("stop_lon", "mean"))

@@ -220,8 +220,8 @@ share rises toward the platform, if that check gets run - a hypothesis,
 not backing for the 8.9%/155-brand figure already on record. Full detail
 in `DECISIONS.md` under "Observations" > "Chains."
 
-- [ ] Fill the three `TODO` blocks in `pages/2_Findings.py`
-- [ ] Fill `[FILL IN]` and `[Confirm which applies]` in `pages/3_Methodology.py`
+- [ ] Fill the three `TODO` blocks in `pages/2_Findings_&_EDA.py`
+- [ ] Fill `[FILL IN]` and `[Confirm which applies]` in `pages/3_Methodology_&_Limitations.py`
 - [ ] Transfer everything from `DECISIONS.md` into the methodology page
 - [ ] Trim the limitations to what's true for your actual run — remove any
       that don't apply, keep access mode, the temporal gap, and siting

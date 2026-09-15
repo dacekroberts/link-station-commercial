@@ -19,7 +19,7 @@ from config import (
 
 st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
 
-st.title("Findings")
+st.title("Findings & EDA")
 
 # --- 1. Distance gradient ---------------------------------------------
 

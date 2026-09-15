@@ -183,7 +183,7 @@ is not what this project is teaching.
 
 ## Don't do these
 
-**Don't write the prose in `pages/2_Findings.py`.** Three blocks are marked
+**Don't write the prose in `pages/2_Findings_&_EDA.py`.** Three blocks are marked
 `TODO — write this up`. Those are the user's analysis and the reason the
 project exists. Help them think it through, ask what they're seeing in the
 numbers, react to their draft — but the interpretation has to be theirs.

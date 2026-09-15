@@ -114,7 +114,7 @@ NAICS_STOREFRONT_PREFIXES = [
 
 # Individual 6-digit NAICS codes excluded from the prefix list above, even
 # though their prefix matches. Each entry carries its reasoning so step 2's
-# filter and pages/3_Methodology.py's "What was filtered out" section render
+# filter and pages/3_Methodology_&_Limitations.py's "What was filtered out" section render
 # from the same source instead of drifting apart. Add to this dict rather
 # than writing prose only on the methodology page.
 NAICS_STOREFRONT_EXCLUDE = {
