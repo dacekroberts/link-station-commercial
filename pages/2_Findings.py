@@ -252,18 +252,66 @@ if STATION_STATS_CSV.exists():
 
     if ridership_cols:
         col = ridership_cols[0]
-        st.scatter_chart(
-            stats, x=col, y="businesses_within_0_3mi",
-            x_label="Average monthly boardings",
-            y_label="Businesses within 0.3 miles",
-        )
-        clean = stats[[col, "businesses_within_0_3mi"]].dropna()
+        clean = stats[["station", col, "businesses_within_0_3mi"]].dropna()
         if len(clean) > 2:
-            r = clean.corr().iloc[0, 1]
+            r = clean[[col, "businesses_within_0_3mi"]].corr().iloc[0, 1]
             st.metric("Correlation", f"{r:.2f}")
             st.caption(
                 f"n = {len(clean)} stations. Too few observations to support "
                 "much beyond a description of the pattern."
+            )
+
+            # UW and Northgate highlighted the same way the gradient
+            # section highlights "against the pattern" stations - same
+            # blue/red pair, different group labels since this is a
+            # separate classification (access-mode outliers, not the ring
+            # gradient rule) - not implying it's the same mechanism.
+            OUTLIER_STATIONS = {"University of Washington", "Northgate"}
+            scatter_df = clean.assign(
+                outlier=lambda d: d["station"].map(
+                    lambda s: "Access-mode outlier" if s in OUTLIER_STATIONS else "Other stations"
+                )
+            )
+            base = alt.Chart(scatter_df)
+            points = base.mark_circle(size=110).encode(
+                x=alt.X(f"{col}:Q", title="Average monthly boardings"),
+                y=alt.Y("businesses_within_0_3mi:Q", title="Businesses within 0.3 miles"),
+                color=alt.Color(
+                    "outlier:N",
+                    title=None,
+                    scale=alt.Scale(
+                        domain=["Other stations", "Access-mode outlier"],
+                        range=["#4c78a8", "#e45756"],
+                    ),
+                    legend=alt.Legend(
+                        orient="top-left",
+                        direction="vertical",
+                        fillColor="#0e1117",
+                        padding=4,
+                        offset=0,
+                        symbolSize=40,
+                        labelFontSize=9,
+                        labelLimit=120,
+                        rowPadding=1,
+                    ),
+                ),
+                tooltip=[
+                    alt.Tooltip("station:N", title="Station"),
+                    alt.Tooltip(f"{col}:Q", title="Avg. Monthly Boardings", format=","),
+                    alt.Tooltip(
+                        "businesses_within_0_3mi:Q", title="Businesses Within 0.3mi", format=","
+                    ),
+                ],
+            )
+            # Visually anchors the r=0.68 correlation reported above - a
+            # least-squares fit through all 16 points, not a claim of
+            # causation.
+            trend = base.transform_regression(
+                col, "businesses_within_0_3mi"
+            ).mark_line(strokeDash=[4, 4]).encode(color=alt.value("#888888"))
+            st.altair_chart(
+                (points + trend).properties(height=420),
+                use_container_width=True,
             )
 
         st.markdown(
