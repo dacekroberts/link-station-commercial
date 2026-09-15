@@ -413,19 +413,60 @@ empty states with no exceptions (checked via `streamlit.testing`).
 
 **Ring boundaries**
 - Used: 0.1 / 0.2 / 0.3 / 0.6 miles
-- Why 0.3 as the walkshed: _[your reasoning]_
-- Alternatives tested: _[if any]_
+- Why 0.3 as the walkshed: recorded in `config.py`'s own comment on
+  `RING_EDGES_MILES` - "the 0.3 mile mark is the walkshed of interest;
+  0.3-0.6 is the comparison band that gives the gradient something to
+  decline against." A conventional ~5-6 minute walk radius, with the outer
+  band there specifically as a contrast baseline, not as a second walkshed
+  claim of its own.
+- Alternatives tested: none. Unlike the heat radius/blur tuning (Session
+  7, a real 3-way visual comparison), the ring edges were set once in
+  `config.py` before Session 6's analysis ran and never revisited against
+  an alternative set.
 
 **Overlapping downtown buffers**
 - Chose: allow overlap, disclose in methodology
 - Rejected: nearest-station assignment, because it understates how many
   stations genuinely serve a downtown block
-- Effect: _[how many businesses appear in more than one station's rings]_
+- Effect: **1,767 of 4,116 businesses that fall in any ring (42.9%)** are
+  claimed by more than one station's ring set. Computed directly from
+  `step4_rings.py`'s own spatial join (grouped business `record_id`s by
+  distinct `station` count), not estimated - re-run for this entry, not
+  carried over from memory. Distinct from the 6,847 business-ring match
+  *rows* already on record above, which counts pairs, not unique
+  businesses.
 
 **Brand normalization**
-- Method: _[exact match after normalization / fuzzy with rapidfuzz]_
-- Spot-checked: _[which brands you verified by hand]_
-- Known failures: _[names that didn't collapse correctly]_
+- Method: exact match after normalization only - confirmed directly from
+  `normalize_brand()` in `step4_rings.py`: uppercase, strip store numbers
+  (`#1234`), strip legal suffixes (LLC/INC/CORP/etc.), strip remaining
+  punctuation, collapse whitespace. The function's own docstring names
+  `rapidfuzz` as a possible follow-up for what exact matching misses, but
+  it was never implemented - every brand key in `chain_stats.csv` is an
+  exact-match key, not a fuzzy one.
+- Spot-checked: the two brands that originally surfaced the downtown-
+  overlap chain bug (PU POWDER, Saigon Drip Kitchen - both real
+  single-location businesses, confirmed by hand in Session 6), plus the
+  top real chains from the post-fix list, independently confirmed as
+  actual checkable Seattle/PNW brands: Subway, Evergreens Salad, Caffe
+  Ladro, Westman's Bagels, Metro by T-Mobile, Great State Burger, Just
+  Poke, Dough Zone Dumpling House.
+- Known failures, found via a quick prefix-collision check against
+  `chain_stats.csv` just now (not an exhaustive audit): **"RUDYS BARBER
+  SHOP" vs. "RUDYS BARBERSHOP"** and **"MOLLY MOON S HOMEMADE ICE CREAM"
+  vs. "MOLLY MOONS HOMEMADE ICE CREAM"** are each almost certainly the
+  same real chain (Rudy's Barbershop; Molly Moon's Homemade Ice Cream),
+  split into two separate brand keys - the barbershop pair by a
+  "BARBER SHOP" vs. "BARBERSHOP" spacing difference the normalizer
+  doesn't merge, the ice cream pair by inconsistent source-record
+  apostrophe use ("Molly Moon's" vs. "Molly Moons") colliding with the
+  regex's punctuation-to-space rule. **Not yet corrected in
+  `chain_stats.csv` or the 153-brand / 8.8% headline figures** - open
+  question for you: patch `normalize_brand()` and re-run step 4 (would
+  shift those numbers slightly), or leave as a documented limitation of
+  exact-match normalization. Everything else the check surfaced (the
+  various "SEATTLE ___" / "PIKE PLACE ___" groups) was unrelated
+  businesses sharing a common word, not a normalization miss.
 
 ---
 
