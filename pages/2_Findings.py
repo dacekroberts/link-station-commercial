@@ -293,6 +293,22 @@ if STATION_STATS_CSV.exists():
             )
             st.subheader("Correlation")
             st.markdown(f"**r = {r:.3f}**")
+            # Plausible partial explanation for the moderate (not strong)
+            # r: density and ridership aren't just uncorrelated at some
+            # stations (the access-mode outliers, above) - they're also
+            # spread very differently across all 16. Computed here, not
+            # hardcoded, so it stays accurate if the underlying data changes.
+            ridership_ratio = clean[col].max() / clean[col].min()
+            density_ratio = clean["businesses_within_0_3mi"].max() / clean["businesses_within_0_3mi"].min()
+            st.caption(
+                f"Businesses within 0.3mi ranges {density_ratio:.0f}x across stations "
+                f"({clean['businesses_within_0_3mi'].min():.0f} to "
+                f"{clean['businesses_within_0_3mi'].max():.0f}); average monthly "
+                f"boardings ranges only {ridership_ratio:.1f}x "
+                f"({clean[col].min():,.0f} to {clean[col].max():,.0f}). Density is far "
+                "more concentrated in a handful of stations than ridership is, which "
+                "may limit how tightly a linear relationship can fit."
+            )
 
         st.markdown(
             """
