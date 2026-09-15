@@ -261,40 +261,13 @@ if STATION_STATS_CSV.exists():
                 "much beyond a description of the pattern."
             )
 
-            # UW and Northgate highlighted the same way the gradient
-            # section highlights "against the pattern" stations - same
-            # blue/red pair, different group labels since this is a
-            # separate classification (access-mode outliers, not the ring
-            # gradient rule) - not implying it's the same mechanism.
-            OUTLIER_STATIONS = {"University of Washington", "Northgate"}
-            scatter_df = clean.assign(
-                outlier=lambda d: d["station"].map(
-                    lambda s: "Access-mode outlier" if s in OUTLIER_STATIONS else "Other stations"
-                )
-            )
-            base = alt.Chart(scatter_df)
-            points = base.mark_circle(size=110).encode(
+            # Single colour, no legend - only 2 of 16 stations (UW,
+            # Northgate) are access-mode outliers, not enough to warrant a
+            # colour split. Station names still available via tooltip.
+            base = alt.Chart(clean)
+            points = base.mark_circle(size=110, color="#4c78a8").encode(
                 x=alt.X(f"{col}:Q", title="Average monthly boardings"),
                 y=alt.Y("businesses_within_0_3mi:Q", title="Businesses within 0.3 miles"),
-                color=alt.Color(
-                    "outlier:N",
-                    title=None,
-                    scale=alt.Scale(
-                        domain=["Other stations", "Access-mode outlier"],
-                        range=["#4c78a8", "#e45756"],
-                    ),
-                    legend=alt.Legend(
-                        orient="top-left",
-                        direction="vertical",
-                        fillColor="#0e1117",
-                        padding=4,
-                        offset=0,
-                        symbolSize=40,
-                        labelFontSize=9,
-                        labelLimit=120,
-                        rowPadding=1,
-                    ),
-                ),
                 tooltip=[
                     alt.Tooltip("station:N", title="Station"),
                     alt.Tooltip(f"{col}:Q", title="Avg. Monthly Boardings", format=","),
