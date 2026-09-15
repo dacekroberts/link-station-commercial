@@ -13,6 +13,26 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-15 — Session 8
+
+- **Excluded three corporate food-service contractors (Compass One, Bon
+  Appetit Management, Flik International) from chain analysis only, not
+  density.** User caught Compass One's 11-location count as suspicious
+  while reviewing the chains table; verified it wasn't the downtown-
+  overlap bug (location_count is structurally correct) but a different
+  issue - each is a national contract caterer operating cafeterias
+  inside a single client's office buildings (Compass One's 23 addresses
+  cluster in South Lake Union, reading as one Amazon-campus footprint),
+  not an independent chain making repeated real-estate decisions.
+  NAICS 722310 identifies them but doesn't cleanly filter them (misses
+  23 of Compass One's 24 records; the code they mostly use, 722514, would
+  also wrongly exclude ~30 genuine small independent cafes). Filtered by
+  the three specific brand names instead. Chain headline moves 155 -> 152
+  brands, 8.9% -> 8.5% share; ring_stats.csv/station_stats.csv untouched
+  (confirmed byte-identical after the re-run). Full reasoning in
+  `config.py`'s `CHAIN_ANALYSIS_EXCLUDE_BRANDS` and on the methodology
+  page.
+
 ### 2026-09-13 — Session 7
 
 - **Also added this session:** finer per-category pin toggle layers (12,
@@ -1052,6 +1072,11 @@ Consolidated from several separate decisions made across the session - the
   too high; the normalization patch on top of that fix moved the number a
   further 0.1 point (8.8% -> 8.9%), a small, expected correction in the
   same direction, not a second version of the same bug.
+  **Updated again, Session 8 (2026-09-15):** excluding the three
+  corporate food-service contractors (Compass One, Bon Appetit
+  Management, Flik International — see "Changes" above) moves this to
+  **152 brands, 8.5%**. The 155/8.9% figures here are the pre-exclusion
+  snapshot, not the current one.
 - Real top chains, verified: Subway (7 locations/8 stations), Evergreens
   Salad (7/5), Caffe Ladro (5/5), Westman's Bagels, Metro by T-Mobile,
   Great State Burger, Just Poke, Dough Zone Dumpling House — all real,
@@ -1068,7 +1093,7 @@ Consolidated from several separate decisions made across the session - the
   question above, if it gets checked: chains generally need a larger
   threshold population to sustain a location than an independent shop
   does, which could predict a different distance-decay pattern for chains
-  vs. independents. This doesn't back up the 8.9%/155-brand figure
+  vs. independents. This doesn't back up the 152-brand/8.5% figure
   already on record - it's a lens for a question not yet answered, only
   useful if that ring-by-ring chain check actually gets run.
 
