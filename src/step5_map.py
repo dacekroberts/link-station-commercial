@@ -114,7 +114,7 @@ def naics_label(name: str, prefixes: tuple) -> str:
 
 LEGEND_HTML = """
 <div style="
-    position: fixed; bottom: 24px; left: 24px; z-index: 9999;
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
     background: white; padding: 10px 14px; border: 1px solid #999;
     border-radius: 4px; font-family: sans-serif; font-size: 13px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.3);
