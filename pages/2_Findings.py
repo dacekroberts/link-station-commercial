@@ -256,6 +256,7 @@ if STATION_STATS_CSV.exists():
         clean = stats[["station", col, "businesses_within_0_3mi"]].dropna()
         if len(clean) > 2:
             r = clean[[col, "businesses_within_0_3mi"]].corr().iloc[0, 1]
+            st.markdown("**Graph 3: Commercial Density VS Station Ridership Volume**")
             st.metric("Correlation", f"{r:.2f}")
             st.caption(
                 f"n = {len(clean)} stations. Too few observations to support "
