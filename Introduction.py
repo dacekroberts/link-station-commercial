@@ -23,7 +23,8 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("Commercial density around Seattle's light rail stations")
+st.title("Commercial Density Around Seattle's Light Rail Stations")
+st.caption("By Dace Roberts")
 
 st.markdown(
     """
