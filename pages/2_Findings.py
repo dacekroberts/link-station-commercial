@@ -157,7 +157,7 @@ if RING_STATS_CSV.exists():
         """
     )
 
-    with st.expander("Per-station detail"):
+    with st.expander("Table 1: Commercial Density by Concentric Ring"):
         # Same 8/8 split and colour as the line chart above: standard-
         # pattern stations first, against-the-pattern stations after,
         # alphabetical within each group; against-the-pattern station
