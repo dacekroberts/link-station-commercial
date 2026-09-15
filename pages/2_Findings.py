@@ -8,7 +8,14 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from config import RING_STATS_CSV, STATION_STATS_CSV, CHAIN_STATS_CSV, RING_LABELS, STATIONS_CSV
+from config import (
+    RING_STATS_CSV,
+    STATION_STATS_CSV,
+    CHAIN_STATS_CSV,
+    CHAIN_RING_STATS_CSV,
+    RING_LABELS,
+    STATIONS_CSV,
+)
 
 st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
 
@@ -408,13 +415,42 @@ if CHAIN_STATS_CSV.exists():
         if len(chains) else "—",
     )
 
-    st.markdown("**Brands/Franchises with High Concentration near Link Stations**")
+    st.markdown("**Table 3: Brands/Franchises with High Concentration near Link Stations**")
     chains_display = chains.head(25).rename(columns={
         "brand": "Brand Name",
         "station_count": "# of Stations within Proximity",
         "location_count": "# of Locations within Station Proximity",
     })
     st.dataframe(chains_display, use_container_width=True, hide_index=True)
+
+    if CHAIN_RING_STATS_CSV.exists():
+        chain_ring = pd.read_csv(CHAIN_RING_STATS_CSV)
+        # Same ring_number_map/numbered_ring_labels built for Graph 1/2
+        # above - reused here for the same "Ring N: <range>" labelling.
+        chain_ring = chain_ring.assign(
+            ring_label=lambda d: d["ring"].map(ring_number_map),
+            chain_share_pct=lambda d: d["chain_share"] * 100,
+        )
+
+        st.markdown("**Graph 4: Chain Share by Concentric Ring**")
+        chain_ring_chart = (
+            alt.Chart(chain_ring)
+            .mark_bar()
+            .encode(
+                x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Ring"),
+                y=alt.Y(
+                    "chain_share_pct:Q",
+                    title="Share of businesses that are chains (%)",
+                ),
+                tooltip=[
+                    alt.Tooltip("ring_label:N", title="Ring"),
+                    alt.Tooltip("chain_share_pct:Q", title="Chain share", format=".1f"),
+                    alt.Tooltip("chain_matches:Q", title="Chain locations", format=","),
+                    alt.Tooltip("total_matches:Q", title="Total businesses", format=","),
+                ],
+            )
+        )
+        st.altair_chart(chain_ring_chart, use_container_width=True)
 
     st.markdown(
         """
@@ -428,5 +464,23 @@ if CHAIN_STATS_CSV.exists():
         few brands actually resolved correctly.
         """
     )
+
+    if CHAIN_RING_STATS_CSV.exists():
+        with st.expander("Table 4: Chain Share Detail by Concentric Ring"):
+            chain_ring_table = chain_ring.rename(columns={
+                "ring_label": "Ring",
+                "total_matches": "Total Businesses",
+                "chain_matches": "Chain Locations",
+                "chain_share": "Chain Share",
+            })[["Ring", "Total Businesses", "Chain Locations", "Chain Share"]]
+            st.dataframe(
+                chain_ring_table.style.format({
+                    "Total Businesses": "{:,.0f}",
+                    "Chain Locations": "{:,.0f}",
+                    "Chain Share": "{:.1%}",
+                }),
+                use_container_width=True,
+                hide_index=True,
+            )
 else:
     st.info("Run `python src/step4_rings.py` to generate chain statistics.")
