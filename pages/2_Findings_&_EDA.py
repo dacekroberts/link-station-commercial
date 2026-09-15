@@ -50,7 +50,7 @@ if RING_STATS_CSV.exists():
         alt.Chart(gradient_df)
         .mark_bar()
         .encode(
-            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Ring"),
+            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
             y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
             tooltip=[
                 alt.Tooltip("ring_label:N", title="Ring"),
@@ -103,7 +103,7 @@ if RING_STATS_CSV.exists():
         alt.Chart(long)
         .mark_line(point=True)
         .encode(
-            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Ring"),
+            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
             y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
             detail="station:N",
             color=alt.Color(
@@ -437,7 +437,7 @@ if CHAIN_STATS_CSV.exists():
             alt.Chart(chain_ring)
             .mark_bar()
             .encode(
-                x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Ring"),
+                x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
                 y=alt.Y(
                     "chain_share_pct:Q",
                     title="Share of businesses that are chains (%)",
