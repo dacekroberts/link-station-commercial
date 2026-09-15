@@ -126,11 +126,35 @@ if RING_STATS_CSV.exists():
     )
 
     with st.expander("Per-station detail"):
-        st.dataframe(
+        # Same 8/8 split and colour as the line chart above: standard-
+        # pattern stations first, against-the-pattern stations after,
+        # alphabetical within each group; against-the-pattern station
+        # names coloured to match their line ("#e45756").
+        detail = (
             rings.pivot(index="station", columns="ring", values="density_per_sq_mi")
             .reindex(columns=RING_LABELS)
-            .round(1),
+            .round(1)
+        )
+        ordered_index = (
+            station_group[station_group == "Standard pattern"].sort_index().index.tolist()
+            + station_group[station_group == "Against the pattern"].sort_index().index.tolist()
+        )
+        # station moved out of the index into a plain column - Streamlit's
+        # dataframe grid doesn't forward Styler.map_index() colour to the
+        # index column (tried it, confirmed via direct DOM inspection: text
+        # stayed default white), but does respect column-cell styling via
+        # Styler.map() on a regular column.
+        detail = detail.reindex(ordered_index).reset_index()
+
+        def _highlight_against(station_name):
+            if station_group.get(station_name) == "Against the pattern":
+                return "color: #e45756; font-weight: 600;"
+            return ""
+
+        st.dataframe(
+            detail.style.map(_highlight_against, subset=["station"]),
             use_container_width=True,
+            hide_index=True,
         )
 else:
     st.info("Run `python src/step4_rings.py` to generate ring statistics.")
