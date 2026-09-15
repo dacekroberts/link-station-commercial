@@ -130,6 +130,14 @@ this project needed to see, not a convenient coincidence of picking a
 lenient category. This is general U.S. walking behavior, not a study of
 transit riders in Seattle specifically, so it supports the ring choice
 rather than proving it.
+
+The same study is also part of why this project uses four tiers rather
+than a single cutoff: it found that 65% of U.S. walking trips exceed the
+0.25-mile distance conventionally assumed as the maximum in transportation
+planning, arguing against relying on one flat threshold at all. A single
+ring would have collapsed whatever internal structure exists between the
+platform and the outer edge into one undifferentiated number, rather than
+letting a gradient — or a departure from one — show up in the data at all.
 """
 )
 
@@ -252,7 +260,12 @@ st.markdown(
 Buffers are straight-line radii, not walksheds. Seattle's terrain makes this
 consequential: I-5, the Montlake Cut, and steep grades near Beacon Hill and
 Rainier Beach put part of each circle out of walking reach. Reported density
-is therefore lower than the density a pedestrian actually encounters.
+is therefore lower than the density a pedestrian actually encounters. This is
+a recognized gap in the transportation-research literature too, not just an
+issue specific to this project's data — Yang and Diez-Roux (2012) note that
+most travel datasets record only trip start and end points, not the route
+actually walked, and that street-network distance is the more accurate but
+rarely available alternative to straight-line distance.
 
 Buffers around {', '.join(DOWNTOWN_CLUSTER)} overlap. Businesses in the
 overlap are counted for each station, inflating downtown density relative to
