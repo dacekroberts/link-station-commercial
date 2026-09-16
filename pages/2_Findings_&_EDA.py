@@ -397,6 +397,39 @@ if RING_STATS_CSV.exists():
             unsafe_allow_html=True,
         )
 
+    st.markdown(
+        """
+        After thoroughly investigating the eight stations against the
+        density decay pattern (alongside a few extra), two main factors
+        stood out to me as explanations for their non-conformity and the
+        concentric ring 2->3 rise. The first is geographic limitations.
+        Seattle is already a uniquely constrained city due to its isthmus
+        shape (narrow stretch of land with water bodies on both sides),
+        meaning not all transit stops are blessed with an adjacent
+        commercially viable zone. This is especially true when we consider
+        how long existing Seattle infrastructure has been in place prior
+        to the rapid 1 line expansion this decade. Northgate, UW, Stadium,
+        SODO and Rainier Beach all suffer from urban geographic
+        limitations.
+
+        The second factor also stems from urban geography, differing in
+        its direct impact on my methodology in interpreting the data. I
+        coined this phenomenon "downtown buffer overlap", and the three
+        downtown stations of Westlake, Symphony and Pioneer Square are its
+        representatives. Rather than seeing downtown buffer overlap as
+        disproving my hypothesis, I believe it shows potential for
+        improving the density model in future iterations of this project.
+        One quick fix I ruled out would be to individualize businesses to
+        one station, whichever is closest. This is implemented on the
+        heatmap when zooming in to look at individual businesses, but from
+        a macro standpoint it doesn't make sense to do so. Someone could
+        get off at the symphony station, walk around downtown and do some
+        shopping near Westlake. Those sort of interactions shouldn't be
+        discounted just because the shopper got off at a slightly further
+        station.
+        """
+    )
+
 else:
     st.info("Run `python src/step4_rings.py` to generate ring statistics.")
 
