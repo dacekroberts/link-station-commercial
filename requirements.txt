@@ -4,3 +4,4 @@
 # needed on your machine when you regenerate outputs/.
 streamlit>=1.40
 pandas>=2.2
+altair>=5
