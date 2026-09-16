@@ -74,6 +74,20 @@ if RING_STATS_CSV.exists():
         f"Ring 3→4 {(r4 - r3) / r3:+.1%}."
     )
 
+    st.markdown(
+        """
+        Graph 1 aligns with one of my hypotheses when starting this project:
+        "Does commercial density drop off with decreased proximity to
+        transit hubs"? The overall density between concentric ring 1 to
+        ring 4 shows a net decrease of -67.5% (957 businesses/sq mi -> 311).
+        On its own, this would appear to resolve with my hypothesis, but
+        looking closer at the data reveals a contradiction. The slight jump
+        (+7.6%) between rings 2 and 3 would seem to suggest although
+        density does drop off on a macro-level, the decay is not
+        monotonic. What causes this mid-level rise?
+        """
+    )
+
     # Per-station view: which stations follow the expected declining
     # pattern, and which run against it. Classification rule, computed
     # from the data rather than picked by eye: a station counts as
@@ -170,11 +184,21 @@ if RING_STATS_CSV.exists():
 
     st.markdown(
         """
-        **TODO — write this up.** Is the gradient monotonic? How steep? Which
-        stations run against the pattern, and does the article's station-level
-        commentary explain why? Rainier Beach is the case to check first: its
-        commercial core sits several blocks from the platform, so a low reading
-        there is geography rather than absence.
+        To answer the rise between concentric rings 2 and 3 found in graph
+        1, I constructed a line graph, per-station for graph 2 to get a
+        visual on which stations adhered to the "pattern" of top-down (but
+        not strictly linear) decay. As it turns out, the stations split in
+        half when checking their adherence. Eight Stations (neutral color)
+        mostly correlated to a decay pattern, and the other eight (red)
+        eclipsed their ring 1 totals further away. With this discovery in
+        mind, I constructed table 1 (below) to get an itemized view of the
+        commercial density data per-station. I found that six out of
+        sixteen stations exhibited a ring 2 -> ring 3 rise, and of those
+        six stations, four were a part of the against-pattern group. At
+        this point, I was certain I could provide an explanation for the
+        ring 2->3 rise if I could also explain the reasoning for the
+        against-pattern station group. I decided taking a look at each of
+        these eight stations individually was the best course of action.
         """
     )
 
