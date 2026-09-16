@@ -255,6 +255,148 @@ if RING_STATS_CSV.exists():
             hide_index=True,
         )
 
+    # Per-station write-up, one collapsible <details> per station/pair.
+    # Not st.expander() - its label is plain text only (no markdown/HTML),
+    # so it can't take the red-for-against-pattern colour, underline, or
+    # larger font this section asks for. <details>/<summary> gives native
+    # collapse/expand behaviour with full control over header styling
+    # instead. Red matches the same "#e45756" already used for
+    # against-pattern station names in Table 1 and the Graph 2 legend.
+    st.markdown(
+        """
+        <style>
+        .station-note summary {
+            font-weight: 700;
+            text-decoration: underline;
+            font-size: 1.15rem;
+            cursor: pointer;
+            margin: 0.75rem 0 0.25rem 0;
+        }
+        .station-note.against summary { color: #e45756; }
+        .station-note p { margin: 0.35rem 0 1rem 0; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    station_notes = [
+        {
+            "title": "Northgate",
+            "against": True,
+            "body": """Northgate station has zero businesses within its first concentric
+                ring. That alone sets it into the red group. If we look at the heatmap
+                (or any map for that matter), it's easy to see why: Interstate 5 sits
+                directly west of the station coordinates, swallowing up roughly half
+                of the potential area for commercial density immediately. On the east
+                side, the station's parking absorbs the remaining possible land for
+                businesses, which flags Northgate as an urban geographic victim within
+                this experiment. There is simply more important infrastructure that
+                already exists in the station's proximity, hindering next-door
+                commercial development potential.""",
+        },
+        {
+            "title": "University of Washington",
+            "against": True,
+            "body": """This station exits adjacent to UW's husky stadium and the
+                Montlake UW Hospital campus, both of which are vast and long-term
+                spatial occupiers in the area. As a result, there are once again zero
+                businesses within its first concentric ring. Similar to Northgate, the
+                existing urban design predating the light rail's implementation has
+                limited the possibility of proximal commercial space in this area.""",
+        },
+        {
+            "title": "Westlake/Symphony <em>(Ring 3 rising)</em>",
+            "against": True,
+            "body": """Both stations sit very close to each other in Seattle's densest
+                downtown area. So close in fact that their third concentric rings
+                overlap on each other's origin points (station coordinates). This
+                station-to-station proximity reveals a limitation in my density model:
+                Businesses that sit between two close stations like in this instance
+                will be counted twice, meaning the ring 3 commercial density jumps for
+                one station largely comes from counting businesses clustered around
+                another station.""",
+        },
+        {
+            "title": "Pioneer Square",
+            "against": True,
+            "body": """Similar to Westlake/Symphony, being the next station down in the
+                packed downtown corridor with a commercial density increase from
+                concentric ring 1-&gt;2 rather than 2-&gt;3. Indicative of the
+                persistent double-counting businesses due to station proximity. Sits
+                directly next to public-serving infrastructure like Seattle civic
+                square, King County courthouse, and city hall park limiting adjacent
+                commercial development.""",
+        },
+        {
+            "title": "Stadium",
+            "against": True,
+            "body": """Uniquely placed station with primary purpose being to serve
+                sports fans for football, soccer, and baseball at Lumen Field/T-Mobile
+                Park. The surrounding area has been reserved for metro
+                operations/employees and not catered towards spontaneous foot traffic.
+                Concentric ring 4 touches chinatown station which spikes commercial
+                density there.""",
+        },
+        {
+            "title": "SODO",
+            "against": True,
+            "body": """SODO station sits in a historically industrial corridor of
+                Seattle. Lots of adjacent auto-related businesses, back offices, etc.
+                Like the stadium station, the area is not very foot-traffic
+                friendly.""",
+        },
+        {
+            "title": "Rainier Beach",
+            "against": True,
+            "body": """Intriguing from a geography perspective, Rainier Beach station
+                sits multiple blocks away from the neighborhood's main commercial
+                core, resulting in zero business in concentric ring 3. Other possible
+                factors include the nearby East Duwamish Greenbelt and sprawling
+                residential/scholastic developments in place of commercial zones.""",
+        },
+        {
+            "title": "Beacon Hill/Mount Baker",
+            "against": False,
+            "body": """Although these two stations do not fall into the against
+                pattern group, it is worth mentioning that their concentric ring 4
+                boundaries barely miss the other station. This generated a weaker
+                version of the spacing effects seen in the downtown stations, but not
+                to a large enough degree to go against the pattern.""",
+        },
+        {
+            "title": "Capitol Hill",
+            "against": False,
+            "body": """Another station in the pattern-adhering group, despite having a
+                concentric ring 2-&gt;3 jump like in graph 1. The best reasonable
+                explanation is that for as dense of a location as Capitol Hill, having
+                concentric ring 2 absorbing the bulk of Cal Anderson park, the largest
+                of its kind in the area, potentially skews the density data. I feel
+                more confident in this explanation based on the fact that even ring 4
+                outperforms ring 2 in a commercial density regard here.""",
+        },
+        {
+            "title": "Columbia City",
+            "against": False,
+            "body": """Columbia City features a dense residential zone in its midst,
+                resulting in another commercial jump from concentric ring 2-&gt;3.
+                Since it falls within the pattern-adhering group nonetheless, I
+                believe there could be a potential pattern between residential cores
+                and a ring 2-&gt;3 jump based on there simply being more surface area
+                for ring 3 to draw a few more businesses.""",
+        },
+    ]
+    for note in station_notes:
+        css_class = "station-note against" if note["against"] else "station-note"
+        st.markdown(
+            f"""
+            <details class="{css_class}">
+            <summary>{note['title']}</summary>
+            <p>{note['body']}</p>
+            </details>
+            """,
+            unsafe_allow_html=True,
+        )
+
     # Breaks down the aggregate bar chart's ring-3 uptick: how many of the
     # 16 stations actually rise from ring 2 to ring 3 (rather than
     # continuing to decline), and how many of those are from the
