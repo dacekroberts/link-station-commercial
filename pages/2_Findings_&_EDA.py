@@ -397,33 +397,6 @@ if RING_STATS_CSV.exists():
             unsafe_allow_html=True,
         )
 
-    # Breaks down the aggregate bar chart's ring-3 uptick: how many of the
-    # 16 stations actually rise from ring 2 to ring 3 (rather than
-    # continuing to decline), and how many of those are from the
-    # against-the-pattern group vs. the standard-pattern group. Computed
-    # from station_pivot/station_group, already built above for the
-    # chart and table - not re-derived.
-    ring2_col, ring3_col = RING_LABELS[1], RING_LABELS[2]
-    ring3_uptick = station_pivot[ring3_col] > station_pivot[ring2_col]
-    contributors = station_pivot[ring3_uptick].index
-    n_contributors = len(contributors)
-    n_against_contributors = int((station_group.loc[contributors] == "Against the pattern").sum())
-    against_names = sorted(
-        s for s in contributors if station_group.loc[s] == "Against the pattern"
-    )
-
-    ring2_avg = gradient[ring2_col]
-    ring3_avg = gradient[ring3_col]
-    st.markdown(
-        f"**Ring 3 uptick, broken down:** {n_contributors} of 16 stations have "
-        f"higher density in ring 3 than ring 2 - this is what pulls the aggregate "
-        f"chart above up at ring 3 instead of continuing to decline. "
-        f"**{n_against_contributors} of those {n_contributors}** are from the "
-        f"against-the-pattern group ({', '.join(against_names)}), not the "
-        f"standard-pattern group. In absolute terms, the aggregate rises from "
-        f"{ring2_avg:.0f} to {ring3_avg:.0f} businesses/sq mi - a "
-        f"{ring3_avg - ring2_avg:.0f}-business-per-sq-mi difference."
-    )
 else:
     st.info("Run `python src/step4_rings.py` to generate ring statistics.")
 
