@@ -397,6 +397,7 @@ if RING_STATS_CSV.exists():
             unsafe_allow_html=True,
         )
 
+    st.subheader("Concluding Thoughts")
     st.markdown(
         """
         After thoroughly investigating the eight stations against the
