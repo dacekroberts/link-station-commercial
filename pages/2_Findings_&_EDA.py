@@ -64,6 +64,16 @@ if RING_STATS_CSV.exists():
     )
     st.altair_chart(bar_chart, use_container_width=True)
 
+    # Ring-to-ring percent change, computed from the same `gradient` series
+    # the chart above renders - not hardcoded, so it stays accurate if the
+    # underlying data changes.
+    r1, r2, r3, r4 = (gradient[label] for label in RING_LABELS)
+    st.caption(
+        f"Ring-to-ring change: Ring 1→2 {(r2 - r1) / r1:+.1%}, "
+        f"Ring 2→3 {(r3 - r2) / r2:+.1%} (the uptick), "
+        f"Ring 3→4 {(r4 - r3) / r3:+.1%}."
+    )
+
     # Per-station view: which stations follow the expected declining
     # pattern, and which run against it. Classification rule, computed
     # from the data rather than picked by eye: a station counts as
