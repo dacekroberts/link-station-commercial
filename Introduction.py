@@ -10,7 +10,7 @@ Run:  streamlit run Introduction.py
 import pandas as pd
 import streamlit as st
 
-from components import render_social_links
+from components import render_social_links, set_sidebar_width
 from config import (
     STATION_STATS_CSV,
     CITYWIDE_COVERAGE_CSV,
@@ -24,6 +24,7 @@ st.set_page_config(
     layout="wide",
 )
 
+set_sidebar_width()
 render_social_links()
 
 st.title("Commercial Density Around Seattle's Light Rail Stations")

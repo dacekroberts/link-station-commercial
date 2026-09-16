@@ -8,6 +8,35 @@ gets called from each page, rather than duplicated four times over.
 
 import streamlit as st
 
+# Streamlit's default expanded sidebar is 300px. The ask was 2/3 of that
+# (200px), but the longest nav label - "Methodology & Limitations" - needs
+# at least 218px of sidebar width before it stops clipping under
+# text-overflow:ellipsis (measured directly in the rendered DOM, binary-
+# searched to the exact pixel: 217px clips, 218px doesn't). 225px is the
+# narrowest round number with a small safety margin above that measured
+# threshold, so it survives minor font-rendering differences across
+# browsers rather than sitting exactly on the edge.
+SIDEBAR_WIDTH_PX = 225
+
+
+def set_sidebar_width():
+    """Shrinks the expanded sidebar from Streamlit's 300px default.
+
+    Not user-resize-proof by design - Streamlit's own drag handle can still
+    widen it back out; this only sets the default/initial width.
+    """
+    st.markdown(
+        f"""
+        <style>
+        [data-testid="stSidebar"] {{
+            width: {SIDEBAR_WIDTH_PX}px !important;
+            min-width: {SIDEBAR_WIDTH_PX}px !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 def render_social_links():
     """GitHub/LinkedIn icon links, top-right above the page title.

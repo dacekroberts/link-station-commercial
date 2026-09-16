@@ -9,7 +9,7 @@ Placeholders in [brackets] need your actual numbers before this is done.
 
 import streamlit as st
 
-from components import render_social_links
+from components import render_social_links, set_sidebar_width
 from config import (
     RING_EDGES_MILES,
     NAICS_STOREFRONT_PREFIXES,
@@ -34,6 +34,7 @@ from config import (
 
 st.set_page_config(page_title="Methodology", page_icon="📋", layout="wide")
 
+set_sidebar_width()
 render_social_links()
 
 st.title("Methodology & Limitations")
