@@ -721,7 +721,8 @@ if STATION_STATS_CSV.exists():
             f"Businesses' widest gap is {biz_gap:.2f} SD, right before "
             f"{' and '.join(biz_outliers)}. Ridership's widest gap is "
             f"smaller ({rid_gap:.2f} SD, right before "
-            f"{' and '.join(rid_outliers)}), consistent with its lower CV."
+            f"{' and '.join(rid_outliers)}), consistent with its lower "
+            "Coefficient of Variation (shown below in Table 3)."
         )
 
         st.markdown(
