@@ -76,6 +76,16 @@ def set_base_font():
         [data-testid="stSidebar"] code {
             font-family: "Source Code Pro", Menlo, Consolas, monospace !important;
         }
+
+        /* Streamlit's own UI glyphs (sidebar collapse/expand arrow, etc.)
+        are rendered as ligatures in the Material Symbols icon font, not
+        images - the wildcard above was breaking these, showing the raw
+        ligature name ("keyboard_double_arrow_left") as literal text
+        instead of the arrow icon. Confirmed via the element's own
+        pre-existing rule (font-family: "Material Symbols Rounded"). */
+        [data-testid="stIconMaterial"] {
+            font-family: "Material Symbols Rounded" !important;
+        }
         </style>
         """,
         unsafe_allow_html=True,
