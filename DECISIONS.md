@@ -15,6 +15,23 @@ each; detail lives in the sections below.
 
 ### 2026-09-17 — Between sessions
 
+- **Ran the full pipeline from scratch (step1 through step5) before Session
+  9, to check for drift between committed `outputs/` and what the pipeline
+  actually produces today.** Every step ran with zero warnings and matched
+  the committed figures exactly: 16/16 stations; 11,466 clean businesses
+  (84,390 -> 58,774 -> 14,728 -> 11,478 -> 11,466); geocoding at 99.5%
+  overall (90.2% donor, 94.9% of the Census remainder); 6,847 business-ring
+  matches with the same gradient (957/550/592/311) and chain figures (152
+  brands, 8.5% share, 11.0%/10.1%/8.3%/8.5% by ring); 4,120 of 11,409
+  businesses within any ring, matching the Introduction page's own
+  citywide-coverage metric. Every regenerated `outputs/*.csv` came back
+  byte-for-byte identical to the committed version. `heatmap.html` showed a
+  git diff, but only from Folium's random per-render DOM element IDs; after
+  normalizing those out, the two files diffed at zero - no real content
+  change. Reverted that cosmetic diff rather than committing a no-op.
+  **Conclusion: zero drift.** What's committed today is exactly what a
+  clean run produces, confirmed rather than assumed before the Session 9
+  push.
 - **GitHub username changed `tykwondo` -> `dacekroberts`** (same account,
   rename). Updated: repo-local git identity (`user.name`/`user.email` to
   `dacekroberts` / `49654908+dacekroberts@users.noreply.github.com`, same
