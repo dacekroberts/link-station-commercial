@@ -10,13 +10,15 @@ import streamlit as st
 
 # Streamlit's default expanded sidebar is 300px. The ask was 2/3 of that
 # (200px), but the longest nav label - "Methodology & Limitations" - needs
-# at least 218px of sidebar width before it stops clipping under
-# text-overflow:ellipsis (measured directly in the rendered DOM, binary-
-# searched to the exact pixel: 217px clips, 218px doesn't). 225px is the
-# narrowest round number with a small safety margin above that measured
-# threshold, so it survives minor font-rendering differences across
-# browsers rather than sitting exactly on the edge.
-SIDEBAR_WIDTH_PX = 225
+# enough width to stop clipping under text-overflow:ellipsis. Re-measured
+# after switching the base font to Inter (set_base_font() below), which
+# renders that label wider than Streamlit's original default font did:
+# binary-searched to the exact pixel in the live DOM, 235px clips, 236px
+# doesn't. 240px is the narrowest round number with a small safety margin
+# above that threshold, so it survives minor font-rendering differences
+# across browsers rather than sitting exactly on the edge. Re-measure
+# again if the base font ever changes.
+SIDEBAR_WIDTH_PX = 240
 
 
 def set_base_font():
