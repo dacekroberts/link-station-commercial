@@ -19,6 +19,69 @@ import streamlit as st
 SIDEBAR_WIDTH_PX = 225
 
 
+def set_base_font():
+    """Swaps Streamlit's default typeface for Inter on base page text only.
+
+    Inter, not Streamlit's default Source Sans Pro - a widely-used,
+    highly-legible sans-serif on modern data/product interfaces (Notion,
+    Vercel, GitHub's newer UI, Figma), which reads as an intentional
+    typographic choice rather than an unstyled default for a portfolio site
+    aimed at hiring managers. Loaded via Google Fonts rather than a new pip
+    dependency, keeping requirements.txt lean.
+
+    Deliberately scoped, not a blanket override: embedded chart/diagram text
+    is explicitly excluded and reset back to the original default, so this
+    only touches prose, headers, captions, metrics, and tables - not "text
+    embedded in other visuals" per the user's own distinction. The Mermaid
+    flowchart and Folium heatmap need no such exclusion - both render inside
+    their own iframe documents, already isolated from this page's CSS by
+    construction.
+    """
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* Wildcard, not just html/body: Streamlit sets font-family
+        directly on its own text elements (p, headers, etc.), and a plain
+        inherited value from an ancestor - even an !important one - always
+        loses to any rule that targets the element itself. Scoping the
+        wildcard to the app container and sidebar, rather than a bare `*`,
+        keeps this from reaching into the chart/code exclusions below at
+        a lower specificity than they need. */
+        [data-testid="stAppViewContainer"] *,
+        [data-testid="stSidebar"] *,
+        [data-testid="stHeader"] * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont,
+                "Segoe UI", sans-serif !important;
+        }
+
+        /* Altair/Vega-Lite charts (Graphs 1-5) are the one place inline
+        SVG text sits inside the page's own DOM rather than an iframe, so
+        this needs an explicit reset - otherwise it would inherit the new
+        base font too. Same specificity shape as the wildcard above (one
+        attribute selector + one type selector) plus source order below
+        it, so this wins for chart text specifically. */
+        [data-testid="stVegaLiteChart"] text {
+            font-family: "Source Sans Pro", sans-serif !important;
+        }
+
+        /* Code stays monospace regardless of the base font - scoped to
+        match or exceed the wildcard's specificity, not a bare `code`
+        selector, which the wildcard above would otherwise outrank. */
+        [data-testid="stAppViewContainer"] code,
+        [data-testid="stAppViewContainer"] pre,
+        [data-testid="stAppViewContainer"] kbd,
+        [data-testid="stAppViewContainer"] samp,
+        [data-testid="stSidebar"] code {
+            font-family: "Source Code Pro", Menlo, Consolas, monospace !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def set_sidebar_width():
     """Shrinks the expanded sidebar from Streamlit's 300px default.
 
