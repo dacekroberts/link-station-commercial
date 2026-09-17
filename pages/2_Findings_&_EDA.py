@@ -508,7 +508,7 @@ if STATION_STATS_CSV.exists():
 
         st.markdown(
             """
-            The best method of trying to proxy genuine foot traffic in
+            The method I used to attempt proxying genuine foot traffic in
             Seattle's transit corridor was to use average monthly
             ridership counts per station, as direct commercial data from
             storefronts is often privatized or sold at scale. This metric
