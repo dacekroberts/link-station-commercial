@@ -814,7 +814,7 @@ if CHAIN_STATS_CSV.exists():
     right.metric(
         "Share of locations that are chains",
         f"{multi['location_count'].sum() / chains['location_count'].sum():.1%}"
-        if len(chains) else "—",
+        if len(chains) else "N/A",
     )
 
     with st.expander("Table 4: Brands with High Concentration near Link Stations"):
