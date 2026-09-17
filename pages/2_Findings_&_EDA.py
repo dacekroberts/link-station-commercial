@@ -20,7 +20,7 @@ from config import (
     CHAIN_STATS_CSV,
     CHAIN_RING_STATS_CSV,
     RING_LABELS,
-    STATIONS_CSV,
+    SEATTLE_1LINE_STATIONS,
 )
 
 st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
@@ -221,11 +221,13 @@ if RING_STATS_CSV.exists():
         )
         # North-to-south within each group, not alphabetical - Link 1 Line
         # runs roughly north-south, so this reads as a trip down the line
-        # rather than an arbitrary A-Z list. Real station coordinates, not
-        # a guessed geographic order.
-        station_order = (
-            pd.read_csv(STATIONS_CSV).sort_values("latitude", ascending=False)["station"].tolist()
-        )
+        # rather than an arbitrary A-Z list. SEATTLE_1LINE_STATIONS (config.py)
+        # is already in that order, verified against real station coordinates
+        # in step1_stations.py - not data/processed/stations.csv directly,
+        # which is a gitignored pipeline intermediate that doesn't exist on
+        # Streamlit Cloud (this was a real bug: FileNotFoundError in
+        # production, since the app is only supposed to read outputs/).
+        station_order = list(SEATTLE_1LINE_STATIONS)
         ordered_index = (
             [s for s in station_order if station_group.get(s) == "Standard pattern"]
             + [s for s in station_order if station_group.get(s) == "Against the pattern"]
