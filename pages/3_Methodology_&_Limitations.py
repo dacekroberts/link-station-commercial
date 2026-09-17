@@ -206,6 +206,22 @@ st.markdown(
     "vol. 43, no. 1, 2012, pp. 11-19."
 )
 
+st.subheader("AI Use")
+
+st.markdown(
+    """
+This project was built in tandem with Claude Code. Before starting, I
+completed five Skilljar courses on Claude Code over about a month,
+building real working knowledge of it rather than just enough to copy
+and paste.
+
+From there, Claude Code helped me write and debug pipeline scripts,
+build the Streamlit pages you're looking at, and catch bugs I would
+have otherwise missed. The analysis itself, every interpretation and
+judgment call, is mine.
+"""
+)
+
 st.divider()
 
 st.markdown(
