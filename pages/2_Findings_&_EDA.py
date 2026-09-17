@@ -487,21 +487,23 @@ if STATION_STATS_CSV.exists():
             )
             st.subheader("Correlation")
             st.markdown(f"**r = {r:.3f}**")
-            # Plausible partial explanation for the moderate (not strong)
-            # r: density and ridership aren't just uncorrelated at some
-            # stations (the access-mode outliers, above) - they're also
-            # spread very differently across all 16. Computed here, not
-            # hardcoded, so it stays accurate if the underlying data changes.
-            ridership_ratio = clean[col].max() / clean[col].min()
-            density_ratio = clean["businesses_within_0_3mi"].max() / clean["businesses_within_0_3mi"].min()
+            # How much does r depend on a single high-leverage point? Not
+            # redundant with the CV/dot-plot material further down (that's
+            # about each variable's own spread; this is about the
+            # correlation's robustness) - Westlake is the single highest
+            # station in both ridership and density at once, so it's the
+            # natural leverage check. Computed here, not hardcoded, so it
+            # stays accurate if the underlying data changes.
+            no_westlake = clean[clean["station"] != "Westlake"]
+            r_no_westlake = no_westlake[[col, "businesses_within_0_3mi"]].corr().iloc[0, 1]
+            r_spearman = clean[col].rank().corr(clean["businesses_within_0_3mi"].rank())
             st.caption(
-                f"Businesses within 0.3mi ranges {density_ratio:.0f}x across stations "
-                f"({clean['businesses_within_0_3mi'].min():.0f} to "
-                f"{clean['businesses_within_0_3mi'].max():.0f}); average monthly "
-                f"boardings ranges only {ridership_ratio:.1f}x "
-                f"({clean[col].min():,.0f} to {clean[col].max():,.0f}). Density is far "
-                "more concentrated in a handful of stations than ridership is, which "
-                "may limit how tightly a linear relationship can fit."
+                f"Removing Westlake alone - the single highest station in both "
+                f"ridership and density - drops r from {r:.3f} to {r_no_westlake:.3f}. "
+                f"The rank-based (Spearman) correlation across all 16 stations is "
+                f"only {r_spearman:.3f}. Part of the observed linear relationship "
+                "depends on this one high-leverage point rather than reflecting a "
+                "consistent pattern across every station."
             )
 
         st.markdown(
