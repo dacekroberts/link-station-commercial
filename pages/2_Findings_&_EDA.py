@@ -552,6 +552,29 @@ if STATION_STATS_CSV.exists():
                 use_container_width=True,
             )
 
+        # ridership_rank feeds the Symphony/Pioneer Square caption below.
+        ridership_rank = clean[col].rank(ascending=False)
+
+        # Symphony and Pioneer Square are the inverse of the UW/Northgate
+        # mismatch discussed in the write-up below: solidly mid-pack on
+        # ridership but 2nd/3rd-highest density of all 16 stations.
+        # Computed from the same ridership-rank basis as the rest of this
+        # section, not hardcoded.
+        symphony = clean[clean["station"] == "Symphony"].iloc[0]
+        pioneer = clean[clean["station"] == "Pioneer Square"].iloc[0]
+        symphony_rank = int(ridership_rank[clean["station"] == "Symphony"].iloc[0])
+        pioneer_rank = int(ridership_rank[clean["station"] == "Pioneer Square"].iloc[0])
+        st.caption(
+            f"Symphony (ridership rank {symphony_rank} of 16) and Pioneer Square "
+            f"(ridership rank {pioneer_rank} of 16) stand out in the opposite direction "
+            f"from the UW/Northgate mismatch discussed below - {symphony['businesses_within_0_3mi']:.0f} and "
+            f"{pioneer['businesses_within_0_3mi']:.0f} businesses within 0.3mi "
+            "respectively, the 2nd- and 3rd-highest density of all 16 stations despite "
+            "solidly mid-pack ridership. Both are part of the downtown ring-overlap "
+            "cluster already documented in Methodology, so some of that density is "
+            "inflated by buffer overlap rather than purely organic."
+        )
+
         st.markdown(
             """
             Table 2 revealed a plethora of outliers, albeit none as
@@ -586,31 +609,6 @@ if STATION_STATS_CSV.exists():
             infrastructure supports automotive transport much more than
             pedestrians.
             """
-        )
-
-        # ridership_rank feeds the Symphony/Pioneer Square caption below.
-        # UW/Northgate's own numbers used to have a caption here too, but
-        # it's now redundant with the Table 2 write-up above, which covers
-        # the same ranks and counts in prose.
-        ridership_rank = clean[col].rank(ascending=False)
-
-        # Symphony and Pioneer Square are the inverse of UW/Northgate above:
-        # solidly mid-pack on ridership but 2nd/3rd-highest density of all
-        # 16 stations. Computed from the same ridership-rank basis as the
-        # rest of this section, not hardcoded.
-        symphony = clean[clean["station"] == "Symphony"].iloc[0]
-        pioneer = clean[clean["station"] == "Pioneer Square"].iloc[0]
-        symphony_rank = int(ridership_rank[clean["station"] == "Symphony"].iloc[0])
-        pioneer_rank = int(ridership_rank[clean["station"] == "Pioneer Square"].iloc[0])
-        st.caption(
-            f"Symphony (ridership rank {symphony_rank} of 16) and Pioneer Square "
-            f"(ridership rank {pioneer_rank} of 16) stand out in the opposite direction "
-            f"from UW/Northgate above - {symphony['businesses_within_0_3mi']:.0f} and "
-            f"{pioneer['businesses_within_0_3mi']:.0f} businesses within 0.3mi "
-            "respectively, the 2nd- and 3rd-highest density of all 16 stations despite "
-            "solidly mid-pack ridership. Both are part of the downtown ring-overlap "
-            "cluster already documented in Methodology, so some of that density is "
-            "inflated by buffer overlap rather than purely organic."
         )
 
         st.markdown(
