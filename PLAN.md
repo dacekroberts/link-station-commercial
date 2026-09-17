@@ -186,7 +186,7 @@ better than a weak positive you oversell.
 
 ---
 
-## Session 8 — Write it up (2.5 h)
+## Session 8 — Write it up (2.5 h) — nearly done, 2026-09-16 (one item open)
 
 The highest-value hours in the project. Protect them.
 
@@ -220,13 +220,44 @@ share rises toward the platform, if that check gets run - a hypothesis,
 not backing for the 8.9%/155-brand figure already on record. Full detail
 in `DECISIONS.md` under "Observations" > "Chains."
 
-- [ ] Fill the three `TODO` blocks in `pages/2_Findings_&_EDA.py`
-- [ ] Fill `[FILL IN]` and `[Confirm which applies]` in `pages/3_Methodology_&_Limitations.py`
-- [ ] Transfer everything from `DECISIONS.md` into the methodology page
-- [ ] Trim the limitations to what's true for your actual run — remove any
-      that don't apply, keep access mode, the temporal gap, and siting
-- [ ] Rewrite the intro on `Introduction.py` to state what you actually found
-- [ ] Commit
+- [x] Fill the three `TODO` blocks in `pages/2_Findings_&_EDA.py` — DONE
+      2026-09-16: Gradient (per-station notes + Concluding Thoughts),
+      Ridership (Graph 3/Table 2 + the new Graph 4 dot-plot/CV write-up),
+      Chains (below Table 4 and the Graph 5 caption) all filled with your
+      own drafted prose, fact-checked against the pipeline before shipping
+- [x] Fill `[FILL IN]` and `[Confirm which applies]` in
+      `pages/3_Methodology_&_Limitations.py` — DONE, and taken further:
+      the whole page was rewritten in your own voice (first person, no em
+      dashes) rather than just having its placeholders filled
+- [x] Transfer everything from `DECISIONS.md` into the methodology page —
+      DONE for what belongs there (Method rationale, Data Sources, NAICS
+      filtering reasoning, all five Limitations subsections, What a fuller
+      version would add). Not a literal line-for-line transfer of every
+      `DECISIONS.md` entry — environment setup and the session-by-session
+      "things that went wrong" log stay in `DECISIONS.md`/`Sessions 1-7
+      Context.md` as project history, not reader-facing methodology
+- [x] Trim the limitations to what's true for your actual run — DONE, and
+      re-verified twice: once during the rewrite, again when the chain-
+      overlap numbers were caught drifting stale (155/8.9% → corrected to
+      152/8.5%, matching the live Findings page) via a fresh pipeline run
+- [ ] Rewrite the intro on `Introduction.py` to state what you actually
+      found — **NOT done.** The intro still states what the project set
+      out to measure ("tests whether density falls off... looks at which
+      kinds of businesses concentrate closest"), not what it found (the
+      ~67.5% ring 1→4 decline with the real ring-3 anomaly, r=0.684
+      ridership correlation, chain share highest at the platform). This is
+      the one open Session 8 item — see the Session 9 overview below.
+- [x] Commit — every change above committed individually with its own
+      message throughout the session (30 commits total on 2026-09-16)
+
+**Beyond the original plan, this session:** site-wide polish (GitHub/
+LinkedIn icon links and a narrower 225px sidebar on every page), a new
+Graph 4 (dot plot) and Table 3 (Coefficient of Variation) built from
+scratch for the ridership section, and a 5th page (`pages/4_Flowchart.py`)
+showing the pipeline's real build process as a Mermaid diagram with two
+decision diamonds for the chain-definition bug catch and the basemap/
+heat-layer saga. A base site font (Inter) was also applied to page text
+site-wide, explicitly excluding chart/diagram text.
 
 Write claims you can defend. "Density declines 40% between the inner and
 outer ring" beats "transit drives commercial development," and only one of
