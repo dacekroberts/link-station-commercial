@@ -130,7 +130,7 @@ if RING_STATS_CSV.exists():
     st.caption(
         f"{n_standard} of 16 stations never climb back above their own "
         f"ring-1 density after the first ring (a single minor up-tick still "
-        f"counts as this pattern - a real reversal doesn't); the other "
+        f"counts as this pattern; a real reversal doesn't); the other "
         f"{n_against} run against it. Hover a line for the station name."
     )
 
@@ -171,7 +171,7 @@ if RING_STATS_CSV.exists():
                 alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
-        .properties(height=504, width=900, padding={"bottom": 90})
+        .properties(height=756, width=900, padding={"bottom": 90})
     )
     # Fixed width (not container-filling), capped at 900px deliberately -
     # measured (not guessed) that Streamlit's main content container caps
