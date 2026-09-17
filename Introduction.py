@@ -116,8 +116,7 @@ if STATION_STATS_CSV.exists():
     # nothing to point at. States both dates directly instead.
     st.caption(
         f"Business data was retrieved {LICENSE_SNAPSHOT}. Ridership figures "
-        f"reflect {RIDERSHIP_SNAPSHOT} - a different window, discussed on "
-        "the methodology page."
+        f"reflect {RIDERSHIP_SNAPSHOT}."
     )
 else:
     st.info(
