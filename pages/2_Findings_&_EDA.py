@@ -588,26 +588,11 @@ if STATION_STATS_CSV.exists():
             """
         )
 
-        # UW and Northgate: high ridership rank, disproportionately low
-        # density - not a downtown-overlap effect (neither is in the
-        # cluster), consistent instead with the access-mode limitation
-        # already documented in Methodology (park-and-ride, transfers).
+        # ridership_rank feeds the Symphony/Pioneer Square caption below.
+        # UW/Northgate's own numbers used to have a caption here too, but
+        # it's now redundant with the Table 2 write-up above, which covers
+        # the same ranks and counts in prose.
         ridership_rank = clean[col].rank(ascending=False)
-        density_rank = clean["businesses_within_0_3mi"].rank(ascending=False)
-        uw = clean[clean["station"] == "University of Washington"].iloc[0]
-        northgate = clean[clean["station"] == "Northgate"].iloc[0]
-        uw_r_rank = int(ridership_rank[clean["station"] == "University of Washington"].iloc[0])
-        uw_d_rank = int(density_rank[clean["station"] == "University of Washington"].iloc[0])
-        northgate_r_rank = int(ridership_rank[clean["station"] == "Northgate"].iloc[0])
-        northgate_d_rank = int(density_rank[clean["station"] == "Northgate"].iloc[0])
-        st.caption(
-            f"University of Washington (ridership rank {uw_r_rank} of 16, but density "
-            f"rank {uw_d_rank} of 16 - only {uw['businesses_within_0_3mi']:.0f} businesses "
-            f"within 0.3mi) and Northgate (ridership rank {northgate_r_rank}, density rank "
-            f"{northgate_d_rank}, {northgate['businesses_within_0_3mi']:.0f} businesses) are "
-            "the sharpest mismatches in this direction - high ridership without matching "
-            "commercial density nearby."
-        )
 
         # Symphony and Pioneer Square are the inverse of UW/Northgate above:
         # solidly mid-pack on ridership but 2nd/3rd-highest density of all
