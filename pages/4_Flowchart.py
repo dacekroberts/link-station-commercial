@@ -26,7 +26,7 @@ actually got built, not just the finished result. A data pipeline looks
 clean once it's done, but this one had dead ends and bugs along the way,
 and I wanted a couple of the more interesting ones visible here.
 
-The diagram below follows the same five-step pipeline used throughout this
+The diagram below follows a five-step pipeline used throughout this
 project, starting from the manual data downloads and ending at the
 Streamlit app you're looking at right now. Two of the pipeline's real
 pivot points are called out directly: a bug in how I first defined a
