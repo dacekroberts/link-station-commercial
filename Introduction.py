@@ -132,6 +132,31 @@ else:
     )
 
 st.divider()
+st.subheader("What I Found")
+st.caption(
+    "These are the headline numbers. For the full breakdown, including "
+    "per-station detail, the correlation's leverage check, and further "
+    "pattern discovery, see the Findings & EDA page."
+)
+st.markdown(
+    """
+- **Density falls off fast, but not cleanly.** Businesses per square mile
+  drop 67.5% between the innermost and outermost rings, 957 to 311, with
+  a real uptick at the third ring that turned out to have a specific,
+  checkable cause rather than just being noise.
+- **Ridership and density move together, moderately.** The correlation
+  across all sixteen stations lands at r = 0.684, strong enough to
+  matter, not strong enough to lean on by itself.
+- **Businesses cluster far less evenly than ridership does.** Businesses'
+  spread across stations is about 1.8 times as uneven as ridership's,
+  proportionally, not just in raw numbers.
+- **Chains lean into platform proximity too.** Chain share is highest
+  right at the platform, 11% in the first ring, and falls to 8.5% by the
+  fourth, the same declining pattern found in overall density.
+"""
+)
+
+st.divider()
 st.subheader("Why Seattle?")
 
 st.markdown(
