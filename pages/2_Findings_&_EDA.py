@@ -719,12 +719,12 @@ if STATION_STATS_CSV.exists():
         biz_gap, biz_outliers = _biggest_gap("Businesses")
         rid_gap, rid_outliers = _biggest_gap("Ridership")
         st.caption(
+            f"Most stations cluster similarly on both metrics - the "
+            f"difference is in how far the tail sits past that cluster. "
             f"Businesses' widest gap is {biz_gap:.2f} SD, right before "
-            f"{' and '.join(biz_outliers)} - a sharp break from the rest "
-            f"of the pack, not a gradual climb. Ridership's widest gap is "
-            f"only {rid_gap:.2f} SD, right before {' and '.join(rid_outliers)}, "
-            "consistent with the more even spread its lower CV already "
-            "suggests."
+            f"{' and '.join(biz_outliers)}. Ridership's widest gap is "
+            f"smaller ({rid_gap:.2f} SD, right before "
+            f"{' and '.join(rid_outliers)}), consistent with its lower CV."
         )
 
         cv_table = (
