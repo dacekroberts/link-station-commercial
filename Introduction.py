@@ -78,6 +78,20 @@ if STATION_STATS_CSV.exists():
     # within concentric ring area of Link stations") is long enough that an
     # equal-thirds column still clipped it with an ellipsis even at this
     # project's standard 1280px test width, confirmed by screenshot.
+    # "Data Retrieved on" is scoped to just the last column, not every
+    # metric on the page - measured via canvas.measureText against the
+    # column's own available width (206.8px): 36px needs 212px for a date
+    # like "2026-09-06" (overflows, confirmed by screenshot), 30px only
+    # needs 177px, comfortably clear.
+    st.markdown(
+        """
+        <style>
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:last-child
+        [data-testid="stMetricValue"] { font-size: 30px !important; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
     left, mid, right = st.columns([1, 2, 1])
     left.metric("Number of Stations Analyzed", len(stats))
     if CITYWIDE_COVERAGE_CSV.exists():
@@ -117,6 +131,7 @@ else:
         "```"
     )
 
+st.divider()
 st.subheader("Why Seattle?")
 
 st.markdown(
