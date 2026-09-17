@@ -754,6 +754,33 @@ if STATION_STATS_CSV.exists():
             "not just in absolute terms, businesses cluster far more "
             "unevenly across these sixteen stations than ridership does."
         )
+
+        st.markdown(
+            """
+            This dot plot provides a holistic view of the variance of the
+            two variables explored in graph 3 and table 2 (business
+            density per station and avg. monthly ridership per station).
+            Their similar shapes are undermined by the larger gap between
+            the aforementioned Westlake outlier/sister station Symphony
+            and the rest of the pack in business density. The two
+            downtown stations sit roughly two standard deviations away
+            from the average, while the rest are within one. On the other
+            hand, the ridership volume side is saved from a similar fate
+            thanks to the smoother tail, particularly U District station
+            sitting in what would otherwise be a large gap. Despite the
+            improvement, each of the top three stations sits at least 0.5
+            standard deviations above the one immediately below it, which
+            is still significant.
+
+            It's quite likely that by removing outliers, the variance in
+            this section could be toned down, but as graph 3's caption
+            indicates, removing an outlier like Westlake also decreases
+            the strength of the correlation. That being said, the
+            coexistence of outliers and tight groups alike in graph 4 as
+            well as graph 3 supports the medium-strong r-value from the
+            beginning of this section.
+            """
+        )
     else:
         st.info(
             "No ridership column found. Export station boardings from Sound "
