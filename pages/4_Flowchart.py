@@ -123,12 +123,16 @@ _FLOWCHART_HTML = f"""
     clearInterval(_scaleInterval);
     const w = svg.width.baseVal.value;
     const h = svg.height.baseVal.value;
-    svg.setAttribute("width", w * 0.75);
-    svg.setAttribute("height", h * 0.75);
+    svg.setAttribute("width", w * 0.6);
+    svg.setAttribute("height", h * 0.6);
   }}, 100);
 </script>
 </body>
 </html>
 """
 
-components.html(_FLOWCHART_HTML, height=940, scrolling=True)
+# Scale (0.6) and height (905) chosen together, live-tested in the
+# rendered DOM: at 0.6 the diagram's own content is ~899px tall, fitting
+# inside 905px with a small margin - large enough that no scrollbar
+# appears at all (905 was previously 940, sized for the old 0.75 scale).
+components.html(_FLOWCHART_HTML, height=905, scrolling=True)
