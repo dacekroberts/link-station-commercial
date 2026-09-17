@@ -43,9 +43,9 @@ st.header("Method")
 
 st.markdown(
     f"""
-I project station points from EPSG:4326 to EPSG:32610 (UTM zone 10N) so
-that distance gets measured in meters instead of decimal degrees, then
-buffer each station into four concentric rings at
+To measure distance in meters instead of decimal degrees, I project
+station points from EPSG:4326 to EPSG:32610 (UTM zone 10N), then buffer
+each station into four concentric rings at
 {', '.join(str(e) for e in RING_EDGES_MILES[1:])} miles. Each ring
 subtracts the disc inside it, so a business only falls into one ring per
 station, never double-counted at the same station. Businesses get
@@ -53,7 +53,7 @@ assigned through a spatial join, and I normalize the raw counts by ring
 area to get a density figure (businesses per square mile) instead of a
 raw count that would just reward a bigger ring.
 
-I didn't pick these four distances at random. The rings are meant to
+These four distances weren't picked at random. The rings are meant to
 capture a rider's spontaneous walkable detour off their trip, not just
 physical nearness to the platform. A business sitting at the outer edge
 of ring 4 could still see foot traffic from people walking to or from
@@ -61,8 +61,8 @@ work or home, but that's a commute passing by, not a station-driven
 impulse stop, so I'd expect its benefit from the station specifically to
 have already dropped off compared to the inner rings.
 
-I checked the 0.6 mile outer edge against real walking-trip data rather
-than assuming it. Using the distance-decay parameters Yang and Diez-Roux
+Rather than assuming it, I checked the 0.6 mile outer edge against real
+walking-trip data. Using the distance-decay parameters Yang and Diez-Roux
 (2012) fit to 2009 National Household Travel Survey data, roughly 77% of
 one-way walking trips for meals and 72% for shopping (the closest matches
 to my food-service and retail categories) land at 0.6 miles or less.
