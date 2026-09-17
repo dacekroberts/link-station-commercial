@@ -733,13 +733,13 @@ if CHAIN_STATS_CSV.exists():
         if len(chains) else "—",
     )
 
-    st.markdown("**Table 3: Brands with High Concentration near Link Stations**")
-    chains_display = chains.head(25).rename(columns={
-        "brand": "Brand Name",
-        "station_count": "# of Stations within Proximity",
-        "location_count": "# of Locations within Station Proximity",
-    })
-    st.dataframe(chains_display, use_container_width=True, hide_index=True)
+    with st.expander("Table 4: Brands with High Concentration near Link Stations"):
+        chains_display = chains.head(25).rename(columns={
+            "brand": "Brand Name",
+            "station_count": "# of Stations within Proximity",
+            "location_count": "# of Locations within Station Proximity",
+        })
+        st.dataframe(chains_display, use_container_width=True, hide_index=True)
 
     if CHAIN_RING_STATS_CSV.exists():
         chain_ring = pd.read_csv(CHAIN_RING_STATS_CSV)
@@ -813,7 +813,7 @@ if CHAIN_STATS_CSV.exists():
     )
 
     if CHAIN_RING_STATS_CSV.exists():
-        with st.expander("Table 4: Chain Share Detail by Concentric Ring"):
+        with st.expander("Table 5: Chain Share Detail by Concentric Ring"):
             chain_ring_table = chain_ring.rename(columns={
                 "ring_label": "Ring",
                 "total_matches": "Total Businesses",
