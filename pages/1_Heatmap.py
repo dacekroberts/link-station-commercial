@@ -21,8 +21,11 @@ st.title("Commercial density around station areas")
 
 st.markdown(
     """
-Each point is a licensed business in a storefront category. Circles mark the
-ring boundaries; toggle them in the layer control at the top right.
+Stations are represented by blue dots along the 1 Line (thick green line).
+Circles mark the concentric ring boundaries which can be toggled via layer
+control in the top left. When enabled, business density will display as
+numbered circles summing areas when zoomed out. Zooming in will show
+individual dots, hover over those to see further details.
 
 The heat layer is illustrative. Leaflet applies a visual blur rather than a
 statistical density estimate, so read the colour as "roughly where things

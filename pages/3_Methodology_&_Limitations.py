@@ -107,12 +107,6 @@ Overall, {GEOCODE_OVERALL_RATE:.1%} of businesses got geocoded.
 
 Ridership numbers come from {RIDERSHIP_SOURCE}, {RIDERSHIP_SNAPSHOT},
 exported by hand from the published Power BI dashboard.
-
-Where I use directional ridership estimates, they come from Michael
-Smith, "Ridership Patterns for Link 1 Line," Seattle Transit Blog, 25
-August 2025. Sound Transit provided the underlying per-direction counts
-through a public records request, and the directional split itself is
-Smith's own derived estimate, not an official agency figure.
 """
 )
 
@@ -140,14 +134,6 @@ else:
     st.markdown("*No categories excluded yet.*")
 
 if NAICS_STOREFRONT_REVIEWED_KEPT:
-    st.markdown(
-        "**Reviewed the same way, kept.** Not every catch-all code turned "
-        "out to be a problem. One looked identical in shape to the "
-        "exclusions above, so I checked it anyway, since \"I looked and "
-        "it's fine\" deserves to be written down just as deliberately as "
-        "\"I looked and dropped it,\" rather than letting the category "
-        "just quietly stay in."
-    )
     for code, (label, reason) in NAICS_STOREFRONT_REVIEWED_KEPT.items():
         st.markdown(f"**Kept: {label}** (NAICS `{code}`)")
         st.markdown(reason)
