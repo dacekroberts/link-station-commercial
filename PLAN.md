@@ -27,7 +27,7 @@ The goal is to hit every failure mode while they're cheap.
 - [x] `geopandas.__version__` → 1.1.4; reprojection 4326→32610 verified
 - [x] conda not needed
 - [x] `streamlit run app.py` — all four pages render empty states, no errors
-- [x] `git init` + commits (identity `tykwondo`, repo-local)
+- [x] `git init` + commits (identity `dacekroberts`, repo-local)
 - [x] Downloads in `data/raw/`: GTFS, license CSV, GIS donor geojson, ST GIS
       shapefiles
 - [x] CSV inspected: columns confirmed; **no** status/expiration column

@@ -13,6 +13,21 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-17 — Between sessions
+
+- **GitHub username changed `tykwondo` -> `dacekroberts`** (same account,
+  rename). Updated: repo-local git identity (`user.name`/`user.email` to
+  `dacekroberts` / `49654908+dacekroberts@users.noreply.github.com`, same
+  numeric account ID); the GitHub icon link in `components.py`; historical
+  references in `PLAN.md` and `Sessions 1-7 Context.md`. Since no remote
+  had been pushed yet (Session 9 still pending), all 141 existing local
+  commits were rewritten via `git filter-branch --env-filter` to the new
+  identity as well, rather than leaving old commits under the old name -
+  cleanly safe to do since nothing had gone public. Verified after: commit
+  count unchanged (141), working tree unaffected, single uniform author/
+  committer identity across all history. No content changed, authorship
+  only.
+
 ### 2026-09-15 — Session 8
 
 - **Excluded three corporate food-service contractors (Compass One, Bon
