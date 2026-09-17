@@ -431,7 +431,7 @@ businesses choose to locate.
 """
 )
 
-st.header("What a fuller version would add")
+st.header("What a Fuller Version Would Add")
 
 st.markdown(
     """
