@@ -649,7 +649,7 @@ if STATION_STATS_CSV.exists():
                     alt.Tooltip("z:Q", title="SD from mean", format="+.2f"),
                 ],
             )
-            .properties(height=160)
+            .properties(height=320)
         )
         st.altair_chart(dot_chart, use_container_width=True)
 
