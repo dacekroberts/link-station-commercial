@@ -38,9 +38,9 @@ set_base_font()
 set_sidebar_width()
 render_social_links()
 
-st.title("Methodology & Limitations")
+st.title("Methodology")
 
-st.header("Method")
+st.subheader("Method")
 
 st.markdown(
     f"""
@@ -90,7 +90,7 @@ in the data.
 """
 )
 
-st.header("Data Sources")
+st.subheader("Data Sources")
 
 st.markdown(
     f"""
@@ -115,7 +115,7 @@ exported by hand from the published Power BI dashboard.
 """
 )
 
-st.header("What Was Filtered Out")
+st.subheader("What Was Filtered Out")
 
 st.markdown(
     """
@@ -174,7 +174,7 @@ if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
         "choice\" apart from \"one vendor, many kitchens\" on its own."
     )
 
-st.header("Citations")
+st.subheader("Citations")
 
 st.markdown(
     """
@@ -200,7 +200,13 @@ st.markdown(
     "vol. 43, no. 1, 2012, pp. 11-19."
 )
 
-st.header("Limitations")
+st.divider()
+
+st.markdown(
+    '<h1 style="font-size:44px; font-weight:700; line-height:52.8px; '
+    'margin:0 0 0.5rem 0;">Limitations</h1>',
+    unsafe_allow_html=True,
+)
 
 st.subheader("What \"commercial space\" means here")
 
