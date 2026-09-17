@@ -269,8 +269,13 @@ them survives a follow-up question.
 
 ## Session 9 — Deploy (1 h)
 
+- [x] From-scratch pipeline run (step1 through step5), diffed against
+      committed `outputs/` — DONE 2026-09-17, zero drift. Full detail in
+      `DECISIONS.md` under "Changes."
 - [ ] Push to a public GitHub repo
-- [ ] Confirm `outputs/` is committed and `requirements.txt` is the lean one
+- [x] Confirm `outputs/` is committed and `requirements.txt` is the lean
+      one — confirmed: `outputs/*.csv` and `heatmap.html` are tracked,
+      `requirements.txt` is `streamlit`/`pandas`/`altair` only
 - [ ] Deploy on Streamlit Community Cloud, pointing at `Introduction.py`
 - [ ] Watch the build log. If it fails, it is almost always a dependency that
       leaked into `requirements.txt`
