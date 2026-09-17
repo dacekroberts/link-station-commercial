@@ -24,8 +24,7 @@ st.markdown(
 This page exists so you can see how this project actually got built, not
 just the finished result. A data pipeline looks clean once it's done, but
 this one had real dead ends and real bugs along the way, and I wanted a
-couple of the more interesting ones visible here instead of buried in a
-decisions log.
+couple of the more interesting ones visible here.
 
 The diagram below follows the same five-step pipeline used throughout this
 project, starting from the manual data downloads and ending at the
