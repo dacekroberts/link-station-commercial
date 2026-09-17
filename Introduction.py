@@ -37,7 +37,7 @@ Businesses cluster near transit. In Seattle, much of that clustering
 likely predates the rail itself, as the 1 Line was largely routed through
 neighborhoods, like downtown and Capitol Hill, that already had commercial
 cores, rather than seeding new ones from nothing. Newer stations tell a
-different story — University of Washington, added in 2016, sits at the
+different story: University of Washington, added in 2016, sits at the
 center of campus and hospital land rather than an established retail core
 the line reached. This project measures the resulting density pattern,
 not which came first at each station.
@@ -94,7 +94,7 @@ if STATION_STATS_CSV.exists():
         mid.metric("Businesses within concentric ring area of Link stations", f"{in_rings:,}")
         mid.caption(f"of {citywide:,} citywide ({in_rings / citywide:.1%})")
     else:
-        mid.metric("Businesses within concentric ring area of Link stations", "—")
+        mid.metric("Businesses within concentric ring area of Link stations", "N/A")
     right.metric("Data Retrieved on", LICENSE_SNAPSHOT)
     # Self-contained rather than "the two dates" - no metric above actually
     # shows a ridership figure (only the business-license date does), so a
@@ -144,8 +144,8 @@ of time to afford walking to bus stops from your residence, waiting for
 the bus, and dealing with the traffic's impacts regardless.
 
 As a result, the introduction of the Link rail to the city's transit
-infrastructure — first opened in 2009 and significantly expanded this
-decade — has begun to change that equation. Starting with the subject of
+infrastructure (first opened in 2009 and significantly expanded this
+decade) has begun to change that equation. Starting with the subject of
 this paper, the 1 Line serves the main network servicing the primary
 north-south urban corridor. At the time of writing, the city has already
 expanded into a 2nd line that serves an east-west area connecting the
