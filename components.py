@@ -113,6 +113,36 @@ def set_sidebar_width():
     )
 
 
+def render_sidebar_nav_label():
+    """Small "Pages" label above the sidebar's auto-generated page nav.
+
+    Streamlit builds that nav list itself from the pages/ directory - there's
+    no API to insert a real element above it, so this uses a CSS ::before on
+    the nav container instead. Kept small (12px) on purpose: the nav
+    container itself already starts well below the sidebar's collapse arrow
+    (measured in the live DOM - collapse button bottom at 44px, nav top at
+    76px), so this can't overlap it regardless of size, but a large label
+    would still look heavy sitting above a short page list.
+    """
+    st.markdown(
+        """
+        <style>
+        [data-testid="stSidebarNav"]::before {
+            content: "Pages";
+            display: block;
+            padding: 8px 0 4px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgba(250, 250, 250, 0.5);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_social_links():
     """GitHub/LinkedIn icon links, top-right above the page title.
 

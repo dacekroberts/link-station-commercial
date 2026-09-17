@@ -9,12 +9,18 @@ not hardcoded from memory.
 import streamlit as st
 import streamlit.components.v1 as components
 
-from components import render_social_links, set_base_font, set_sidebar_width
+from components import (
+    render_sidebar_nav_label,
+    render_social_links,
+    set_base_font,
+    set_sidebar_width,
+)
 
 st.set_page_config(page_title="Flowchart", page_icon="🔀", layout="wide")
 
 set_base_font()
 set_sidebar_width()
+render_sidebar_nav_label()
 render_social_links()
 
 st.title("Flowchart")
