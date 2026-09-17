@@ -107,12 +107,28 @@ _FLOWCHART_HTML = f"""
 <script>
   mermaid.initialize({{ startOnLoad: true, theme: "dark", securityLevel: "loose",
     flowchart: {{ useMaxWidth: false, htmlLabels: true }} }});
+
+  // Mermaid renders the SVG async after startOnLoad, so poll for it rather
+  // than hooking a callback - v10's promise-based mermaid.run() API isn't
+  // used here since startOnLoad already triggers its own render pass.
+  // Scaling the SVG's own width/height attributes (not a CSS transform)
+  // shrinks the box it occupies in the page too, so there's no leftover
+  // blank space below the diagram at the smaller size.
+  const _scaleInterval = setInterval(() => {{
+    const svg = document.querySelector(".mermaid svg");
+    if (!svg) return;
+    clearInterval(_scaleInterval);
+    const w = svg.width.baseVal.value;
+    const h = svg.height.baseVal.value;
+    svg.setAttribute("width", w * 0.75);
+    svg.setAttribute("height", h * 0.75);
+  }}, 100);
 </script>
 </body>
 </html>
 """
 
-components.html(_FLOWCHART_HTML, height=1250, scrolling=True)
+components.html(_FLOWCHART_HTML, height=940, scrolling=True)
 
 st.caption(
     "Diagram covers the two most consequential pivots. The full record of "
