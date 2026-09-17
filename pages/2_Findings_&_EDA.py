@@ -171,7 +171,7 @@ if RING_STATS_CSV.exists():
                 alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
-        .properties(height=756, width=900, padding={"bottom": 90})
+        .properties(height=504, width=900, padding={"bottom": 90})
     )
     # Fixed width (not container-filling), capped at 900px deliberately -
     # measured (not guessed) that Streamlit's main content container caps
