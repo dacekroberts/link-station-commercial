@@ -565,14 +565,13 @@ if STATION_STATS_CSV.exists():
         symphony_rank = int(ridership_rank[clean["station"] == "Symphony"].iloc[0])
         pioneer_rank = int(ridership_rank[clean["station"] == "Pioneer Square"].iloc[0])
         st.caption(
-            f"Symphony (ridership rank {symphony_rank} of 16) and Pioneer Square "
-            f"(ridership rank {pioneer_rank} of 16) stand out in the opposite direction "
-            f"from the UW/Northgate mismatch discussed below - {symphony['businesses_within_0_3mi']:.0f} and "
-            f"{pioneer['businesses_within_0_3mi']:.0f} businesses within 0.3mi "
-            "respectively, the 2nd- and 3rd-highest density of all 16 stations despite "
-            "solidly mid-pack ridership. Both are part of the downtown ring-overlap "
-            "cluster already documented in Methodology, so some of that density is "
-            "inflated by buffer overlap rather than purely organic."
+            f"Symphony (rank {symphony_rank}) and Pioneer Square (rank {pioneer_rank}) "
+            f"are the inverse of the UW/Northgate mismatch below - "
+            f"{symphony['businesses_within_0_3mi']:.0f} and "
+            f"{pioneer['businesses_within_0_3mi']:.0f} businesses within 0.3mi, the "
+            "2nd- and 3rd-highest of all 16, despite mid-pack ridership. Both sit in "
+            "the downtown overlap cluster, so some of that density is buffer "
+            "inflation, not purely organic."
         )
 
         st.markdown(
