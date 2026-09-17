@@ -677,7 +677,6 @@ if STATION_STATS_CSV.exists():
             "suggests."
         )
 
-        st.subheader("Coefficient of Variation")
         cv_table = (
             cv_long.groupby("metric")["value"]
             .agg(["mean", "std"])
@@ -686,13 +685,17 @@ if STATION_STATS_CSV.exists():
             .reset_index()
             .rename(columns={"metric": "Metric"})
         )
-        st.dataframe(
-            cv_table.style.format(
-                {"Mean": "{:,.1f}", "Std. Dev.": "{:,.1f}", "CV": "{:.3f}"}
-            ),
-            use_container_width=True,
-            hide_index=True,
-        )
+        with st.expander(
+            "Table 3: Coefficient of Variation for Station Business "
+            "Density and Ridership"
+        ):
+            st.dataframe(
+                cv_table.style.format(
+                    {"Mean": "{:,.1f}", "Std. Dev.": "{:,.1f}", "CV": "{:.3f}"}
+                ),
+                use_container_width=True,
+                hide_index=True,
+            )
         # Quick-glance insight for the table: the CV ratio itself, spelled
         # out as a plain multiple rather than requiring the reader to
         # divide the two CV values themselves.
