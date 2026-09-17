@@ -653,6 +653,30 @@ if STATION_STATS_CSV.exists():
         )
         st.altair_chart(dot_chart, use_container_width=True)
 
+        # Quick-glance insight for the chart itself: where's the biggest
+        # single jump in each metric's sorted z-scores, and who sits past
+        # it. Computed from cv_long, not hardcoded - finds the widest gap
+        # between consecutive sorted stations per metric and names whoever
+        # falls on the far side of it, so this stays accurate if the
+        # underlying data changes rather than naming specific stations by
+        # hand.
+        def _biggest_gap(metric):
+            g = cv_long[cv_long["metric"] == metric].sort_values("z").reset_index(drop=True)
+            gaps = g["z"].diff()
+            idx = gaps.idxmax()
+            return gaps.max(), g.loc[idx:, "station"].tolist()
+
+        biz_gap, biz_outliers = _biggest_gap("Businesses")
+        rid_gap, rid_outliers = _biggest_gap("Ridership")
+        st.caption(
+            f"Businesses' widest gap is {biz_gap:.2f} SD, right before "
+            f"{' and '.join(biz_outliers)} - a sharp break from the rest "
+            f"of the pack, not a gradual climb. Ridership's widest gap is "
+            f"only {rid_gap:.2f} SD, right before {' and '.join(rid_outliers)}, "
+            "consistent with the more even spread its lower CV already "
+            "suggests."
+        )
+
         st.subheader("Coefficient of Variation")
         cv_table = (
             cv_long.groupby("metric")["value"]
@@ -668,6 +692,17 @@ if STATION_STATS_CSV.exists():
             ),
             use_container_width=True,
             hide_index=True,
+        )
+        # Quick-glance insight for the table: the CV ratio itself, spelled
+        # out as a plain multiple rather than requiring the reader to
+        # divide the two CV values themselves.
+        cv_ratio = cv_table.set_index("Metric").loc["Businesses", "CV"] / (
+            cv_table.set_index("Metric").loc["Ridership", "CV"]
+        )
+        st.caption(
+            f"Businesses' CV is {cv_ratio:.1f}x Ridership's - proportionally, "
+            "not just in absolute terms, businesses cluster far more "
+            "unevenly across these sixteen stations than ridership does."
         )
     else:
         st.info(
