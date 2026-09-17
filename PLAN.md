@@ -267,20 +267,27 @@ them survives a follow-up question.
 
 ---
 
-## Session 9 — Deploy (1 h)
+## Session 9 — Deploy (1 h) — DONE 2026-09-17
 
 - [x] From-scratch pipeline run (step1 through step5), diffed against
       committed `outputs/` — DONE 2026-09-17, zero drift. Full detail in
       `DECISIONS.md` under "Changes."
-- [ ] Push to a public GitHub repo
+- [x] Push to a public GitHub repo — DONE 2026-09-17:
+      github.com/dacekroberts/link-station-commercial, 167 commits
 - [x] Confirm `outputs/` is committed and `requirements.txt` is the lean
       one — confirmed: `outputs/*.csv` and `heatmap.html` are tracked,
       `requirements.txt` is `streamlit`/`pandas`/`altair` only
-- [ ] Deploy on Streamlit Community Cloud, pointing at `Introduction.py`
-- [ ] Watch the build log. If it fails, it is almost always a dependency that
-      leaked into `requirements.txt`
-- [ ] Open every page on the deployed URL
-- [ ] Add the link to the repo description
+- [x] Deploy on Streamlit Community Cloud, pointing at `Introduction.py`
+      — DONE, live at link-station-commercial-daceroberts.streamlit.app
+- [x] Watch the build log. If it fails, it is almost always a dependency that
+      leaked into `requirements.txt` — clean build, no errors, dependencies
+      resolved (Streamlit Cloud auto-downgraded pyarrow 25.0.1 -> 24.0.1
+      for a known segfault, unrelated to anything in this project)
+- [x] Open every page on the deployed URL — all 5 pages checked live, zero
+      exceptions, heatmap and Mermaid flowchart (CDN-loaded JS) both
+      confirmed rendering correctly
+- [x] Add the link to the repo description — added as the repo's Website
+      field on GitHub
 
 ---
 
