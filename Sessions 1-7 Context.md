@@ -24,11 +24,12 @@ work throughout, not just code.
 
 ## Who's who
 
-- User: `dacekroberts@gmail.com`, GitHub `tykwondo`. Git identity is
-  **repo-local**, not global: `tykwondo` /
-  `49654908+tykwondo@users.noreply.github.com` (a GitHub noreply address,
-  chosen deliberately so commits attribute to the account with zero personal
-  email exposed in history).
+- User: `dacekroberts@gmail.com`, GitHub `dacekroberts` (renamed from
+  `tykwondo` on 2026-09-17; all local commit history rewritten to match -
+  see `DECISIONS.md`). Git identity is **repo-local**, not global:
+  `dacekroberts` / `49654908+dacekroberts@users.noreply.github.com` (a
+  GitHub noreply address, chosen deliberately so commits attribute to the
+  account with zero personal email exposed in history).
 - Repo: `C:\Users\dacek\Documents\Portfolio\link-station-commercial`, git
   initialized Session 1, on `main`, no remote yet (Session 9 territory).
 
