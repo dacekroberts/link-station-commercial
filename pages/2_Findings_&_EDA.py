@@ -504,6 +504,93 @@ if STATION_STATS_CSV.exists():
                 "may limit how tightly a linear relationship can fit."
             )
 
+            # Graph 5: the same "density concentrates more than ridership"
+            # point above, but across the whole sample rather than just the
+            # min/max extremes. Dot plot, not a strip plot - simulated both
+            # first (see DECISIONS.md): a strip plot's jitter is random and
+            # carries no information of its own, while a dot plot's stack
+            # height is a deterministic count a reader can actually trust.
+            # "Businesses" is used as the category label here, not
+            # "Density" - this section's businesses_within_0_3mi is a raw
+            # count, not the gradient section's businesses-per-square-mile
+            # density figure, and reusing "density" for a different metric
+            # would blur two distinct numbers this project has otherwise
+            # been careful to keep separate.
+            cv_long = pd.concat([
+                clean[["station", "businesses_within_0_3mi"]]
+                .rename(columns={"businesses_within_0_3mi": "value"})
+                .assign(metric="Businesses"),
+                clean[["station", col]]
+                .rename(columns={col: "value"})
+                .assign(metric="Ridership"),
+            ], ignore_index=True)
+            cv_long["z"] = cv_long.groupby("metric")["value"].transform(
+                lambda s: (s - s.mean()) / s.std()
+            )
+            cv_long["bin"] = (cv_long["z"] / 0.28).round() * 0.28
+            cv_long = cv_long.sort_values(["metric", "bin", "z"])
+            cv_long["stack_order"] = cv_long.groupby(["metric", "bin"]).cumcount()
+
+            st.markdown(
+                "**Graph 5: Businesses & Ridership Spread "
+                "(Standard Deviations from Mean)**"
+            )
+            with st.popover("How to read this chart"):
+                st.markdown(
+                    "Each dot is one of the sixteen stations. The x-axis "
+                    "measures how far that station's value sits from the "
+                    "average for its own metric, in standard deviations - "
+                    "a rough gauge of \"typical\" (near 0, the middle) "
+                    "versus \"unusually high or low\" (far from 0) for that "
+                    "metric specifically. When several stations land close "
+                    "to the same value, their dots stack vertically "
+                    "instead of overlapping, so a tall stack means many "
+                    "stations cluster there, and a lone dot far out means "
+                    "that station is a real outlier, not just noise."
+                )
+            dot_chart = (
+                alt.Chart(cv_long)
+                .mark_circle(opacity=0.85, size=90)
+                .encode(
+                    x=alt.X("bin:Q", title="Standard deviations from mean"),
+                    y=alt.Y("metric:N", title=None),
+                    yOffset=alt.YOffset(
+                        "stack_order:Q", scale=alt.Scale(range=[6, -60])
+                    ),
+                    color=alt.Color(
+                        "metric:N",
+                        legend=None,
+                        scale=alt.Scale(
+                            domain=["Businesses", "Ridership"],
+                            range=["#4c78a8", "#eb6834"],
+                        ),
+                    ),
+                    tooltip=[
+                        alt.Tooltip("station:N", title="Station"),
+                        alt.Tooltip("z:Q", title="SD from mean", format="+.2f"),
+                    ],
+                )
+                .properties(height=160)
+            )
+            st.altair_chart(dot_chart, use_container_width=True)
+
+            st.subheader("Coefficient of Variation")
+            cv_table = (
+                cv_long.groupby("metric")["value"]
+                .agg(["mean", "std"])
+                .assign(cv=lambda d: d["std"] / d["mean"])
+                .rename(columns={"mean": "Mean", "std": "Std. Dev.", "cv": "CV"})
+                .reset_index()
+                .rename(columns={"metric": "Metric"})
+            )
+            st.dataframe(
+                cv_table.style.format(
+                    {"Mean": "{:,.1f}", "Std. Dev.": "{:,.1f}", "CV": "{:.3f}"}
+                ),
+                use_container_width=True,
+                hide_index=True,
+            )
+
         st.markdown(
             """
             **TODO — write this up.** Whatever the correlation, the access-mode
