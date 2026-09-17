@@ -44,9 +44,13 @@ st.header("Method")
 
 st.markdown(
     f"""
-To measure distance in meters instead of decimal degrees, I project
-station points from EPSG:4326 to EPSG:32610 (UTM zone 10N), then buffer
-each station into four concentric rings at
+Station coordinates come out of the GTFS feed as latitude/longitude in
+EPSG:4326, the standard coordinate system GPS data uses, measured in
+degrees. To measure distance in meters instead of degrees, I project
+those points to EPSG:32610 (UTM zone 10N), a coordinate system built for
+this part of the Pacific Northwest that measures in meters instead.
+
+Then I buffer each station into four concentric rings at
 {', '.join(str(e) for e in RING_EDGES_MILES[1:])} miles. Each ring
 subtracts the disc inside it, so a business only falls into one ring per
 station, never double-counted at the same station. Businesses get
