@@ -43,40 +43,45 @@ st.header("Method")
 
 st.markdown(
     f"""
-Station points are projected from EPSG:4326 to EPSG:32610 (UTM zone 10N)
-so that distances are measured in metres, then buffered into concentric
-annuli at {', '.join(str(e) for e in RING_EDGES_MILES[1:])} miles. Each ring
-subtracts the disc inside it, so a business falls in exactly one ring per
-station. Businesses are assigned by spatial join, and counts are normalised
-by ring area to give density per square mile.
+I project station points from EPSG:4326 to EPSG:32610 (UTM zone 10N) so
+that distance gets measured in meters instead of decimal degrees, then
+buffer each station into four concentric rings at
+{', '.join(str(e) for e in RING_EDGES_MILES[1:])} miles. Each ring
+subtracts the disc inside it, so a business only falls into one ring per
+station, never double-counted at the same station. Businesses get
+assigned through a spatial join, and I normalize the raw counts by ring
+area to get a density figure (businesses per square mile) instead of a
+raw count that would just reward a bigger ring.
 
-**Why these particular distances.** The rings are meant to capture a
-*spontaneous* walkable detour off a rider's trip, not just physical
-nearness — a business at the outer edge may still see foot traffic from
-people walking to or from work or home, but that traffic is a commute
-passing by, not a station-driven impulse stop, so its benefit from the
-station specifically is expected to have already fallen off relative to
-the inner rings.
+I didn't pick these four distances at random. The rings are meant to
+capture a rider's spontaneous walkable detour off their trip, not just
+physical nearness to the platform. A business sitting at the outer edge
+of ring 4 could still see foot traffic from people walking to or from
+work or home, but that's a commute passing by, not a station-driven
+impulse stop, so I'd expect its benefit from the station specifically to
+have already dropped off compared to the inner rings.
 
-The 0.6-mile outer edge is checked, not assumed, against purpose-matched
-national walking-trip data: using the distance-decay parameters fitted by
-Yang and Diez-Roux (2012) to 2009 National Household Travel Survey data,
-roughly 77% of one-way walking trips for *meals* and 72% for *shopping* —
-the closest matches to this project's food-service and retail categories —
-are 0.6 miles or less. Recreation, the longest-distance purpose in that
-study, is the outlier at only ~50% within 0.6 miles, which is the pattern
-this project needed to see, not a convenient coincidence of picking a
-lenient category. This is general U.S. walking behavior, not a study of
-transit riders in Seattle specifically, so it supports the ring choice
-rather than proving it.
+I checked the 0.6 mile outer edge against real walking-trip data rather
+than assuming it. Using the distance-decay parameters Yang and Diez-Roux
+(2012) fit to 2009 National Household Travel Survey data, roughly 77% of
+one-way walking trips for meals and 72% for shopping (the closest matches
+to my food-service and retail categories) land at 0.6 miles or less.
 
-The same study is also part of why this project uses four tiers rather
-than a single cutoff: it found that 65% of U.S. walking trips exceed the
-0.25-mile distance conventionally assumed as the maximum in transportation
-planning, arguing against relying on one flat threshold at all. A single
-ring would have collapsed whatever internal structure exists between the
-platform and the outer edge into one undifferentiated number, rather than
-letting a gradient — or a departure from one — show up in the data at all.
+Recreation, the longest-distance purpose in that study, is the outlier at
+only about 50% within 0.6 miles, which is the pattern I needed to see,
+not a convenient coincidence of picking a lenient category on purpose.
+This is general U.S. walking behavior though, not a study of Seattle
+transit riders specifically, so it supports my ring choice rather than
+proving it outright.
+
+The same study is part of the reason I used four tiers instead of one
+flat cutoff. It found that 65% of U.S. walking trips exceed the 0.25 mile
+distance conventionally assumed as the max in transportation planning,
+which argues against relying on a single threshold at all. One ring
+alone would have collapsed whatever structure actually exists between
+the platform and the outer edge into a single undifferentiated number,
+instead of letting a gradient, or a departure from one, actually show up
+in the data.
 """
 )
 
@@ -84,30 +89,30 @@ st.header("Data Sources")
 
 st.markdown(
     f"""
-**Station locations** — GTFS feed from Sound Transit's Open Transit Data
-downloads. Station coordinates come from `stops.txt`, filtered to 1 Line
-stops within Seattle city limits. Platforms sharing a station name are
-averaged to a single point.
+Station locations come from Sound Transit's Open Transit Data GTFS feed.
+I pulled station coordinates from `stops.txt`, filtered down to 1 Line
+stops within Seattle city limits, and averaged platforms that share a
+station name into a single point.
 
-**Commercial spaces** — {LICENSE_SOURCE}, downloaded {LICENSE_SNAPSHOT}.
-Filtered to NAICS prefixes {', '.join(NAICS_STOREFRONT_PREFIXES)}
-(retail, food service, personal services). Addresses geocoded in two passes:
-a join against the City's own GIS geometry by account number matched
-{GEOCODE_DONOR_RATE:.1%} of businesses ({GEOCODE_DONOR_MATCHED:,} of
-{GEOCODE_DONOR_MATCHED + GEOCODE_CENSUS_REMAINDER:,}) directly; the
-remaining {GEOCODE_CENSUS_REMAINDER:,} went to the U.S. Census Bureau bulk
-geocoder, which matched {GEOCODE_CENSUS_RATE:.1%} of those
-({GEOCODE_CENSUS_MATCHED:,} of {GEOCODE_CENSUS_REMAINDER:,}). Overall:
-{GEOCODE_OVERALL_RATE:.1%} of businesses geocoded.
+Commercial spaces come from {LICENSE_SOURCE}, downloaded {LICENSE_SNAPSHOT}.
+I filtered to NAICS prefixes {', '.join(NAICS_STOREFRONT_PREFIXES)} to
+capture retail, food service, and personal services. Addresses were
+geocoded in two passes: a join against the City's own GIS geometry by
+account number matched {GEOCODE_DONOR_RATE:.1%} of businesses
+({GEOCODE_DONOR_MATCHED:,} of {GEOCODE_DONOR_MATCHED + GEOCODE_CENSUS_REMAINDER:,})
+directly, and the remaining {GEOCODE_CENSUS_REMAINDER:,} went through the
+U.S. Census Bureau's bulk geocoder, which matched {GEOCODE_CENSUS_RATE:.1%}
+of those ({GEOCODE_CENSUS_MATCHED:,} of {GEOCODE_CENSUS_REMAINDER:,}).
+Overall, {GEOCODE_OVERALL_RATE:.1%} of businesses got geocoded.
 
-**Ridership** — {RIDERSHIP_SOURCE}, {RIDERSHIP_SNAPSHOT}, exported by hand
-from the published Power BI dashboard.
+Ridership numbers come from {RIDERSHIP_SOURCE}, {RIDERSHIP_SNAPSHOT},
+exported by hand from the published Power BI dashboard.
 
-**Directional ridership** — where used, directional estimates come from
-Michael Smith, "Ridership Patterns for Link 1 Line," Seattle Transit Blog,
-25 August 2025. The underlying per-direction counts were obtained from
-Sound Transit by public records request; the directional split is the
-authors' derived estimate, not an agency figure.
+Where I use directional ridership estimates, they come from Michael
+Smith, "Ridership Patterns for Link 1 Line," Seattle Transit Blog, 25
+August 2025. Sound Transit provided the underlying per-direction counts
+through a public records request, and the directional split itself is
+Smith's own derived estimate, not an official agency figure.
 """
 )
 
@@ -115,21 +120,21 @@ st.header("What Was Filtered Out")
 
 st.markdown(
     """
-The NAICS prefix filter above is broad by design — it is meant to catch
-retail, food service, and personal services in one pass, not to hand-pick
-categories. That breadth pulls in a few things that don't belong for
-specific reasons, including a couple of NAICS "catch-all" codes (labelled
-"All Other...") broad enough that they needed a closer look before deciding
-either way. Rather than narrow the prefix list itself — and lose categories
-it correctly keeps — individual NAICS codes are excluded one at a time, each
-with its reasoning recorded here so the choice is checkable rather than
-silent.
+I kept the NAICS prefix filter above broad on purpose. It's meant to
+catch retail, food service, and personal services in one pass rather
+than hand-picking categories one at a time. That breadth pulls in a few
+things that don't really belong, including a couple of NAICS
+"catch-all" codes (labeled "All Other...") that were broad enough to
+need a closer look before I could decide either way. Instead of
+narrowing the prefix list itself, which would risk losing categories it
+correctly keeps, I excluded individual NAICS codes one at a time, with
+my reasoning recorded here so the choice is checkable instead of silent.
 """
 )
 
 if NAICS_STOREFRONT_EXCLUDE:
     for code, (label, reason) in NAICS_STOREFRONT_EXCLUDE.items():
-        st.markdown(f"**Excluded — {label}** (NAICS `{code}`)")
+        st.markdown(f"**Excluded: {label}** (NAICS `{code}`)")
         st.markdown(reason)
 else:
     st.markdown("*No categories excluded yet.*")
@@ -137,39 +142,45 @@ else:
 if NAICS_STOREFRONT_REVIEWED_KEPT:
     st.markdown(
         "**Reviewed the same way, kept.** Not every catch-all code turned "
-        "out to be a problem — one looked identical in shape to the "
-        "exclusions above and was checked anyway, precisely so \"we looked "
-        "and it's fine\" is recorded as deliberately as \"we looked and "
-        "dropped it,\" rather than the category just quietly staying in."
+        "out to be a problem. One looked identical in shape to the "
+        "exclusions above, so I checked it anyway, since \"I looked and "
+        "it's fine\" deserves to be written down just as deliberately as "
+        "\"I looked and dropped it,\" rather than letting the category "
+        "just quietly stay in."
     )
     for code, (label, reason) in NAICS_STOREFRONT_REVIEWED_KEPT.items():
-        st.markdown(f"**Kept — {label}** (NAICS `{code}`)")
+        st.markdown(f"**Kept: {label}** (NAICS `{code}`)")
         st.markdown(reason)
 
 if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
     st.markdown(
-        "**A separate, narrower exclusion — chain analysis only, not "
-        "density.** These are real businesses. Nothing about their "
-        "filtering, geocoding, or counting was wrong, and they still "
-        "count fully toward the density, gradient, and ridership figures "
-        "elsewhere on this site. They worked their way into apparent "
-        "relevance for one specific piece of analysis — which brands "
-        "cluster near stations — for a reason that has nothing to do "
-        "with transit: each is a corporate food-service **contractor** "
-        "(NAICS `722310`, \"Food Service Contractors\"), not an "
-        "independent chain. One vendor operating cafeterias inside "
-        "however many buildings its client company occupies looks "
-        "identical, in a brand-name count, to a coffee chain that made "
-        "eight separate real-estate decisions to be near a platform — "
-        "but it isn't the same kind of \"chain,\" and averaging it in "
-        "would credit one company's office-campus footprint as evidence "
-        "about transit-adjacency site selection. This is a limitation of "
-        "the approach, not an error in it: name-based brand grouping "
-        "cannot distinguish \"repeated deliberate choice\" from \"one "
-        "vendor, many kitchens\" on its own."
+        "**A separate, narrower exclusion: chain analysis only, not "
+        "density.** These are real "
+        "businesses, and nothing about how I filtered, geocoded, or "
+        "counted them was wrong; they still count fully toward the "
+        "density, gradient, and ridership figures everywhere else on "
+        "this site. They only became a problem for one specific piece "
+        "of analysis, which brands cluster near stations, and for a "
+        "reason that has nothing to do with transit."
+    )
+    st.markdown(
+        "Each one is a corporate food-service **contractor** (NAICS "
+        "`722310`, \"Food Service Contractors\"), not an independent "
+        "chain. One vendor running cafeterias inside however many "
+        "buildings its client company occupies looks identical, in a "
+        "brand-name count, to a coffee chain that made eight separate "
+        "real-estate decisions to be near a platform, but it isn't the "
+        "same kind of \"chain.\""
+    )
+    st.markdown(
+        "Averaging it in would credit one company's office-campus "
+        "footprint as evidence about transit-adjacency site selection. "
+        "This is a limitation of the approach rather than an error in "
+        "it: name-based brand grouping can't tell \"repeated deliberate "
+        "choice\" apart from \"one vendor, many kitchens\" on its own."
     )
     for brand, (label, reason) in CHAIN_ANALYSIS_EXCLUDE_BRANDS.items():
-        st.markdown(f"**Excluded from chain analysis — {label}**")
+        st.markdown(f"**Excluded from chain analysis: {label}**")
         st.markdown(reason)
 
 st.header("Citations")
@@ -177,9 +188,9 @@ st.header("Citations")
 st.markdown(
     """
 A few claims on this page lean on outside research, not just this
-project's own data — cited here in full; referenced by author and year
-where they're used above. Not every source below is cited inline yet —
-one is background reading that shaped how this project's author thinks
+project's own data. They're cited here in full, and referenced by
+author and year wherever they're used above. Not every source below is
+cited inline yet. One is background reading that shaped how I think
 about the subject, kept on record for a future write-up rather than
 backing a specific claim today.
 """
@@ -204,31 +215,35 @@ st.subheader("What \"commercial space\" means here")
 
 st.markdown(
     f"""
-Business license records are a registry of legal entities, not a survey of
-storefronts. Home-based sole proprietors and businesses listed at
-registered-agent addresses appear identically to physical retail; the NAICS
-filter reduces this but does not eliminate it.
+Business license records are a registry of legal entities, not a survey
+of storefronts. Home-based sole proprietors and businesses listed at
+registered-agent addresses show up identically to physical retail in
+this data. The NAICS filter reduces that problem, but it doesn't
+eliminate it.
 
 Each record is a point, not a footprint. An office tower and a food cart
-count as one apiece, so these figures measure establishment counts rather
-than commercial floor area.
+both count as one apiece, so these figures are measuring establishment
+counts, not commercial floor area.
 
-Geocoding failures are not randomly distributed — addresses with unusual
-formatting fail more often, and those may differ systematically from
-addresses that match cleanly. Two sources are stacked here: a business
-missing from the GIS donor layer isn't necessarily a hard address — it may
-simply postdate that snapshot, or not have carried over for an unrelated
-reason — but the City's layer only includes businesses it successfully
-geocoded, so donor-absence could also skew toward the same hard-to-place
-addresses Census then struggles with. The {GEOCODE_TOTAL_FAILED} businesses
-({GEOCODE_FAILED_RATE:.1%}) that failed both passes are too few to
-characterise confidently, but are unlikely to be a random sample of the
-whole.
+Geocoding failures aren't randomly distributed. Addresses with unusual
+formatting fail more often, and those addresses might differ
+systematically from the ones that match cleanly. Two sources stack on
+top of each other here: a business missing from the GIS donor layer
+isn't necessarily a hard address to place, it could just postdate that
+snapshot or not have carried over for some unrelated reason, but the
+City's layer only includes businesses it successfully geocoded in the
+first place, so donor-absence could still skew toward the same
+hard-to-place addresses that then trip up Census too.
 
-**On survival.** This export contains only currently-active licenses — there
-is no status or expiration column, confirmed by inspection (Session 1).
-Survival rates cannot be computed: there is no record of businesses that
-closed, and therefore no denominator. Tenure figures describe the
+The {GEOCODE_TOTAL_FAILED} businesses ({GEOCODE_FAILED_RATE:.1%}) that
+failed both passes are too small a group to characterize with any
+confidence, but I doubt they're a random sample of the whole.
+
+**On survival.** This export only contains currently active licenses.
+There's no status or expiration column, which I confirmed by inspection
+back in Session 1. That means survival rates can't be computed at all,
+since there's no record of businesses that closed and therefore no
+denominator to work with. The tenure figures on this site describe the
 distribution among survivors, not survival itself.
 """
 )
@@ -237,49 +252,55 @@ st.subheader("Ridership as a foot-traffic proxy")
 
 st.markdown(
     """
-Counts derive from Automatic Passenger Counters on the trains, which
-register door passages rather than unique riders. Transfers are counted more
-than once.
+Counts come from Automatic Passenger Counters on the trains, which
+register door passages rather than unique riders, so transfers get
+counted more than once.
 
-Boardings measure departures, not arrivals. For a customer-arrival proxy
-alightings are conceptually closer, though at most stations the two are
-similar over a full day since riders make round trips.
+Boardings measure departures, not arrivals. Alightings would be
+conceptually closer to a customer-arrival proxy, though at most stations
+the two end up similar over a full day since most riders make round
+trips anyway.
 
-**The boardings figure used here includes weekends**, deliberately, not by
-default. It is each station's average monthly total (twelve months of 2025,
-averaged), not the "average weekday boardings" figure transit agencies more
-commonly report. That choice cuts both ways: weekday ridership is
-disproportionately commute-driven — passing through on the way to a job, not
-stopping to shop — so a weekday-only figure would arguably *understate*
-pedestrian exposure to the storefronts this analysis counts. Including
-weekends better matches the discretionary, retail-adjacent trips this
-project cares about, at the cost of not being directly comparable to
-published "average weekday boardings" figures elsewhere. A same-shaped
-"average daily boardings" figure also appears on Sound Transit's dashboard
-(also weekend-inclusive) but was not transcribed. It is not a simple
-derivation of the monthly total — checked directly against all 192
-station-months, it matches neither `total ÷ calendar days` nor
-`total ÷ weekdays` (off by roughly +9% and −22% respectively, on average),
-so Sound Transit is applying some service-day weighting of its own. What
-was checked instead: averaged to one figure per station across 2025, the
-two metrics correlate at **r = 0.998** across the sixteen stations. For a
-cross-station comparison, which is what this analysis does, that is close
-enough to redundant that transcribing both would not have changed anything
-— confirmed empirically, not assumed.
+**The boardings figure I use here includes weekends on purpose**, not by
+default. It's each station's average monthly total across all twelve
+months of 2025, not the "average weekday boardings" figure transit
+agencies more commonly report. That choice cuts both ways. Weekday
+ridership is disproportionately commute-driven, people passing through
+on the way to a job rather than stopping to shop, so a weekday-only
+figure would arguably understate pedestrian exposure to the storefronts
+I'm counting here.
 
-**Access mode is the substantive problem.** A large share of riders at some
-stations arrive by car or connecting bus and board directly. Much of
-Northgate's ridership transfers in from the adjacent transit center, for
-example. Those passengers never pass a storefront. Ridership therefore
-overstates pedestrian exposure at park-and-ride and transfer-heavy stations
-and understates it at walk-up stations.
+Including weekends better matches the discretionary, retail-adjacent
+trips this project actually cares about, at the cost of not being
+directly comparable to the "average weekday boardings" figures published
+elsewhere. Sound Transit's own dashboard shows a similarly shaped
+"average daily boardings" figure (also weekend-inclusive), but I didn't
+transcribe it.
 
-**On directional figures.** Sound Transit's raw per-direction data has no
-expansion method applied and does not reconcile with published totals.
-Seattle Transit Blog found the discrepancy large enough to conclude the file
-captures only a subset of trips, and used it for directional ratios while
-taking absolute counts from the official dashboard. This project follows the
-same convention.
+It isn't a simple derivation of the monthly total either; checked
+directly against all 192 station-months, it matches neither
+`total ÷ calendar days` nor `total ÷ weekdays` (off by roughly +9% and
+-22% respectively, on average), so Sound Transit is applying some
+service-day weighting of its own. What I did check: averaged to one
+figure per station across 2025, the two metrics correlate at
+**r = 0.998** across the sixteen stations. For a cross-station
+comparison, which is what this analysis does, that's close enough to
+redundant that transcribing both wouldn't have changed anything. I
+confirmed that empirically rather than just assuming it.
+
+**Access mode is the bigger problem.** A large share of riders at some
+stations arrive by car or a connecting bus and board directly, never
+passing a storefront. Much of Northgate's ridership, for example,
+transfers in from the adjacent transit center. So ridership overstates
+pedestrian exposure at park-and-ride and transfer-heavy stations, and
+understates it at walk-up stations.
+
+**On directional figures.** Sound Transit's raw per-direction data has
+no expansion method applied to it and doesn't reconcile with the
+published totals. Seattle Transit Blog found the discrepancy large
+enough to conclude the file only captures a subset of trips, and used it
+for directional ratios while pulling absolute counts from the official
+dashboard instead. I followed the same convention here.
 """
 )
 
@@ -287,25 +308,27 @@ st.subheader("Temporal misalignment")
 
 st.markdown(
     f"""
-Ridership reflects {RIDERSHIP_SNAPSHOT}; business license data reflects a
-single snapshot on {LICENSE_SNAPSHOT}. Two gaps follow from that, not one.
+Ridership reflects {RIDERSHIP_SNAPSHOT}, and business license data
+reflects a single snapshot from {LICENSE_SNAPSHOT}. That mismatch
+creates two separate gaps, not just one.
 
-First, the twelve months averaged into the ridership figure are not
-evenly comparable to each other: the Federal Way extension opened in late
-2025, so the ridership window itself may span a system change rather than
-sit entirely before or after one. Averaging smooths month-to-month noise,
-but it can also blend two different network configurations into one number.
+First, the twelve months I averaged into the ridership figure aren't
+evenly comparable to each other. The Federal Way extension opened in
+late 2025, so the ridership window itself might span a system change
+instead of sitting entirely before or after one. Averaging smooths out
+month-to-month noise, but it can also blend two different network
+configurations into a single number without showing that it did.
 
-Second, the license snapshot postdates the full ridership window by roughly
-nine months, and the full East Link extension completed in 2026 — entirely
-after the ridership period this analysis uses — allowing riders travelling
-between stations north of International District/Chinatown to take either
-line. That's expected to reduce 1 Line counts without any change in
-underlying travel demand.
+Second, the license snapshot comes roughly nine months after the
+ridership window ends, and the full East Link extension finished in
+2026, entirely after the ridership period I'm using here. That
+extension lets riders traveling between stations north of International
+District/Chinatown take either line now, which I'd expect to reduce 1
+Line counts without any real change in underlying travel demand.
 
-Station-level ridership from 2025 may therefore misstate current (2026)
-conditions, particularly downtown and at the south end. Figures are
-labelled with their snapshot date wherever they appear.
+Station-level ridership from 2025 could therefore misstate current, 2026
+conditions, especially downtown and at the south end. I've labeled
+figures with their snapshot date wherever they appear on this site.
 """
 )
 
@@ -313,67 +336,81 @@ st.subheader("Spatial interpretation")
 
 st.markdown(
     f"""
-Buffers are straight-line radii, not walksheds. Seattle's terrain makes this
-consequential: I-5, the Montlake Cut, and steep grades near Beacon Hill and
-Rainier Beach put part of each circle out of walking reach. Reported density
-is therefore lower than the density a pedestrian actually encounters. This is
-a recognized gap in the transportation-research literature too, not just an
-issue specific to this project's data — Yang and Diez-Roux (2012) note that
-most travel datasets record only trip start and end points, not the route
-actually walked, and that street-network distance is the more accurate but
-rarely available alternative to straight-line distance.
+My buffers are straight-line radii, not actual walksheds, and Seattle's
+terrain makes that a real problem here. I-5, the Montlake Cut, and the
+steep grades near Beacon Hill and Rainier Beach all put part of each
+circle out of walking reach. That means the density figures I report are
+lower than the density a pedestrian would actually encounter on foot.
+This isn't just an issue with my own data either; it's a recognized gap
+in the transportation-research literature. Yang and Diez-Roux (2012)
+note that most travel datasets only record trip start and end points,
+not the route someone actually walked, and that street-network distance
+is the more accurate alternative to straight-line distance, just rarely
+available.
 
-Buffers around {', '.join(DOWNTOWN_CLUSTER)} overlap. Businesses in the
-overlap are counted for each station, inflating downtown density relative to
-isolated stations. This is disclosed rather than corrected: assigning each
-business to its nearest station would understate how many stations genuinely
-serve a downtown block. The overlap is not a marginal effect: of the 4,116
-businesses that fall within any station's ring at all, **1,767 (42.9%)**
-are claimed by more than one station's ring set — computed directly from
-the spatial join, not estimated.
+Buffers around {', '.join(DOWNTOWN_CLUSTER)} overlap each other. A
+business sitting in that overlap gets counted for every station whose
+buffer reaches it, which inflates downtown density relative to more
+isolated stations. I'm disclosing this rather than correcting it,
+because assigning each business to only its nearest station would
+understate how many stations genuinely serve a downtown block. This
+isn't a marginal effect either: of the 4,116 businesses that fall within
+any station's ring at all, **1,767 (42.9%)** are claimed by more than
+one station's ring set. That's computed directly from the spatial join,
+not estimated.
 
-**That same overlap distorts the chain analysis more severely, and was
-corrected there rather than merely disclosed.** A single physical location
-inside the four-station overlap can touch multiple stations on its own —
-verified by hand: a one-location shop with no other branches showed up
-"present at 4 stations," indistinguishable from a real chain. Checked
-across every normalized brand, **1,589 of 3,903 (41%)** touch more than one
-station from exactly one physical location. Defining "chain" as
-`station_count > 1` — the first version of this analysis — would have
-reported **45.7%** of locations as chains; correctly requiring 2+ real
-locations puts the true figure at **8.9%** (155 brands). The chain
-statistics used throughout this project require `location_count >= 2`,
-never station count alone.
+**That same overlap distorts the chain analysis even more severely, and
+I corrected it there instead of just disclosing it.** A single physical
+location inside the four-station overlap can touch multiple stations
+all on its own. I verified this by hand: a one-location shop with no
+other branches showed up as "present at 4 stations," indistinguishable
+from an actual chain.
 
-**Brand matching is exact, not fuzzy — a real limitation of this kind of
-project, not just this one.** Name normalization catches most chains, but
-formatting variants (spacing, punctuation) of the same brand can still
-land on two different keys unless caught by hand — as happened here with
-"Rudy's Barbershop" and "Molly Moon's Homemade Ice Cream," patched as a
-small known-case lookup, not a general fix. The chain-share figures above
-are therefore a **lower bound**, not an exact count. A fuzzy-matching pass
-(e.g. `rapidfuzz`) could close some of that gap, at the cost of needing
-every match checked by hand.
+Checking across every normalized brand, **1,589 of 3,900 (40.7%)** touch
+more than one station from exactly one physical location. Defining
+"chain" as `station_count > 1`, which is what the first version of this
+analysis did, would have reported **45.5%** of locations as chains.
+Correctly requiring 2+ real locations instead puts the true figure at
+**8.5% (152 brands)**. Every chain statistic used throughout this
+project requires `location_count >= 2`, never station count alone.
 
-Ring boundaries are analyst-chosen. Different cutpoints would produce a
-different gradient.
+**Brand matching in this project is exact, not fuzzy**, which is a real
+limitation of this kind of approach generally, not just something
+specific to my project. Name normalization catches most chains, but
+formatting variants like spacing or punctuation on the same brand can
+still land on two different keys unless I catch them by hand. That
+happened here with "Rudy's Barbershop" and "Molly Moon's Homemade Ice
+Cream," which I patched with a small known-case lookup rather than a
+general fix. So the chain-share figures on this site are a **lower
+bound**, not an exact count. A fuzzy-matching pass, using something like
+`rapidfuzz`, could close some of that gap, but at the cost of needing
+every match checked by hand afterward.
 
-**Station points are an average of two platforms, not a single focal point.**
-Northbound and southbound platforms are recorded separately in the GTFS feed
-and collapsed to one coordinate per station. The offset between a platform
-and that averaged point ranges from 14 m (Capitol Hill) to 72 m (Columbia
-City) across the sixteen stations, averaging 48 m. Against the innermost
-ring's 161 m width (0.1 mile), that is not negligible: a business near the
-inner-ring boundary could fall in a different ring depending on whether the
-averaged point or a single platform is used as the reference. It matters less
-for the outer rings — 48 m against a 483 m radius (0.3 mile) is a small
-fraction — so the effect is concentrated in the finest-grained comparison.
+Ring boundaries are choices I made as the analyst. Different cutpoints
+would produce a different gradient.
 
-**Station siting is not random.** Link was routed through corridors that
-were already commercially active, so proximity and density are partly
-co-determined. Rainier Beach shows the reverse case: the neighbourhood's
-commercial centre sits several blocks from the platform, so the buffer
-captures less activity than the neighbourhood contains.
+**Station points here are an average of two platforms, not a single
+focal point.** Northbound and southbound platforms get recorded
+separately in the GTFS feed, and I collapsed them to one coordinate per
+station. The offset between an individual platform and that averaged
+point ranges from 14 m (Capitol Hill) to 72 m (Columbia City) across the
+sixteen stations, averaging 48 m.
+
+Against the innermost ring's 161 m width (0.1 mile), that's not a
+negligible difference: a business sitting near the inner-ring boundary
+could fall in a different ring depending on whether I used the averaged
+point or a single platform as the reference. It matters a lot less for
+the outer rings, since 48 m against a 483 m radius (0.3 mile) is a much
+smaller fraction, so this effect is concentrated in the finest-grained
+comparison.
+
+**Station siting isn't random either.** Link was routed through
+corridors that were already commercially active, so proximity and
+density are partly co-determined here rather than one simply causing the
+other. Rainier Beach shows the reverse case: the neighborhood's
+commercial center actually sits several blocks away from the platform,
+so my buffer captures less activity than the neighborhood really
+contains.
 """
 )
 
@@ -381,15 +418,19 @@ st.subheader("Inference")
 
 st.markdown(
     """
-With sixteen stations, cross-station comparisons rest on few observations.
-Ring-level analysis expands this to roughly sixty station-ring units, but
-rings within a station are not independent of each other.
+With only sixteen stations, cross-station comparisons rest on a pretty
+small number of observations. Ring-level analysis expands that to
+roughly sixty station-ring units, but rings within the same station
+aren't independent of each other, so it isn't really sixty separate data
+points either.
 
-No non-transit control corridor is included, so there is no baseline for
-what commercial density would look like absent a station.
+I didn't include a non-transit control corridor, so there's no baseline
+showing what commercial density would look like without a station there
+at all.
 
-Findings here are associations. Nothing in this analysis identifies a causal
-effect of transit access on business location.
+The findings on this site are associations, not causes. Nothing in this
+analysis identifies a causal effect of transit access on where
+businesses choose to locate.
 """
 )
 
@@ -397,21 +438,25 @@ st.header("What a fuller version would add")
 
 st.markdown(
     """
-- **Control corridors.** Ballard and Fremont are commercially dense with no
-  light rail, and would give the gradient something to be compared against.
-- **The 2 Line.** Entirely outside Seattle city limits, so it would require
-  business license data from Bellevue and Redmond.
-- **A before-and-after design.** Northgate, Roosevelt and U District opened
-  in October 2021. License issue dates would support comparing business
-  formation on either side of that opening — the strongest available version
-  of this analysis, and the one that comes closest to a causal claim.
-- **Continuous distance-decay weighting instead of flat rings.** The current
-  four annuli treat every business within a band identically regardless of
-  exactly how close it is to the boundary. A negative exponential
-  decay function — `P(d) = e^(-βd)`, the same form Yang and Diez-Roux (2012)
-  fit to national walking-trip data, and Zhao et al. (2003) apply directly to
-  transit walk accessibility as an alternative to flat buffers — would model
-  pedestrian attenuation continuously rather than as four discrete steps,
-  at the cost of real added complexity this project's scope didn't call for.
+- **Control corridors.** Ballard and Fremont are both commercially dense
+  with no light rail at all, and would give the gradient something real
+  to be compared against.
+- **The 2 Line.** It's entirely outside Seattle city limits, so covering
+  it would require pulling business license data from Bellevue and
+  Redmond too.
+- **A before-and-after design.** Northgate, Roosevelt, and U District all
+  opened in October 2021. License issue dates would let me compare
+  business formation on either side of that opening, which would be the
+  strongest available version of this analysis and the one that comes
+  closest to an actual causal claim.
+- **Continuous distance-decay weighting instead of flat rings.** My
+  current four annuli treat every business within a band identically,
+  regardless of how close it actually sits to the boundary. A negative
+  exponential decay function, `P(d) = e^(-βd)`, the same form Yang and
+  Diez-Roux (2012) fit to national walking-trip data and that Zhao et al.
+  (2003) apply directly to transit walk accessibility as an alternative
+  to flat buffers, would model pedestrian attenuation continuously
+  instead of as four discrete steps. That's real added complexity this
+  project's scope didn't call for though.
 """
 )
