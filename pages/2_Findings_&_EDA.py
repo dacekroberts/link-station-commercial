@@ -896,16 +896,13 @@ if CHAIN_STATS_CSV.exists():
         # buffer's edge" finding. Removing just those two stations turns the
         # aggregate ring-3-to-4 move back into a clean decline (8.7% -> 8.4%).
         st.caption(
-            "Chain share's own small reversal at the last ring (8.3% to 8.5%, "
-            "rather than continuing to fall) traces to two of the same "
-            "against-the-pattern stations named in Table 1's ring-3 "
-            "breakdown above - SODO and Stadium. Their fourth ring "
-            "reaches past their own light-industrial and stadium surroundings "
-            "into Chinatown-International District and the Pioneer Square "
-            "locality. Pulling just those two stations out restores a clean "
-            "decline through ring 4 (8.7% to 8.4%) - the same kind of "
-            "outer-ring, neighbor-sampling effect as the density gradient's "
-            "ring-3 reversal, one ring further out."
+            "Chain share's small reversal at the last ring (8.3% to 8.5%) "
+            "traces to SODO and Stadium, the same against-the-pattern "
+            "stations from Table 1's ring-3 breakdown, whose fourth ring "
+            "reaches into Chinatown-International District and Pioneer "
+            "Square. Removing them restores a clean decline (8.7% to "
+            "8.4%): the same outer-ring, neighbor-sampling effect as the "
+            "density gradient's ring-3 reversal, one ring further out."
         )
 
     st.markdown(
