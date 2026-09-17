@@ -202,11 +202,6 @@ place?
 
 st.divider()
 st.subheader("Starting Assumptions")
-st.caption(
-    "Framing, not findings - my own lens coming in, not a claim this "
-    "project's data backs up. See Methodology for what the data actually "
-    "supports."
-)
 
 st.markdown(
     """
