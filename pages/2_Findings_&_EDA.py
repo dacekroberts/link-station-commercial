@@ -502,8 +502,8 @@ if STATION_STATS_CSV.exists():
             r_no_westlake = no_westlake[[col, "businesses_within_0_3mi"]].corr().iloc[0, 1]
             r_spearman = clean[col].rank().corr(clean["businesses_within_0_3mi"].rank())
             st.caption(
-                f"Removing Westlake alone - the single highest station in both "
-                f"ridership and density - drops r from {r:.3f} to {r_no_westlake:.3f}. "
+                f"Westlake is the single highest station in both ridership and "
+                f"density. Removing it drops r from {r:.3f} to {r_no_westlake:.3f}. "
                 f"The rank-based (Spearman) correlation across all 16 stations is "
                 f"only {r_spearman:.3f}. Part of the observed linear relationship "
                 "depends on this one high-leverage point rather than reflecting a "
@@ -720,7 +720,7 @@ if STATION_STATS_CSV.exists():
         biz_gap, biz_outliers = _biggest_gap("Businesses")
         rid_gap, rid_outliers = _biggest_gap("Ridership")
         st.caption(
-            f"Most stations cluster similarly on both metrics - the "
+            f"Most stations cluster similarly on both metrics. The "
             f"difference is in how far the tail sits past that cluster. "
             f"Businesses' widest gap is {biz_gap:.2f} SD, right before "
             f"{' and '.join(biz_outliers)}. Ridership's widest gap is "
