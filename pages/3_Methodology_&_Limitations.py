@@ -144,9 +144,12 @@ if NAICS_STOREFRONT_REVIEWED_KEPT:
         st.markdown(reason)
 
 if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
+    for brand, (label, reason) in CHAIN_ANALYSIS_EXCLUDE_BRANDS.items():
+        st.markdown(f"**Excluded from chain analysis: {label}**")
+        st.markdown(reason)
+
     st.markdown(
-        "**A separate, narrower exclusion: chain analysis only, not "
-        "density.** These are real "
+        "These are real "
         "businesses, and nothing about how I filtered, geocoded, or "
         "counted them was wrong; they still count fully toward the "
         "density, gradient, and ridership figures everywhere else on "
@@ -170,9 +173,6 @@ if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
         "it: name-based brand grouping can't tell \"repeated deliberate "
         "choice\" apart from \"one vendor, many kitchens\" on its own."
     )
-    for brand, (label, reason) in CHAIN_ANALYSIS_EXCLUDE_BRANDS.items():
-        st.markdown(f"**Excluded from chain analysis: {label}**")
-        st.markdown(reason)
 
 st.header("Citations")
 
