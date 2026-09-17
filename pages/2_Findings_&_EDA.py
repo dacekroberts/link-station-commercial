@@ -784,9 +784,9 @@ if STATION_STATS_CSV.exists():
             cv_table.set_index("Metric").loc["Ridership", "CV"]
         )
         st.caption(
-            f"Businesses' CV is {cv_ratio:.1f}x Ridership's - proportionally, "
-            "not just in absolute terms, businesses cluster far more "
-            "unevenly across these sixteen stations than ridership does."
+            f"Businesses' CV is {cv_ratio:.1f}x Ridership's. Businesses "
+            "proportionally cluster far more unevenly across these "
+            "sixteen stations than ridership does."
         )
     else:
         st.info(
