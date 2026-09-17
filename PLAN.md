@@ -186,7 +186,7 @@ better than a weak positive you oversell.
 
 ---
 
-## Session 8 — Write it up (2.5 h) — nearly done, 2026-09-16 (one item open)
+## Session 8 — Write it up (2.5 h) — DONE 2026-09-16/17
 
 The highest-value hours in the project. Protect them.
 
@@ -240,13 +240,15 @@ in `DECISIONS.md` under "Observations" > "Chains."
       re-verified twice: once during the rewrite, again when the chain-
       overlap numbers were caught drifting stale (155/8.9% → corrected to
       152/8.5%, matching the live Findings page) via a fresh pipeline run
-- [ ] Rewrite the intro on `Introduction.py` to state what you actually
-      found — **NOT done.** The intro still states what the project set
-      out to measure ("tests whether density falls off... looks at which
-      kinds of businesses concentrate closest"), not what it found (the
-      ~67.5% ring 1→4 decline with the real ring-3 anomaly, r=0.684
-      ridership correlation, chain share highest at the platform). This is
-      the one open Session 8 item — see the Session 9 overview below.
+- [x] Rewrite the intro on `Introduction.py` to state what you actually
+      found — DONE 2026-09-17: added a "What I Found" section between
+      "What's here" and "Why Seattle?" (dividers on each side), a short
+      blurb pointing to the Findings & EDA page for the full breakdown,
+      and four bulleted headline findings (the ~67.5% ring 1->4 decline
+      with the real ring-3 anomaly, r=0.684 ridership correlation, the
+      1.8x businesses-vs-ridership variance gap, chain share highest at
+      the platform), each number verified against the live pipeline
+      output before shipping.
 - [x] Commit — every change above committed individually with its own
       message throughout the session (30 commits total on 2026-09-16)
 
