@@ -8,7 +8,12 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from components import render_social_links, set_base_font, set_sidebar_width
+from components import (
+    render_sidebar_nav_label,
+    render_social_links,
+    set_base_font,
+    set_sidebar_width,
+)
 from config import (
     RING_STATS_CSV,
     STATION_STATS_CSV,
@@ -22,6 +27,7 @@ st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
 
 set_base_font()
 set_sidebar_width()
+render_sidebar_nav_label()
 render_social_links()
 
 st.title("Findings & EDA")
