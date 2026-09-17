@@ -305,7 +305,7 @@ if RING_STATS_CSV.exists():
                 limited the possibility of proximal commercial space in this area.""",
         },
         {
-            "title": "Westlake/Symphony <em>(Ring 3 rising)</em>",
+            "title": "Westlake/Symphony",
             "against": True,
             "body": """Both stations sit very close to each other in Seattle's densest
                 downtown area. So close in fact that their third concentric rings
@@ -397,7 +397,10 @@ if RING_STATS_CSV.exists():
             unsafe_allow_html=True,
         )
 
-    st.subheader("Concluding Thoughts")
+    st.markdown(
+        '<h3 style="font-size:1.5rem;">Gradient: Concluding Thoughts</h3>',
+        unsafe_allow_html=True,
+    )
     st.markdown(
         """
         After thoroughly investigating the eight stations against the
@@ -734,10 +737,12 @@ if STATION_STATS_CSV.exists():
             the aforementioned Westlake outlier/sister station Symphony
             and the rest of the pack in business density. The two
             downtown stations sit roughly two standard deviations away
-            from the average, while the rest are within one. On the other
-            hand, the ridership volume side is saved from a similar fate
-            thanks to the smoother tail, particularly U District station
-            sitting in what would otherwise be a large gap. Despite the
+            from the average, while the rest are within one.
+
+            On the other hand, the ridership volume side is saved from a
+            similar fate thanks to the smoother tail, particularly U
+            District station sitting in what would otherwise be a large
+            gap. Despite the
             improvement, each of the top three stations sits at least 0.5
             standard deviations above the one immediately below it, which
             is still significant.
@@ -819,6 +824,32 @@ if CHAIN_STATS_CSV.exists():
         })
         st.dataframe(chains_display, use_container_width=True, hide_index=True)
 
+    st.markdown(
+        """
+        One good way to tell if your commercial insight holds weight is to
+        see if the big players in the market are supporting it. To that
+        end, I sought to measure the share of chain locations in the
+        transit-proximal commercial density of Seattle as part of this
+        project. I figured if corporations that could establish multiple
+        locations with relative ease played into the transit market, that
+        could back my hypothesis with the actions of real-world decision
+        makers.
+
+        The initial data probe revealed promising results: 152 brands had
+        at least two locations within the sample range of Seattle
+        stations, with all chain brands accounting for 8.5% of total
+        businesses in the corridor. Topping the line of individual brands
+        angling towards transit is Subway, which is currently operating
+        seven locations within a range of eight stations. The other 24
+        brands listed in table 4 also have noteworthy presences in the
+        transit corridor, suggesting at least a share of the corporate
+        market sees potential commercial value in transit-adjacent
+        storefronts. Those positive points aside, the real test as to
+        whether chain density is correlated with station proximity needed
+        further validation against the concentric ring model.
+        """
+    )
+
     if CHAIN_RING_STATS_CSV.exists():
         chain_ring = pd.read_csv(CHAIN_RING_STATS_CSV)
         # Same ring_number_map/numbered_ring_labels built for Graph 1/2
@@ -836,7 +867,7 @@ if CHAIN_STATS_CSV.exists():
                 x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
                 y=alt.Y(
                     "chain_share_pct:Q",
-                    title="Share of businesses that are chains (%)",
+                    title="Share of businesses that are chains",
                 ),
                 tooltip=[
                     alt.Tooltip("ring_label:N", title="Ring"),
@@ -867,26 +898,24 @@ if CHAIN_STATS_CSV.exists():
             "Chain share's own small reversal at the last ring (8.3% to 8.5%, "
             "rather than continuing to fall) traces to two of the same "
             "against-the-pattern stations named in Table 1's ring-3 "
-            "breakdown above - SODO and Stadium. Their 0.3-0.6mi ring "
+            "breakdown above - SODO and Stadium. Their fourth ring "
             "reaches past their own light-industrial and stadium surroundings "
             "into Chinatown-International District and the Pioneer Square "
-            "corridor: 31 of Stadium's 373 ring-4 businesses are chains, and "
-            "18 of SODO's 149. Pulling just those two stations out of the "
-            "chain data restores a clean decline through ring 4 (8.7% to "
-            "8.4%) - the same kind of outer-ring, neighbor-sampling effect "
-            "as the density gradient's ring-3 reversal, one ring further out."
+            "locality. Pulling just those two stations out restores a clean "
+            "decline through ring 4 (8.7% to 8.4%) - the same kind of "
+            "outer-ring, neighbor-sampling effect as the density gradient's "
+            "ring-3 reversal, one ring further out."
         )
 
     st.markdown(
         """
-        **TODO — write this up.** A brand at eight stations has a real estate
-        function making a repeated, deliberate bet on transit adjacency. A
-        single-location shop may simply be where its owner could afford rent.
-        Does the chain share rise as you move toward the platform? That would
-        be the strongest single finding available here.
-
-        Check the normalization by hand before trusting the counts — verify a
-        few brands actually resolved correctly.
+        Graph 5 cleanly supports the hypothesis that chain share rises
+        closer to the station, going from 11% share within concentric ring
+        1 down to 8.5% within ring 4. On the micro-level, we see a similar
+        unexpected rise to graph 1, though this time the discrepancy is
+        from ring 3 to 4 (+0.2%). The caption underneath graph 5 connects
+        this exception to the downtown overlap buffers that conflated some
+        values in the gradient section.
         """
     )
 
