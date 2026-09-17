@@ -508,11 +508,27 @@ if STATION_STATS_CSV.exists():
 
         st.markdown(
             """
-            **TODO — write this up.** Whatever the correlation, the access-mode
-            problem limits what it means: riders who arrive by car or connecting
-            bus board without passing a storefront, so boardings overstate
-            pedestrian exposure at park-and-ride and transfer-heavy stations.
-            Northgate is the one to look at closely.
+            The best method of trying to proxy genuine foot traffic in
+            Seattle's transit corridor was to use average monthly
+            ridership counts per station, as direct commercial data from
+            storefronts is often privatized or sold at scale. This metric
+            comes with a fair bit of concern around whether all boardings
+            at a given station correlate with commercial value, as there
+            is not an additional mechanism in place such as a survey to
+            indicate trip purpose per passenger. Regardless, we can draw a
+            relative correlation between higher volume and higher earnings
+            potential for nearby businesses. On the business end, 0.3 mi
+            was used as a representative cutoff, summing the first three
+            rings, for each station under the concentric ring model.
+
+            Graph 3's scatter and trendline suggest a moderately strong
+            correlation (r=0.684) between ridership volume and business
+            density per station. As mentioned in the caption, however, the
+            station of Westlake being the highest boarded and having the
+            most businesses heavily skews the correlation. After making
+            this discovery I determined having a table ranking stations
+            based on ridership could give insight into other potential
+            outliers within this correlation.
             """
         )
 
@@ -535,6 +551,42 @@ if STATION_STATS_CSV.exists():
                 ),
                 use_container_width=True,
             )
+
+        st.markdown(
+            """
+            Table 2 revealed a plethora of outliers, albeit none as
+            extreme as Westlake from a raw numbers perspective. Rather,
+            the ranking of ridership and resulting business values showed
+            some signs of promise for a stronger correlation, and some
+            detractors as well. First, the promising side: Of the seven
+            stations with triple-digit business counts nearby, five were
+            in the top seven by ridership volume as well. In a vacuum,
+            this stat should affirm a correlation between business
+            density and ridership. However, looking at the rest of the
+            data is where the realistic picture gets formed.
+
+            Sitting in fifth and seventh place by ridership volume are UW
+            and Northgate stations respectively. As we touched upon in
+            our gradient section, these stations are predisposed to not
+            having commercial presence (17 businesses by Northgate, 5 by
+            UW), and instead see a large number of ridership volume for
+            either park-and-ride transfers (Northgate) or collegiate
+            communal use (UW). The reasoning speaks for itself: Not all
+            transit stations are meant to be used as a commercial
+            opportunity, so it's only natural that statistics
+            incorporating such non-commercial stations will drag down
+            correlation in a commercially-focused study.
+
+            The last notable standout is SODO station, which has low
+            ridership volume but high business density. The explanation
+            for this can also be tied back to the geographic factors
+            explored in the gradient section: The industrial environment
+            of the station reflects a high volume of businesses, but not
+            the kind that attract foot traffic. The surrounding
+            infrastructure supports automotive transport much more than
+            pedestrians.
+            """
+        )
 
         # UW and Northgate: high ridership rank, disproportionately low
         # density - not a downtown-overlap effect (neither is in the
@@ -574,6 +626,17 @@ if STATION_STATS_CSV.exists():
             "solidly mid-pack ridership. Both are part of the downtown ring-overlap "
             "cluster already documented in Methodology, so some of that density is "
             "inflated by buffer overlap rather than purely organic."
+        )
+
+        st.markdown(
+            """
+            Probing into the relationship between station ridership and
+            business density gave me an idea to further pit these
+            variables against each other. Could visualizing the
+            difference in variance between stations for these two
+            variables give us more insights about their impact on shared
+            correlation?
+            """
         )
 
         # Graph 4: the same "density concentrates more than ridership"
