@@ -133,8 +133,3 @@ _FLOWCHART_HTML = f"""
 """
 
 components.html(_FLOWCHART_HTML, height=940, scrolling=True)
-
-st.caption(
-    "Diagram covers the two most consequential pivots. The full record of "
-    "every decision, including the ones not shown here, is in DECISIONS.md."
-)
