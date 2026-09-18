@@ -545,10 +545,9 @@ if STATION_STATS_CSV.exists():
                     "average monthly boardings (x-axis) against the number "
                     "of businesses within 0.3 miles of it (y-axis). The "
                     "dashed line is a least-squares trendline through all "
-                    "sixteen points - it shows the overall direction of the "
-                    "relationship, not a claim that ridership causes "
-                    "density. Hover a dot for that station's name and exact "
-                    "numbers."
+                    "sixteen points, showing the overall direction of the "
+                    "relationship. Hover a dot for that station's name and "
+                    "exact numbers."
                 )
 
             # Single colour, no legend - only 2 of 16 stations (UW,
@@ -774,7 +773,19 @@ if STATION_STATS_CSV.exists():
             alt.Chart(cv_long)
             .mark_circle(opacity=0.85, size=90)
             .encode(
-                x=alt.X("bin:Q", title="Standard deviations from mean"),
+                x=alt.X(
+                    "bin:Q",
+                    title="Standard deviations from mean",
+                    # Explicit, 0.5-spaced values (Vega will just skip any
+                    # outside the actual data range) - the default 0.2 step
+                    # packed in enough ticks that Vega's own overlap-avoidance
+                    # silently dropped every other label, and "0" (renamed
+                    # "Mean" below) happened to land on a hidden one.
+                    axis=alt.Axis(
+                        values=[x / 2 for x in range(-8, 9)],
+                        labelExpr="datum.value === 0 ? 'Mean' : datum.label",
+                    ),
+                ),
                 y=alt.Y("metric:N", title=None),
                 yOffset=alt.YOffset("offset_px:Q", scale=None),
                 color=alt.Color(
