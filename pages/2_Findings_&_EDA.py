@@ -152,11 +152,11 @@ if RING_STATS_CSV.exists():
         """
         Graph 1 aligns with one of my hypotheses when starting this project:
         "Does commercial density drop off with decreased proximity to
-        transit hubs"? The overall density between concentric ring 1 to
-        ring 4 shows a net decrease of -67.5% (957 businesses/sq mi -> 311).
-        On its own, this would appear to resolve with my hypothesis, but
+        transit hubs"? The overall density between concentric rings 1 to 4
+        shows a net decrease of -67.5% (957 businesses/sq mi → 311).
+        On its own, this would appear to support my hypothesis, but
         looking closer at the data reveals a contradiction. The slight jump
-        (+7.6%) between rings 2 and 3 would seem to suggest although
+        (+7.6%) between rings 2 and 3 would seem to suggest that, although
         density does drop off on a macro-level, the decay is not
         monotonic. What causes this mid-level rise?
         """
@@ -263,20 +263,20 @@ if RING_STATS_CSV.exists():
 
     st.markdown(
         """
-        To answer the rise between concentric rings 2 and 3 found in graph
-        1, I constructed a line graph, per-station for graph 2 to get a
+        To answer the rise between concentric rings 2 and 3 found in Graph
+        1, I constructed a line Graph, per station, for Graph 2 to get a
         visual on which stations adhered to the "pattern" of top-down (but
         not strictly linear) decay. As it turns out, the stations split in
         half when checking their adherence. Eight Stations (neutral color)
         mostly correlated to a decay pattern, and the other eight (red)
         eclipsed their ring 1 totals further away. With this discovery in
-        mind, I constructed table 1 (below) to get an itemized view of the
-        commercial density data per-station. I found that six out of
-        sixteen stations exhibited a ring 2 -> ring 3 rise, and of those
+        mind, I constructed Table 1 (below) to get an itemized view of the
+        commercial density data per station. I found that six out of
+        sixteen stations exhibited a ring 2 → ring 3 rise, and of those
         six stations, four were a part of the against-pattern group. At
         this point, I was certain I could provide an explanation for the
         ring 2->3 rise if I could also explain the reasoning for the
-        against-pattern station group. I decided taking a look at each of
+        against-pattern station group. I decided that taking a look at each of
         these eight stations individually was the best course of action.
         """
     )
@@ -366,7 +366,7 @@ if RING_STATS_CSV.exists():
             "against": True,
             "body": """Northgate station has zero businesses within its first concentric
                 ring. That alone sets it into the red group. If we look at the heatmap
-                (or any map for that matter), it's easy to see why: Interstate 5 sits
+                (or any map, for that matter), it's easy to see why: Interstate 5 sits
                 directly west of the station coordinates, swallowing up roughly half
                 of the potential area for commercial density immediately. On the east
                 side, the station's parking absorbs the remaining possible land for
@@ -378,7 +378,7 @@ if RING_STATS_CSV.exists():
         {
             "title": "University of Washington",
             "against": True,
-            "body": """This station exits adjacent to UW's husky stadium and the
+            "body": """This station exits adjacent to UW's Husky Stadium and the
                 Montlake UW Hospital campus, both of which are vast and long-term
                 spatial occupiers in the area. As a result, there are once again zero
                 businesses within its first concentric ring. Similar to Northgate, the
@@ -389,11 +389,11 @@ if RING_STATS_CSV.exists():
             "title": "Westlake/Symphony",
             "against": True,
             "body": """Both stations sit very close to each other in Seattle's densest
-                downtown area. So close in fact that their third concentric rings
+                downtown area. So close, in fact, that their third concentric rings
                 overlap on each other's origin points (station coordinates). This
                 station-to-station proximity reveals a limitation in my density model:
-                Businesses that sit between two close stations like in this instance
-                will be counted twice, meaning the ring 3 commercial density jumps for
+                Businesses that sit between two close stations, as in this instance,
+                will be counted twice, meaning the ring 3 commercial density jump for
                 one station largely comes from counting businesses clustered around
                 another station.""",
         },
@@ -403,9 +403,9 @@ if RING_STATS_CSV.exists():
             "body": """Similar to Westlake/Symphony, being the next station down in the
                 packed downtown corridor with a commercial density increase from
                 concentric ring 1-&gt;2 rather than 2-&gt;3. Indicative of the
-                persistent double-counting businesses due to station proximity. Sits
-                directly next to public-serving infrastructure like Seattle civic
-                square, King County courthouse, and city hall park limiting adjacent
+                persistent double-counting of businesses due to station proximity. Sits
+                directly next to public-serving infrastructure like Seattle Civic
+                Square, King County courthouse, and City Hall Park, limiting adjacent
                 commercial development.""",
         },
         {
@@ -413,9 +413,9 @@ if RING_STATS_CSV.exists():
             "against": True,
             "body": """Uniquely placed station with primary purpose being to serve
                 sports fans for football, soccer, and baseball at Lumen Field/T-Mobile
-                Park. The surrounding area has been reserved for metro
+                Park. The surrounding area has been reserved for Metro
                 operations/employees and not catered towards spontaneous foot traffic.
-                Concentric ring 4 touches chinatown station which spikes commercial
+                Concentric Ring 4 touches Chinatown Station, which spikes commercial
                 density there.""",
         },
         {
@@ -448,12 +448,12 @@ if RING_STATS_CSV.exists():
             "title": "Capitol Hill",
             "against": False,
             "body": """Another station in the pattern-adhering group, despite having a
-                concentric ring 2-&gt;3 jump like in graph 1. The best reasonable
-                explanation is that for as dense of a location as Capitol Hill, having
-                concentric ring 2 absorbing the bulk of Cal Anderson park, the largest
+                concentric ring 2-&gt;3 jump like in Graph 1. The best reasonable
+                explanation is that, for as dense a location as Capitol Hill, having
+                concentric ring 2 absorbing the bulk of Cal Anderson Park, the largest
                 of its kind in the area, potentially skews the density data. I feel
                 more confident in this explanation based on the fact that even ring 4
-                outperforms ring 2 in a commercial density regard here.""",
+                outperforms ring 2 in terms of commercial density in this regard.""",
         },
         {
             "title": "Columbia City",
@@ -494,22 +494,22 @@ if RING_STATS_CSV.exists():
         commercially viable zone. This is especially true when we consider
         how long existing Seattle infrastructure has been in place prior
         to the rapid 1 line expansion this decade. Northgate, UW, Stadium,
-        SODO and Rainier Beach all suffer from urban geographic
+        SODO, and Rainier Beach all suffer from urban geographic
         limitations.
 
         The second factor also stems from urban geography, differing in
         its direct impact on my methodology in interpreting the data. I
         coined this phenomenon "downtown buffer overlap", and the three
-        downtown stations of Westlake, Symphony and Pioneer Square are its
+        downtown stations of Westlake, Symphony, and Pioneer Square are its
         representatives. Rather than seeing downtown buffer overlap as
         disproving my hypothesis, I believe it shows potential for
         improving the density model in future iterations of this project.
-        One quick fix I ruled out would be to individualize businesses to
+        One quick fix I ruled out would be to assign businesses to
         one station, whichever is closest. This is implemented on the
         heatmap when zooming in to look at individual businesses, but from
         a macro standpoint it doesn't make sense to do so. Someone could
-        get off at the symphony station, walk around downtown and do some
-        shopping near Westlake. Those sort of interactions shouldn't be
+        get off at the Symphony Station, walk around downtown, and do some
+        shopping near Westlake. Those sorts of interactions shouldn't be
         discounted just because the shopper got off at a slightly further
         station.
         """
@@ -520,6 +520,7 @@ else:
 
 # --- 2. Ridership ------------------------------------------------------
 
+st.divider()
 st.header("Ridership Analysis")
 
 if STATION_STATS_CSV.exists():
@@ -608,7 +609,7 @@ if STATION_STATS_CSV.exists():
             storefronts is often privatized or sold at scale. This metric
             comes with a fair bit of concern around whether all boardings
             at a given station correlate with commercial value, as there
-            is not an additional mechanism in place such as a survey to
+            is not an additional mechanism in place, such as a survey, to
             indicate trip purpose per passenger. Regardless, we can draw a
             relative correlation between higher volume and higher earnings
             potential for nearby businesses. On the business end, 0.3 mi
@@ -620,7 +621,7 @@ if STATION_STATS_CSV.exists():
             density per station. As mentioned in the caption, however, the
             station of Westlake being the highest boarded and having the
             most businesses heavily skews the correlation. After making
-            this discovery I determined having a table ranking stations
+            this discovery, I determined that having a table ranking stations
             based on ridership could give insight into other potential
             outliers within this correlation.
             """
@@ -682,7 +683,7 @@ if STATION_STATS_CSV.exists():
             data is where the realistic picture gets formed.
 
             Sitting in fifth and seventh place by ridership volume are UW
-            and Northgate stations respectively. As we touched upon in
+            and Northgate stations, respectively. As we touched upon in
             our gradient section, these stations are predisposed to not
             having commercial presence (17 businesses by Northgate, 5 by
             UW), and instead see a large number of ridership volume for
@@ -834,7 +835,7 @@ if STATION_STATS_CSV.exists():
         st.markdown(
             """
             This dot plot provides a holistic view of the variance of the
-            two variables explored in graph 3 and table 2 (business
+            two variables explored in Graph 3 and Table 2 (business
             density per station and avg. monthly ridership per station).
             Their similar shapes are undermined by the larger gap between
             the aforementioned Westlake outlier/sister station Symphony
@@ -851,11 +852,11 @@ if STATION_STATS_CSV.exists():
             is still significant.
 
             It's quite likely that by removing outliers, the variance in
-            this section could be toned down, but as graph 3's caption
+            this section could be toned down, but as Graph 3's caption
             indicates, removing an outlier like Westlake also decreases
             the strength of the correlation. That being said, the
-            coexistence of outliers and tight groups alike in graph 4 as
-            well as graph 3 supports the medium-strong r-value from the
+            coexistence of outliers and tight groups alike in Graph 4, as
+            well as Graph 3, supports the medium-strong r-value from the
             beginning of this section.
             """
         )
@@ -901,6 +902,7 @@ else:
 
 # --- 3. Chains ---------------------------------------------------------
 
+st.divider()
 st.header("Chain Analysis")
 
 if CHAIN_STATS_CSV.exists():
@@ -944,11 +946,11 @@ if CHAIN_STATS_CSV.exists():
         businesses in the corridor. Topping the line of individual brands
         angling towards transit is Subway, which is currently operating
         seven locations within a range of eight stations. The other 24
-        brands listed in table 4 also have noteworthy presences in the
+        brands listed in Table 4 also have noteworthy presences in the
         transit corridor, suggesting at least a share of the corporate
         market sees potential commercial value in transit-adjacent
         storefronts. Those positive points aside, the real test as to
-        whether chain density is correlated with station proximity needed
+        whether chain density is correlated with station proximity needs
         further validation against the concentric ring model.
         """
     )
@@ -1030,7 +1032,7 @@ if CHAIN_STATS_CSV.exists():
         Graph 5 cleanly supports the hypothesis that chain share rises
         closer to the station, going from 11% share within concentric ring
         1 down to 8.5% within ring 4. On the micro-level, we see a similar
-        unexpected rise to graph 1, though this time the discrepancy is
+        unexpected rise in graph 1, though this time the discrepancy is
         from ring 3 to 4 (+0.2%). The caption underneath graph 5 connects
         this exception to the downtown overlap buffers that conflated some
         values in the gradient section.
@@ -1056,3 +1058,28 @@ if CHAIN_STATS_CSV.exists():
             )
 else:
     st.info("Run `python src/step4_rings.py` to generate chain statistics.")
+
+st.divider()
+st.header("In Summary")
+
+st.markdown(
+    """
+    Commercial density, ridership, and chain share all point the same way.
+    Commercial density falls 67.5% from the first ring to the last,
+    ridership correlates with that commercial density at r = 0.684, and
+    even chains lean into platform proximity nearly as hard as independent
+    businesses do. Three separate measures agreeing is a stronger claim
+    than any one alone. Locational choice near public transit is a real,
+    corridor-wide advantage for a Seattle business, not a marginal one.
+
+    The same two complications explain most of the exceptions across all
+    three analyses. Downtown buffer overlap double-counts businesses near
+    Westlake, Symphony, and Pioneer Square across overlapping station
+    rings, inflating outer-ring figures in the commercial density
+    gradient, the chain-share reversal, and several ridership outliers
+    alike. Per-station geography, industrial land at SODO and Stadium,
+    parks and campus land elsewhere, adds further noise station by
+    station. Neither complication undermines the overall pattern, but
+    both cap how precisely any single station's figures should be read.
+    """
+)

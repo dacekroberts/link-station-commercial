@@ -1,0 +1,5 @@
+# Sets the default theme visitors see on first load. They can still
+# switch to light mode themselves via the hamburger menu > Settings -
+# this only changes the default, not a hard lock.
+[theme]
+base = "dark"
