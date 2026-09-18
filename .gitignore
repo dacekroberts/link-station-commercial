@@ -6,6 +6,11 @@ venv/
 .env
 .DS_Store
 
+# Local-only: dev server launch config, custom skills/subagents. Kept out
+# of the repo deliberately - these are local workflow tooling, not part
+# of the deployed app or its documented process.
+.claude/
+
 # Raw downloads are large and re-downloadable. Keep the README that
 # explains how to fetch them, not the files themselves.
 data/raw/*
