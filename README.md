@@ -73,18 +73,6 @@ Each step writes a CSV checkpoint, so a failure costs you one step rather
 than the run. Geocoding batches are cached to `data/raw/geocode_cache/` and
 skipped on re-run.
 
-## Two things that will bite
-
-**Coordinate systems.** Lat/lon is measured in degrees, and a degree of
-longitude is about 75 km at this latitude. Buffering 0.3 miles in degrees
-produces ovals of the wrong size. The pipeline projects to EPSG:32610
-(metres) before any distance operation and back to EPSG:4326 for display.
-If you add spatial code, follow that pattern.
-
-**Station name matching.** The join between ridership and station data is on
-name. GTFS names carry suffixes and the dashboard's names may differ. Step 4
-prints unmatched stations — do not ignore that warning.
-
 ## Scope
 
 Seattle city limits only, Northgate through Rainier Beach. The 1 Line runs
