@@ -279,9 +279,9 @@ def main():
         show=False,
     ).add_to(m)
 
-    # Ring circles, each toggleable so the map is not overwhelming at load.
+    # Ring circles, each toggleable, all on by default.
     for i, label in enumerate(RING_LABELS):
-        layer = folium.FeatureGroup(name=f"Concentric Ring {i + 1}: {label}", show=(i == 2))
+        layer = folium.FeatureGroup(name=f"Concentric Ring {i + 1}: {label}", show=True)
         for _, station in stations.iterrows():
             folium.Circle(
                 location=[station["latitude"], station["longitude"]],
@@ -308,7 +308,10 @@ def main():
         stations["avg_monthly_boardings"] = None
         print(f"No ridership file at {RIDERSHIP_CSV} - station tooltips will omit it.")
 
-    station_layer = folium.FeatureGroup(name="Stations")
+    # control=False - always on, not a togglable layer control entry. Same
+    # treatment as the rail line below: both are baseline map context, not
+    # an optional data layer the reader would want to hide.
+    station_layer = folium.FeatureGroup(name="Stations", control=False)
     for _, station in stations.iterrows():
         boardings = station["avg_monthly_boardings"]
         # Label first, value second - matches the business tooltip's
@@ -336,7 +339,7 @@ def main():
     # --- The rail line itself - important visual context, on by default ---
     rail_coords = load_rail_line_shape()
     if rail_coords:
-        rail_layer = folium.FeatureGroup(name="Link 1 Line route", show=True)
+        rail_layer = folium.FeatureGroup(name="Link 1 Line route", show=True, control=False)
         folium.PolyLine(
             rail_coords, color="#0a7a3c", weight=5, opacity=0.85,
         ).add_to(rail_layer)
@@ -370,8 +373,9 @@ def main():
     # overlap and be unreadable at any zoom a viewer would actually use, and
     # a much heavier file. FastMarkerCluster ships a compact coordinate array
     # and clusters client-side, rather than one full Marker object per
-    # point. Off by default (show=False): this is a detail layer, not what
-    # a first-time viewer should load into.
+    # point. The three broad NAICS-group layers are on by default; the finer
+    # subcategory splits stay off - still a detail layer, not what a
+    # first-time viewer should load into.
     #
     # Pins stay ring-only even though the heat layer now offers an
     # all-Seattle toggle - doubling all 15 pin layers to cover the citywide
@@ -393,14 +397,17 @@ def main():
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
 
-    def add_pin_layer(rows, sublabel, group_name, color, bold=False):
+    def add_pin_layer(rows, sublabel, group_name, color, bold=False, show=False):
         """One toggleable, clustered, coloured pin layer - the one pattern
         reused for every business layer below, broad or fine-grained.
 
         bold=True marks a macro (whole-NAICS-group) layer in the layer
         control, distinguishing it from the finer subcategory splits below
         it - Leaflet renders a layer control's name as HTML, so a literal
-        <b> tag in the string is enough, no extra styling needed."""
+        <b> tag in the string is enough, no extra styling needed. The three
+        bold macro layers are also the only pin layers on by default
+        (show=True) - the finer subcategory splits stay off, still a detail
+        view few viewers will open."""
         data = [
             [row.latitude, row.longitude, row.business_name, row.naics,
              row.nearest_station, row.ring_band]
@@ -431,7 +438,7 @@ def main():
         layer_name = f"Businesses: {group_name} — {sublabel} ({len(data):,})"
         if bold:
             layer_name = f"<b>{layer_name}</b>"
-        fg = folium.FeatureGroup(name=layer_name, show=False)
+        fg = folium.FeatureGroup(name=layer_name, show=show)
         FastMarkerCluster(data, callback=callback).add_to(fg)
         fg.add_to(m)
 
@@ -443,7 +450,9 @@ def main():
         # already prefixes group_name, so passing the full "{name} — NAICS
         # Code: ..." label here doubled the name
         # ("Retail — Retail — NAICS Code: 44/45"), caught by the user.
-        add_pin_layer(group_rows, f"NAICS Code: {'/'.join(prefixes)}", name, color, bold=True)
+        add_pin_layer(
+            group_rows, f"NAICS Code: {'/'.join(prefixes)}", name, color, bold=True, show=True
+        )
 
         # Finer splits within it (Session 7 add-on, cheap reuse of the same
         # pattern): a few specific NAICS codes by count, plus "Other" for
