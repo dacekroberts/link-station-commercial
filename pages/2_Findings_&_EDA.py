@@ -529,6 +529,17 @@ if STATION_STATS_CSV.exists():
                 f"n = {len(clean)} stations. Too few observations to support "
                 "much beyond a description of the pattern."
             )
+            with st.popover("How to read this chart"):
+                st.markdown(
+                    "Each dot is one of the sixteen stations, placed by its "
+                    "average monthly boardings (x-axis) against the number "
+                    "of businesses within 0.3 miles of it (y-axis). The "
+                    "dashed line is a least-squares trendline through all "
+                    "sixteen points - it shows the overall direction of the "
+                    "relationship, not a claim that ridership causes "
+                    "density. Hover a dot for that station's name and exact "
+                    "numbers."
+                )
 
             # Single colour, no legend - only 2 of 16 stations (UW,
             # Northgate) are access-mode outliers, not enough to warrant a
