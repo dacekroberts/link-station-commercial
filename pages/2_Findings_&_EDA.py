@@ -114,7 +114,12 @@ if RING_STATS_CSV.exists():
             alt.Chart(gradient_df)
             .mark_bar()
             .encode(
-                x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
+                x=alt.X(
+                    "ring_label:N",
+                    sort=numbered_ring_labels,
+                    title="Concentric Ring",
+                    axis=alt.Axis(labelAngle=0, labelExpr="split(datum.label, ': ')[0]"),
+                ),
                 y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
                 color=alt.Color(
                     "ring_label:N",
@@ -200,7 +205,12 @@ if RING_STATS_CSV.exists():
         alt.Chart(long)
         .mark_line(point=True)
         .encode(
-            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
+            x=alt.X(
+                "ring_label:N",
+                sort=numbered_ring_labels,
+                title="Concentric Ring",
+                axis=alt.Axis(labelAngle=0, labelExpr="split(datum.label, ': ')[0]"),
+            ),
             y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
             detail="station:N",
             color=alt.Color(
@@ -949,10 +959,16 @@ if CHAIN_STATS_CSV.exists():
                 alt.Chart(chain_ring)
                 .mark_bar()
                 .encode(
-                    x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
+                    x=alt.X(
+                        "ring_label:N",
+                        sort=numbered_ring_labels,
+                        title="Concentric Ring",
+                        axis=alt.Axis(labelAngle=0, labelExpr="split(datum.label, ': ')[0]"),
+                    ),
                     y=alt.Y(
                         "chain_share_pct:Q",
-                        title="Share of businesses that are chains",
+                        title="Chain share of total business counts",
+                        axis=alt.Axis(labelExpr="datum.label + '%'"),
                     ),
                     color=alt.Color(
                         "ring_label:N",
