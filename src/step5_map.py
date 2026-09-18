@@ -119,7 +119,7 @@ LEGEND_HTML = """
     border-radius: 4px; font-family: sans-serif; font-size: 13px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 ">
-  <div style="font-weight: bold; margin-bottom: 6px;">Business category</div>
+  <div style="font-weight: bold; margin-bottom: 6px;">Business Category</div>
   {rows}
 </div>
 """
