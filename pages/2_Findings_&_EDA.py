@@ -23,6 +23,51 @@ from config import (
     SEATTLE_1LINE_STATIONS,
 )
 
+# Static legend/schematic for Graph 1 - explains what "Concentric Ring 1-4"
+# means before the reader hits the bar chart. Pure decoration, no data
+# dependency, so it's a plain constant rather than something built from
+# RING_LABELS - colors here are cosmetic only and don't (yet) drive Graph 1's
+# own bar coloring. Sized as a narrow vertical layout (300x450 viewBox) to
+# sit legibly in the slim right-hand column next to Graph 1, rather than the
+# wide horizontal layout that would suit a full-width placement.
+# One unbroken block, no blank lines: Streamlit's markdown renderer follows
+# CommonMark's rule that a raw-HTML block (an <svg> isn't on the "continue
+# until closing tag" whitelist that <script>/<pre>/<style> get) ends at the
+# first blank line - anything after was silently dropped when this had blank
+# lines between element groups for readability.
+# fill="currentColor" (not a hardcoded hex) on the label text so it inherits
+# the page's actual text color and stays legible in both the light and dark
+# Streamlit themes - the ring/marker fills stay hardcoded since those sit on
+# their own solid color and don't depend on the page theme.
+RING_SCHEMATIC_SVG = (
+    '<svg width="100%" viewBox="0 0 300 450" xmlns="http://www.w3.org/2000/svg" '
+    'role="img" aria-label="Schematic of the four concentric rings used in this analysis">'
+    '<text x="150" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Schematic 1:</text>'
+    '<text x="150" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Concentric Ring Diagram</text>'
+    '<circle cx="150" cy="150" r="80" fill="#0F6E56"/>'
+    '<circle cx="150" cy="150" r="60" fill="#534AB7"/>'
+    '<circle cx="150" cy="150" r="40" fill="#185FA5"/>'
+    '<circle cx="150" cy="150" r="22" fill="#3B6D11"/>'
+    '<circle cx="150" cy="150" r="4" fill="#FFFFFF" stroke="#2C2C2A" stroke-width="1.5"/>'
+    '<text x="150" y="143" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">1</text>'
+    '<text x="150" y="123" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">2</text>'
+    '<text x="150" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">3</text>'
+    '<text x="150" y="84" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">4</text>'
+    '<text x="150" y="248" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.6">not to scale</text>'
+    '<circle cx="18" cy="278" r="8" fill="#FFFFFF" stroke="#2C2C2A" stroke-width="1.5"/>'
+    '<text x="34" y="282" font-size="13" fill="currentColor">Origin Point (Station</text>'
+    '<text x="34" y="298" font-size="13" fill="currentColor">Coordinates)</text>'
+    '<rect x="10" y="312" width="16" height="16" rx="3" fill="#3B6D11"/>'
+    '<text x="34" y="324" font-size="13" fill="currentColor">Concentric Ring 1: 0-0.1 mi</text>'
+    '<rect x="10" y="346" width="16" height="16" rx="3" fill="#185FA5"/>'
+    '<text x="34" y="358" font-size="13" fill="currentColor">Concentric Ring 2: 0.1-0.2 mi</text>'
+    '<rect x="10" y="380" width="16" height="16" rx="3" fill="#534AB7"/>'
+    '<text x="34" y="392" font-size="13" fill="currentColor">Concentric Ring 3: 0.2-0.3 mi</text>'
+    '<rect x="10" y="414" width="16" height="16" rx="3" fill="#0F6E56"/>'
+    '<text x="34" y="426" font-size="13" fill="currentColor">Concentric Ring 4: 0.3-0.6 mi</text>'
+    "</svg>"
+)
+
 st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
 
 set_base_font()
@@ -31,11 +76,12 @@ render_sidebar_nav_label()
 render_social_links()
 
 st.title("Findings & EDA")
+st.caption("EDA: Exploratory Data Analysis")
 
 # --- 1. Distance gradient ---------------------------------------------
 
 st.header("Concentric Ring Gradient Analysis")
-st.caption("Does commercial density fall off with distance?")
+st.caption("All visuals on this page are interactive. Hover over data points for detailed information.")
 
 if RING_STATS_CSV.exists():
     rings = pd.read_csv(RING_STATS_CSV)
@@ -49,27 +95,43 @@ if RING_STATS_CSV.exists():
     numbered_ring_labels = [f"Ring {i + 1}: {label}" for i, label in enumerate(RING_LABELS)]
     ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
 
-    st.markdown("**Graph 1: Average businesses/sq mi per Concentric Ring**")
-    gradient_df = gradient.rename("density_per_sq_mi").reset_index()
-    gradient_df["ring_label"] = gradient_df["ring"].map(ring_number_map)
-    # Built directly in Altair, not st.bar_chart - st.bar_chart's y_label
-    # and the underlying column name each generate their own tooltip
-    # field, showing the same number twice under two different labels.
-    # Explicit tooltips here match the per-station line chart's exactly:
-    # Ring + Businesses/sq mi, same titles, same .0f rounding.
-    bar_chart = (
-        alt.Chart(gradient_df)
-        .mark_bar()
-        .encode(
-            x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
-            y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
-            tooltip=[
-                alt.Tooltip("ring_label:N", title="Ring"),
-                alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
-            ],
+    # Same 4 hex values as Schematic 1's rings (green/blue/purple/teal,
+    # ring 1 to 4) so the bar colors below read as the same rings.
+    ring_colors = ["#3B6D11", "#185FA5", "#534AB7", "#0F6E56"]
+
+    chart_col, schematic_col = st.columns([3, 1])
+
+    with chart_col:
+        st.markdown("**Graph 1: Average businesses/sq mi per Concentric Ring**")
+        gradient_df = gradient.rename("density_per_sq_mi").reset_index()
+        gradient_df["ring_label"] = gradient_df["ring"].map(ring_number_map)
+        # Built directly in Altair, not st.bar_chart - st.bar_chart's y_label
+        # and the underlying column name each generate their own tooltip
+        # field, showing the same number twice under two different labels.
+        # Explicit tooltips here match the per-station line chart's exactly:
+        # Ring + Businesses/sq mi, same titles, same .0f rounding.
+        bar_chart = (
+            alt.Chart(gradient_df)
+            .mark_bar()
+            .encode(
+                x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
+                y=alt.Y("density_per_sq_mi:Q", title="Businesses per square mile"),
+                color=alt.Color(
+                    "ring_label:N",
+                    sort=numbered_ring_labels,
+                    scale=alt.Scale(domain=numbered_ring_labels, range=ring_colors),
+                    legend=None,
+                ),
+                tooltip=[
+                    alt.Tooltip("ring_label:N", title="Ring"),
+                    alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
+                ],
+            )
         )
-    )
-    st.altair_chart(bar_chart, use_container_width=True)
+        st.altair_chart(bar_chart, use_container_width=True)
+
+    with schematic_col:
+        st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
 
     # Ring-to-ring percent change, computed from the same `gradient` series
     # the chart above renders - not hardcoded, so it stays accurate if the
@@ -868,25 +930,37 @@ if CHAIN_STATS_CSV.exists():
             chain_share_pct=lambda d: d["chain_share"] * 100,
         )
 
-        st.markdown("**Graph 5: Chain Share by Concentric Ring**")
-        chain_ring_chart = (
-            alt.Chart(chain_ring)
-            .mark_bar()
-            .encode(
-                x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
-                y=alt.Y(
-                    "chain_share_pct:Q",
-                    title="Share of businesses that are chains",
-                ),
-                tooltip=[
-                    alt.Tooltip("ring_label:N", title="Ring"),
-                    alt.Tooltip("chain_share_pct:Q", title="Chain share", format=".1f"),
-                    alt.Tooltip("chain_matches:Q", title="Chain locations", format=","),
-                    alt.Tooltip("total_matches:Q", title="Total businesses", format=","),
-                ],
+        chart_col, schematic_col = st.columns([3, 1])
+
+        with chart_col:
+            st.markdown("**Graph 5: Chain Share by Concentric Ring**")
+            chain_ring_chart = (
+                alt.Chart(chain_ring)
+                .mark_bar()
+                .encode(
+                    x=alt.X("ring_label:N", sort=numbered_ring_labels, title="Concentric Ring"),
+                    y=alt.Y(
+                        "chain_share_pct:Q",
+                        title="Share of businesses that are chains",
+                    ),
+                    color=alt.Color(
+                        "ring_label:N",
+                        sort=numbered_ring_labels,
+                        scale=alt.Scale(domain=numbered_ring_labels, range=ring_colors),
+                        legend=None,
+                    ),
+                    tooltip=[
+                        alt.Tooltip("ring_label:N", title="Ring"),
+                        alt.Tooltip("chain_share_pct:Q", title="Chain share", format=".1f"),
+                        alt.Tooltip("chain_matches:Q", title="Chain locations", format=","),
+                        alt.Tooltip("total_matches:Q", title="Total businesses", format=","),
+                    ],
+                )
             )
-        )
-        st.altair_chart(chain_ring_chart, use_container_width=True)
+            st.altair_chart(chain_ring_chart, use_container_width=True)
+
+        with schematic_col:
+            st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
 
         # Ties this chart's own small ring-3-to-4 reversal (8.3% -> 8.5%) to
         # the density gradient's already-documented ring-2-to-3 reversal
