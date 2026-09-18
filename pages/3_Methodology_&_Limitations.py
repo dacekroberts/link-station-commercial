@@ -85,7 +85,7 @@ This is general U.S. walking behavior though, not a study of Seattle
 transit riders specifically, so it supports my ring choice rather than
 proving it outright.
 
-The same study is part of the reason I used four tiers instead of one
+The Yang and Diez-Roux study is part of the reason I used four tiers instead of one
 flat cutoff. It found that 65% of U.S. walking trips exceed the 0.25 mile
 distance conventionally assumed as the max in transportation planning,
 which argues against relying on a single threshold at all. One ring
