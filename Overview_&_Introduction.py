@@ -91,8 +91,6 @@ with st.container(key="overview_columns"):
             "the transit corridor"
         )
 
-st.divider()
-
 st.markdown(
     """
 Businesses cluster near transit. In Seattle, much of that clustering
@@ -105,6 +103,8 @@ the line reached. This project measures the resulting density pattern,
 not which came first at each station.
 """
 )
+
+st.divider()
 
 st.subheader("What's here")
 
@@ -121,7 +121,7 @@ provide insights on potential commercial value. Lastly, chain analysis
 was done to determine the level of chain presence within transit hub
 localities. Concentric ring analysis has been visually published as a
 dynamic heatmap viewable on the corresponding page. Resulting findings &
-EDA, as well as Methodology & Limitations are similarly featured on their
+EDA, as well as methodology & limitations are similarly featured on their
 own pages. Further analysis of 1 line stations outside of Seattle city
 limits or the newer 2 line are not included at this time as an
 appropriate scope limitation, though I am not discounting their addition

@@ -35,11 +35,9 @@ and I wanted a couple of the more interesting ones visible here.
 The diagram below follows a five-step pipeline used throughout this
 project, starting from the manual data downloads and ending at the
 Streamlit app you're looking at right now. Two of the pipeline's real
-pivot points are called out directly: a bug in how I first defined a
-"chain" business that would have overstated the true figure by more than
-five times had a required hand-verification step not caught it, and a
-string of basemap problems that forced three separate fixes before the
-heatmap page actually rendered correctly.
+pivot points are called out directly in the corresponding diamond shapes.
+This flowchart is intentionally simplistic for accessibility, beyond this
+visual more decisions and workflow items went into this project.
 """
 )
 
