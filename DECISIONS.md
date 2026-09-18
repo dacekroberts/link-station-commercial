@@ -44,6 +44,29 @@ each; detail lives in the sections below.
   count unchanged (141), working tree unaffected, single uniform author/
   committer identity across all history. No content changed, authorship
   only.
+- **Renamed `Introduction.py` to `Overview_&_Introduction.py`, and added an
+  "Overview" section at the top of that page.** Same mechanism as the
+  earlier `app.py` -> `Introduction.py` and `pages/2_Findings.py` ->
+  `pages/2_Findings_&_EDA.py` renames above: Streamlit derives each
+  sidebar label from its filename, so this one change gets the "Overview &
+  Introduction" nav label for free. Unlike those two, this file is the
+  app's actual entry point (what `streamlit run` targets, and what
+  Streamlit Community Cloud's "main file path" setting points at) rather
+  than a `pages/` file, so the user deleted and recreated the Streamlit
+  Cloud app after this pushed, rather than trying to edit that setting in
+  place - Cloud's own UI only offers it at creation time. Updated
+  everywhere the old filename was live documentation: `CLAUDE.md`'s and
+  `README.md`'s run commands, `README.md`'s file tree and pipeline/app
+  split line, `.devcontainer/devcontainer.json` (`openFiles` and the
+  `postAttachCommand`), and `.claude/launch.json`. Left `PLAN.md`'s two
+  already-checked-off items and `Sessions 1-7 Context.md` alone, same as
+  the earlier renames - those reference the filename that was true when
+  each was written. The new "Overview" section itself is three short
+  bullet-point columns (what the analysis provides, the project workflow,
+  key takeaways) rather than prose, aimed at a visitor who hasn't yet hit
+  the denser writing below it; drafted and refined with the user before
+  any file was touched, per their standing instruction for this kind of
+  content change.
 
 ### 2026-09-15 — Session 8
 

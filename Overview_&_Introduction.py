@@ -4,7 +4,7 @@ Reads only from outputs/. Never runs the pipeline - that keeps the deployed
 app free of the compiled geospatial stack, which is the usual reason a
 Streamlit Cloud deploy fails.
 
-Run:  streamlit run Introduction.py
+Run:  streamlit run "Overview_&_Introduction.py"
 """
 
 import pandas as pd
@@ -37,6 +37,62 @@ render_social_links()
 st.title("Commercial Density Around Seattle's Light Rail Stations")
 st.caption("By Dace Roberts")
 
+st.subheader("Overview")
+
+# A quick, skimmable orientation for a visitor who hasn't yet hit the
+# denser prose below - three short lists rather than paragraphs, since
+# the goal here is a window into the project, not the full argument.
+# st.container(key=...) gives this specific columns row its own
+# "st-key-overview_columns" class so the injected divider CSS can target
+# just these three columns, not the unrelated st.columns() row (the
+# metrics) further down this same page.
+with st.container(key="overview_columns"):
+    st.markdown(
+        """
+        <style>
+        .st-key-overview_columns [data-testid="stHorizontalBlock"]
+        > [data-testid="stColumn"]:not(:first-child) {
+            border-left: 1px solid rgba(128, 128, 128, 0.3);
+            padding-left: 1.5rem;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    provides_col, workflow_col, takeaways_col = st.columns(3)
+    with provides_col:
+        st.markdown("**What This Analysis Provides**")
+        st.markdown(
+            "- This project measures business counts near transit stations "
+            "to analyze significance\n"
+            "- Core component: interactive heatmap allowing customizable "
+            "visualizations of the database\n"
+            "- Findings, methodology, and flowchart pages contribute to "
+            "meaningful insights, validity of the database, and "
+            "informative infrastructure"
+        )
+    with workflow_col:
+        st.markdown("**Project Workflow**")
+        st.markdown(
+            "- Heatmapped database compiles NAICS business data and GIS "
+            "locational data\n"
+            "- Findings and EDA are tied directly to the heatmapped "
+            "database\n"
+            "- Findings do not imply causality, only possible correlations"
+        )
+    with takeaways_col:
+        st.markdown("**Key Takeaways**")
+        st.markdown(
+            "- Business density and brand share of businesses peaks "
+            "closest to transit platforms\n"
+            "- Ridership volume per station shares a moderate correlation "
+            "with business density\n"
+            "- More than a third of Seattle-area businesses lie within "
+            "the transit corridor"
+        )
+
+st.divider()
+
 st.markdown(
     """
 Businesses cluster near transit. In Seattle, much of that clustering
@@ -47,11 +103,6 @@ different story: University of Washington, added in 2016, sits at the
 center of campus and hospital land rather than an established retail core
 the line reached. This project measures the resulting density pattern,
 not which came first at each station.
-
-This project measures commercial density in concentric rings around the
-sixteen Link 1 Line stations inside Seattle, tests whether density falls
-off with distance from the platform, and looks at which kinds of businesses
-concentrate closest.
 """
 )
 

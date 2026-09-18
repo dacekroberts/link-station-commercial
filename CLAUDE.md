@@ -43,7 +43,7 @@ wheels). Built with `uv`; plain `venv`/`pip` is equivalent.
 ```powershell
 .venv\Scripts\Activate.ps1        # Windows; macOS/Linux: source .venv/bin/activate
 python src/step1_stations.py      # then 2, 3, 4, 5 in order
-streamlit run Introduction.py
+streamlit run "Overview_&_Introduction.py"
 ```
 
 Commit after each step that succeeds. Prompt the user to fill in
