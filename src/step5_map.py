@@ -429,6 +429,34 @@ def main():
                 return marker;
             }}
         """
+        # Leaflet.markercluster's default iconCreateFunction hands every
+        # cluster the same fixed 40x40px icon regardless of how many points
+        # it holds - a 2-point cluster gets exactly as large a hit area as a
+        # 500-point one. At the boundary where a cluster is about to split
+        # into individual markers, that oversized hit area sits on top of
+        # (and blocks hovering) whichever lone dot happens to render right
+        # next to it - caught via screenshot on the Heatmap page. Scaling
+        # icon size (and therefore hit area) down for small clusters fixes
+        # this at the source rather than just tuning cluster radius/zoom
+        # thresholds, which would only make the collision less likely, not
+        # eliminate it.
+        icon_create_function = f"""
+            function (cluster) {{
+                var count = cluster.getChildCount();
+                var size = count <= 3 ? 18 : count <= 10 ? 26 : count <= 50 ? 34 : 42;
+                var fontSize = Math.max(9, Math.round(size * 0.42));
+                return new L.DivIcon({{
+                    html: '<div style="width:100%; height:100%; border-radius:50%; ' +
+                        'background:{color}; opacity:0.85; ' +
+                        'border:1px solid rgba(0,0,0,0.4); display:flex; ' +
+                        'align-items:center; justify-content:center; color:#fff; ' +
+                        'font-size:' + fontSize + 'px; font-weight:600;">' +
+                        count + '</div>',
+                    className: 'business-cluster-icon',
+                    iconSize: new L.Point(size, size)
+                }});
+            }}
+        """
         # FastMarkerCluster's own `show` param is not reliable for hiding it
         # at load - wrap it in a FeatureGroup instead, the same mechanism the
         # ring layers above use, which does respect show=False.
@@ -439,7 +467,9 @@ def main():
         if bold:
             layer_name = f"<b>{layer_name}</b>"
         fg = folium.FeatureGroup(name=layer_name, show=show)
-        FastMarkerCluster(data, callback=callback).add_to(fg)
+        FastMarkerCluster(
+            data, callback=callback, icon_create_function=icon_create_function
+        ).add_to(fg)
         fg.add_to(m)
 
     for name, prefixes, color in NAICS_GROUPS:

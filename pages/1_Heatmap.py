@@ -49,10 +49,10 @@ st.markdown(
     f"""
 Stations are represented by blue dots along the 1 Line (thick green line).
 <u>Concentric ring boundaries and NAICS/GIS geocoded storefronts are
-togglable via layer control in the top left.</u> <img src="{LAYER_CONTROL_ICON_DATA_URI}" width="18"
+toggleable via the layer control in the top left.</u> <img src="{LAYER_CONTROL_ICON_DATA_URI}" width="18"
 height="18" style="vertical-align: middle;" alt="Layer control icon"/> When
 enabled, business density will display as numbered circles summing areas
-when zoomed out. Zooming in will show individual dots, hover over those to
+when zoomed out. Zooming in will show individual dots; hover over those to
 see further details.
 
 The heat layer is illustrative. Leaflet applies a visual blur rather than a

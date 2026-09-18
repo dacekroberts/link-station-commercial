@@ -120,9 +120,10 @@ NAICS_STOREFRONT_PREFIXES = [
 NAICS_STOREFRONT_EXCLUDE = {
     "812930": (
         "Parking Lots and Garages",
-        "Paying to park is a planned decision made before the trip, not the "
-        "incidental foot traffic — a meal, a purchase — this analysis is "
-        "trying to measure near a platform. Someone who chose to drive and "
+        "Paying to park is a planned decision made before the trip, not "
+        "incidental foot traffic. A meal or a shopping purchase is more in "
+        "line with what this analysis is trying to measure near a "
+        "platform. Someone who chose to drive and "
         "pay for parking made a different choice than someone who walked "
         "past a restaurant or shop on the way from the platform; treating "
         "the two as the same kind of \"storefront\" would credit driving "
@@ -130,7 +131,7 @@ NAICS_STOREFRONT_EXCLUDE = {
     ),
     "812990": (
         "All Other Personal Services",
-        "This is NAICS's residual catch-all within 812 — businesses that "
+        "This is NAICS's residual catch-all within 812. Businesses that "
         "didn't fit a more specific personal-services code, which already "
         "exist and are kept separately (nail salons, barber shops, dry "
         "cleaners, pet care each have their own line). A hand sample of 40 "
@@ -147,7 +148,7 @@ NAICS_STOREFRONT_EXCLUDE = {
         "remaining hours, and the storefront types this bucket's minority "
         "represents (massage, dance, pet care, wellness) are already "
         "substantially captured under their own dedicated NAICS codes "
-        "elsewhere in the dataset — so this is a bounded, characterized "
+        "elsewhere in the dataset. This is a bounded, characterized "
         "undercount of those categories specifically, not an unaccounted-"
         "for gap.",
     ),
@@ -162,13 +163,13 @@ NAICS_STOREFRONT_REVIEWED_KEPT = {
     "459999": (
         "All Other Miscellaneous Retailers",
         "Retail's own catch-all, structurally identical in shape to 812990 "
-        "above — but a hand sample of 25 of the 1,190 rows found the "
+        "above, but a hand sample of 25 of the 1,190 rows found the "
         "opposite profile. Roughly 70% were plausible walk-in storefronts: "
         "niche independent shops uncommon enough that they don't have their "
         "own NAICS code (a violin shop, a comic shop, a record store, a "
         "coin shop, a distillery tasting room), against a minority of "
         "non-storefront rows (an industrial gas supplier, a houseboat-"
-        "owners' advocacy nonprofit, a couple of vague-named LLCs). Kept: "
+        "owners' advocacy nonprofit, a couple of vaguely named LLCs). Kept: "
         "unlike the personal-services catch-all, this bucket's residue is "
         "dominated by real, if uncommon, retail rather than professional or "
         "home-based operations.",
@@ -195,7 +196,7 @@ NAICS_STOREFRONT_REVIEWED_KEPT = {
 CHAIN_ANALYSIS_EXCLUDE_BRANDS = {
     "COMPASS ONE": (
         "Compass One LLC",
-        "23 of its 24 licensed locations use NAICS 722514, not 722310 - "
+        "23 of its 24 licensed locations use NAICS 722514, not 722310, "
         "but all 24 cluster in South Lake Union under addresses that read "
         "as office-campus buildings (Terry Ave N, Boren Ave N, Fairview "
         "Ave N), not walk-in storefronts. Compass Group is a real, large "
@@ -205,13 +206,13 @@ CHAIN_ANALYSIS_EXCLUDE_BRANDS = {
     ),
     "BON APPETIT MANAGEMENT": (
         "Bon Appétit Management Company",
-        "NAICS 722310 (Food Service Contractors) throughout - another "
+        "NAICS 722310 (Food Service Contractors) throughout; another "
         "national contract caterer, same pattern as Compass One at a "
         "smaller scale in this dataset (4 locations).",
     ),
     "FLIK INTERNATIONAL": (
         "Flik International",
-        "NAICS 722310 (Food Service Contractors) throughout - a third "
+        "NAICS 722310 (Food Service Contractors) throughout; a third "
         "national contract caterer (3 locations), same pattern.",
     ),
 }
@@ -256,5 +257,5 @@ LICENSE_SNAPSHOT = "2026-09-06"
 LICENSE_SOURCE = (
     "City of Seattle Open Data - Active Business License Tax Certificate "
     "(dataset wnbq-64tb). Point geometry joined from the companion GIS layer "
-    "'Seattle Business License' where account numbers match."
+    "'Seattle Business License' where account numbers match"
 )

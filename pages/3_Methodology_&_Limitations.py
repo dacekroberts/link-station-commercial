@@ -81,12 +81,12 @@ to my food-service and retail categories) land at 0.6 miles or less.
 Recreation, the longest-distance purpose in that study, is the outlier at
 only about 50% within 0.6 miles, which is the pattern I needed to see,
 not a convenient coincidence of picking a lenient category on purpose.
-This is general U.S. walking behavior though, not a study of Seattle
+This is general U.S. walking behavior, though, not a study of Seattle
 transit riders specifically, so it supports my ring choice rather than
 proving it outright.
 
 The Yang and Diez-Roux study is part of the reason I used four tiers instead of one
-flat cutoff. It found that 65% of U.S. walking trips exceed the 0.25 mile
+flat cutoff. It found that 65% of U.S. walking trips exceed the 0.25-mile
 distance conventionally assumed as the max in transportation planning,
 which argues against relying on a single threshold at all. One ring
 alone would have collapsed whatever structure actually exists between
@@ -105,7 +105,7 @@ I pulled station coordinates from `stops.txt`, filtered down to 1 Line
 stops within Seattle city limits, and averaged platforms that share a
 station name into a single point.
 
-Commercial spaces come from {LICENSE_SOURCE}, downloaded {LICENSE_SNAPSHOT}.
+Commercial spaces come from {LICENSE_SOURCE}; downloaded {LICENSE_SNAPSHOT}.
 I filtered to NAICS prefixes {', '.join(NAICS_STOREFRONT_PREFIXES)} to
 capture retail, food service, and personal services. Addresses were
 geocoded in two passes: a join against the City's own GIS geometry by
@@ -248,7 +248,7 @@ Geocoding failures aren't randomly distributed. Addresses with unusual
 formatting fail more often, and those addresses might differ
 systematically from the ones that match cleanly. Two sources stack on
 top of each other here: a business missing from the GIS donor layer
-isn't necessarily a hard address to place, it could just postdate that
+isn't necessarily a hard address to place; it could just postdate that
 snapshot or not have carried over for some unrelated reason, but the
 City's layer only includes businesses it successfully geocoded in the
 first place, so donor-absence could still skew toward the same
@@ -343,7 +343,7 @@ ridership window ends, and the full East Link extension finished in
 2026, entirely after the ridership period I'm using here. That
 extension lets riders traveling between stations north of International
 District/Chinatown take either line now, which I'd expect to reduce 1
-Line counts without any real change in underlying travel demand.
+Line ridership counts without any real change in underlying travel demand.
 
 Station-level ridership from 2025 could therefore misstate current, 2026
 conditions, especially downtown and at the south end. I've labeled
@@ -423,7 +423,7 @@ the outer rings, since 48 m against a 483 m radius (0.3 mile) is a much
 smaller fraction, so this effect is concentrated in the finest-grained
 comparison.
 
-**Station siting isn't random either.** Link was routed through
+**Station siting isn't random either.** The link rail was routed through
 corridors that were already commercially active, so proximity and
 density are partly co-determined here rather than one simply causing the
 other. Rainier Beach shows the reverse case: the neighborhood's
@@ -476,6 +476,6 @@ st.markdown(
   (2003) apply directly to transit walk accessibility as an alternative
   to flat buffers, would model pedestrian attenuation continuously
   instead of as four discrete steps. That's real added complexity this
-  project's scope didn't call for though.
+  project's scope didn't call for, though.
 """
 )
