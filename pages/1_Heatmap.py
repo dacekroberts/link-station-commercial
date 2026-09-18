@@ -76,11 +76,5 @@ if HEATMAP_HTML.exists():
     # net against a stray pixel of overflow, not because it's expected to
     # trigger.
     components.html(heatmap_html, width=1000, height=650, scrolling=True)
-    st.download_button(
-        "Download the map",
-        data=heatmap_html,
-        file_name="heatmap.html",
-        mime="text/html",
-    )
 else:
     st.info("No map yet. Run `python src/step5_map.py` to generate it.")

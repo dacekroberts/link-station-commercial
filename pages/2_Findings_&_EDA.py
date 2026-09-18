@@ -81,7 +81,11 @@ st.caption("EDA: Exploratory Data Analysis")
 # --- 1. Distance gradient ---------------------------------------------
 
 st.header("Concentric Ring Gradient Analysis")
-st.caption("All visuals on this page are interactive. Hover over data points for detailed information.")
+st.caption(
+    "<u>All visuals on this page are interactive. Hover over data points "
+    "for detailed information.</u>",
+    unsafe_allow_html=True,
+)
 
 if RING_STATS_CSV.exists():
     rings = pd.read_csv(RING_STATS_CSV)
@@ -661,7 +665,7 @@ if STATION_STATS_CSV.exists():
         pioneer_rank = int(ridership_rank[clean["station"] == "Pioneer Square"].iloc[0])
         st.caption(
             f"Symphony (rank {symphony_rank}) and Pioneer Square (rank {pioneer_rank}) "
-            f"are the inverse of the UW/Northgate mismatch below. That's "
+            f"feature "
             f"{symphony['businesses_within_0_3mi']:.0f} and "
             f"{pioneer['businesses_within_0_3mi']:.0f} businesses within 0.3mi, the "
             "2nd- and 3rd-highest of all 16, despite mid-pack ridership. Both sit in "

@@ -91,6 +91,8 @@ with st.container(key="overview_columns"):
             "the transit corridor"
         )
 
+st.subheader("Introduction")
+
 st.markdown(
     """
 Businesses cluster near transit. In Seattle, much of that clustering
