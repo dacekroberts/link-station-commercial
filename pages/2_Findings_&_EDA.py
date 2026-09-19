@@ -45,7 +45,7 @@ RING_SCHEMATIC_SVG = (
     'role="img" aria-label="Schematic of the four concentric rings used in this analysis">'
     '<text x="150" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Schematic 1:</text>'
     '<text x="150" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Concentric Ring Diagram</text>'
-    '<circle cx="150" cy="150" r="80" fill="#FDE3C8"/>'
+    '<circle cx="150" cy="150" r="80" fill="#FDD0A2"/>'
     '<circle cx="150" cy="150" r="60" fill="#FBB878"/>'
     '<circle cx="150" cy="150" r="40" fill="#F0801F"/>'
     '<circle cx="150" cy="150" r="22" fill="#C2500A"/>'
@@ -64,7 +64,7 @@ RING_SCHEMATIC_SVG = (
     '<text x="34" y="358" font-size="13" fill="currentColor">Concentric Ring 2: 0.1-0.2 mi</text>'
     '<rect x="10" y="380" width="16" height="16" rx="3" fill="#FBB878"/>'
     '<text x="34" y="392" font-size="13" fill="currentColor">Concentric Ring 3: 0.2-0.3 mi</text>'
-    '<rect x="10" y="414" width="16" height="16" rx="3" fill="#FDE3C8"/>'
+    '<rect x="10" y="414" width="16" height="16" rx="3" fill="#FDD0A2"/>'
     '<text x="34" y="426" font-size="13" fill="currentColor">Concentric Ring 4: 0.3-0.6 mi</text>'
     "</svg>"
 )
@@ -105,7 +105,7 @@ if RING_STATS_CSV.exists():
     # read as the same rings. Stays inside orange/peach/cream on purpose:
     # no red (Graph 2's against-pattern lines, Table 1's highlight) and no
     # true yellow (Graph 4's Ridership dots).
-    ring_colors = ["#C2500A", "#F0801F", "#FBB878", "#FDE3C8"]
+    ring_colors = ["#C2500A", "#F0801F", "#FBB878", "#FDD0A2"]
 
     chart_col, schematic_col = st.columns([3, 1])
 

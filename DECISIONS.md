@@ -20,19 +20,27 @@ each; detail lives in the sections below.
   moved Graph 4's Ridership dots from orange to gold.** The old palette
   read flat, with no sense that density falls off with distance. The new
   ramp goes ring 1 `#C2500A` (burnt orange) to `#F0801F`, `#FBB878`,
-  `#FDE3C8` (cream) at ring 4, so the bars and rings read as bold-to-pale
-  with distance. Two constraints shaped it: red is off limits (Graph 2's
-  against-the-pattern lines and Table 1's highlight already use it), and
-  orange on the ring/bar colors would have collided with Graph 4's orange
-  Ridership dots on the same page, so those became gold `#F2C94C`. The
-  ramp deliberately never reaches true yellow, so the gold stays distinct
-  from ring 3's peach and ring 4's cream. Numerals inside the rings are
-  white on ring 1 and dark brown `#3B1505` on rings 2-4 for contrast.
-  Known tradeoff, not resolved: on the dark theme the palest ring is the
-  brightest element, the reverse of the usual dark-mode "more is brighter"
-  convention; the alternative (fading outer rings toward the background)
-  was previewed and not chosen. Any future light theme would need this
-  ramp retuned, since ring 4 nearly vanishes on a light background.
+  `#FDD0A2` (soft peach) at ring 4, so the bars and rings read as
+  bold-to-pale with distance. Two constraints shaped it: red is off limits
+  (Graph 2's against-the-pattern lines and Table 1's highlight already use
+  it), and orange on the ring/bar colors would have collided with Graph
+  4's orange Ridership dots on the same page, so those became gold
+  `#F2C94C`. The ramp deliberately never reaches true yellow, so the gold
+  stays distinct from ring 3's peach and ring 4's peach-cream. Numerals
+  inside the rings are white on ring 1 and dark brown `#3B1505` on rings
+  2-4 for contrast.
+  Ring 4 was tuned after seeing it on the dark page: the first cream
+  (`#FDE3C8`) read as a near-white, the brightest thing on screen, the
+  reverse of the usual dark-mode "more is brighter" convention. The
+  alternative of fading outer rings toward the background (ring 4 at 3.1:1
+  contrast) was previewed and rejected as less faithful to the bold-to-pale
+  intent. Darkening ring 4 by 15% was also previewed and rejected, since it
+  made rings 3 and 4 equal in lightness and erased the step between them.
+  What shipped raises ring 4's saturation 15 points (21% to 36%) instead:
+  still lighter than ring 3, about 13:1 against the page (was 15:1), at
+  the cost of narrowing the ring 3 to ring 4 lightness gap from about 12
+  points to about 7. Any future light theme would need this ramp retuned,
+  since ring 4 nearly vanishes on a light background.
 - **Graph 2 now fills its container width instead of a fixed 900px, with
   its legend above the plot.** Measured at a 375px phone viewport: the
   fixed 900px chart overflowed a 343px container with nothing to scroll
