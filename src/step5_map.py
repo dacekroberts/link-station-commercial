@@ -417,11 +417,20 @@ def main():
             return
         callback = f"""
             function (row) {{
+                // business_name comes straight from the City's license
+                // registry as free text - a name containing '&' or '<'
+                // (e.g. "Smith & Sons") would otherwise break this
+                // tooltip's HTML or inject markup. The other fields
+                // below are computed/controlled values, not at risk.
+                function esc(s) {{
+                    return String(s).replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                }}
                 var marker = L.circleMarker(new L.LatLng(row[0], row[1]), {{
                     radius: 5, color: '{color}', fillColor: '{color}',
                     fillOpacity: 0.85, weight: 1
                 }});
-                var html = '<b>' + row[2] + '</b><br>' +
+                var html = '<b>' + esc(row[2]) + '</b><br>' +
                     'NAICS code: ' + row[3] + '<br>' +
                     'Nearest station: ' + row[4] + '<br>' +
                     row[5];
