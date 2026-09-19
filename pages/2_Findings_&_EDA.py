@@ -26,8 +26,9 @@ from config import (
 # Static legend/schematic for Graph 1 - explains what "Concentric Ring 1-4"
 # means before the reader hits the bar chart. Pure decoration, no data
 # dependency, so it's a plain constant rather than something built from
-# RING_LABELS - colors here are cosmetic only and don't (yet) drive Graph 1's
-# own bar coloring. Sized as a narrow vertical layout (300x450 viewBox) to
+# RING_LABELS - its four ring colors must stay in sync with `ring_colors`
+# below, which colors Graph 1 and Graph 5's bars. Sized as a narrow vertical
+# layout (300x450 viewBox) to
 # sit legibly in the slim right-hand column next to Graph 1, rather than the
 # wide horizontal layout that would suit a full-width placement.
 # One unbroken block, no blank lines: Streamlit's markdown renderer follows
@@ -44,26 +45,26 @@ RING_SCHEMATIC_SVG = (
     'role="img" aria-label="Schematic of the four concentric rings used in this analysis">'
     '<text x="150" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Schematic 1:</text>'
     '<text x="150" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Concentric Ring Diagram</text>'
-    '<circle cx="150" cy="150" r="80" fill="#0F6E56"/>'
-    '<circle cx="150" cy="150" r="60" fill="#534AB7"/>'
-    '<circle cx="150" cy="150" r="40" fill="#185FA5"/>'
-    '<circle cx="150" cy="150" r="22" fill="#3B6D11"/>'
+    '<circle cx="150" cy="150" r="80" fill="#FDE3C8"/>'
+    '<circle cx="150" cy="150" r="60" fill="#FBB878"/>'
+    '<circle cx="150" cy="150" r="40" fill="#F0801F"/>'
+    '<circle cx="150" cy="150" r="22" fill="#C2500A"/>'
     '<circle cx="150" cy="150" r="4" fill="#FFFFFF" stroke="#2C2C2A" stroke-width="1.5"/>'
     '<text x="150" y="143" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">1</text>'
-    '<text x="150" y="123" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">2</text>'
-    '<text x="150" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">3</text>'
-    '<text x="150" y="84" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">4</text>'
+    '<text x="150" y="123" text-anchor="middle" font-size="14" font-weight="600" fill="#3B1505">2</text>'
+    '<text x="150" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="#3B1505">3</text>'
+    '<text x="150" y="84" text-anchor="middle" font-size="14" font-weight="600" fill="#3B1505">4</text>'
     '<text x="150" y="248" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.6">not to scale</text>'
     '<circle cx="18" cy="278" r="8" fill="#FFFFFF" stroke="#2C2C2A" stroke-width="1.5"/>'
     '<text x="34" y="282" font-size="13" fill="currentColor">Origin Point (Station</text>'
     '<text x="34" y="298" font-size="13" fill="currentColor">Coordinates)</text>'
-    '<rect x="10" y="312" width="16" height="16" rx="3" fill="#3B6D11"/>'
+    '<rect x="10" y="312" width="16" height="16" rx="3" fill="#C2500A"/>'
     '<text x="34" y="324" font-size="13" fill="currentColor">Concentric Ring 1: 0-0.1 mi</text>'
-    '<rect x="10" y="346" width="16" height="16" rx="3" fill="#185FA5"/>'
+    '<rect x="10" y="346" width="16" height="16" rx="3" fill="#F0801F"/>'
     '<text x="34" y="358" font-size="13" fill="currentColor">Concentric Ring 2: 0.1-0.2 mi</text>'
-    '<rect x="10" y="380" width="16" height="16" rx="3" fill="#534AB7"/>'
+    '<rect x="10" y="380" width="16" height="16" rx="3" fill="#FBB878"/>'
     '<text x="34" y="392" font-size="13" fill="currentColor">Concentric Ring 3: 0.2-0.3 mi</text>'
-    '<rect x="10" y="414" width="16" height="16" rx="3" fill="#0F6E56"/>'
+    '<rect x="10" y="414" width="16" height="16" rx="3" fill="#FDE3C8"/>'
     '<text x="34" y="426" font-size="13" fill="currentColor">Concentric Ring 4: 0.3-0.6 mi</text>'
     "</svg>"
 )
@@ -99,9 +100,12 @@ if RING_STATS_CSV.exists():
     numbered_ring_labels = [f"Ring {i + 1}: {label}" for i, label in enumerate(RING_LABELS)]
     ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
 
-    # Same 4 hex values as Schematic 1's rings (green/blue/purple/teal,
-    # ring 1 to 4) so the bar colors below read as the same rings.
-    ring_colors = ["#3B6D11", "#185FA5", "#534AB7", "#0F6E56"]
+    # Same 4 hex values as Schematic 1's rings (a warm orange ramp, bold
+    # burnt orange at ring 1 to cream at ring 4) so the bar colors below
+    # read as the same rings. Stays inside orange/peach/cream on purpose:
+    # no red (Graph 2's against-pattern lines, Table 1's highlight) and no
+    # true yellow (Graph 4's Ridership dots).
+    ring_colors = ["#C2500A", "#F0801F", "#FBB878", "#FDE3C8"]
 
     chart_col, schematic_col = st.columns([3, 1])
 
@@ -225,15 +229,12 @@ if RING_STATS_CSV.exists():
                     range=["#4c78a8", "#e45756"],
                 ),
                 legend=alt.Legend(
-                    orient="top-left",
-                    direction="vertical",
-                    fillColor="#0e1117",
-                    padding=4,
-                    offset=0,
-                    symbolSize=40,
-                    labelFontSize=9,
-                    labelLimit=90,
-                    rowPadding=1,
+                    orient="top",
+                    direction="horizontal",
+                    offset=8,
+                    symbolSize=60,
+                    labelFontSize=11,
+                    columnPadding=16,
                 ),
             ),
             opacity=alt.condition(
@@ -247,23 +248,18 @@ if RING_STATS_CSV.exists():
                 alt.Tooltip("density_per_sq_mi:Q", title="Businesses/sq mi", format=".0f"),
             ],
         )
-        .properties(height=504, width=900, padding={"bottom": 90})
+        .properties(height=504)
     )
-    # Fixed width (not container-filling), capped at 900px deliberately -
-    # measured (not guessed) that Streamlit's main content container caps
-    # out at 970px on a 1280px-wide window with the sidebar expanded;
-    # anything wider than that drags the whole page into horizontal
-    # scroll, not just this chart, since a scoped-scroll wrapper (tried via
-    # unsafe_allow_html, the same idea as the heatmap iframe's own
-    # scrolling=True) doesn't work in this Streamlit version - each
-    # st.markdown/st.altair_chart call gets its own isolated element
-    # container rather than nesting inside a shared open tag. 900px leaves
-    # a margin under the measured ceiling and is still meaningfully wider
-    # than the ~810px this chart rendered at under container-fill, short of
-    # the originally-requested 1.5x (which would need ~1200px) - traded
-    # off in favor of a page that doesn't scroll sideways on a normal
-    # laptop window.
-    st.altair_chart(per_station_chart, use_container_width=False)
+    # Container-width, not a fixed pixel width. This chart used to be pinned
+    # at 900px (a laptop-window choice: wider than the ~810px container-fill
+    # size, but under the 970px ceiling that would drag the whole page into
+    # horizontal scroll). On a phone that fixed width overflowed a ~343px
+    # container with nothing to scroll it, cutting off Rings 2-4 entirely
+    # (measured at a 375px viewport). Filling the container is the fix; the
+    # legend moved above the plot (horizontal) so it no longer overlays the
+    # lines at narrow widths, which also made its old opaque dark fill, a
+    # hardcoded copy of the theme background, unnecessary.
+    st.altair_chart(per_station_chart, use_container_width=True)
 
     st.markdown(
         """
@@ -799,7 +795,7 @@ if STATION_STATS_CSV.exists():
                     legend=alt.Legend(orient="right"),
                     scale=alt.Scale(
                         domain=["Businesses", "Ridership"],
-                        range=["#4c78a8", "#eb6834"],
+                        range=["#4c78a8", "#F2C94C"],
                     ),
                 ),
                 tooltip=[

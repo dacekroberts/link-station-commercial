@@ -13,6 +13,38 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-19 — Between sessions
+
+- **Recolored Schematic 1, and Graph 1/Graph 5's bars with it, from four
+  categorical hues (green/blue/purple/teal) to one warm orange ramp, and
+  moved Graph 4's Ridership dots from orange to gold.** The old palette
+  read flat, with no sense that density falls off with distance. The new
+  ramp goes ring 1 `#C2500A` (burnt orange) to `#F0801F`, `#FBB878`,
+  `#FDE3C8` (cream) at ring 4, so the bars and rings read as bold-to-pale
+  with distance. Two constraints shaped it: red is off limits (Graph 2's
+  against-the-pattern lines and Table 1's highlight already use it), and
+  orange on the ring/bar colors would have collided with Graph 4's orange
+  Ridership dots on the same page, so those became gold `#F2C94C`. The
+  ramp deliberately never reaches true yellow, so the gold stays distinct
+  from ring 3's peach and ring 4's cream. Numerals inside the rings are
+  white on ring 1 and dark brown `#3B1505` on rings 2-4 for contrast.
+  Known tradeoff, not resolved: on the dark theme the palest ring is the
+  brightest element, the reverse of the usual dark-mode "more is brighter"
+  convention; the alternative (fading outer rings toward the background)
+  was previewed and not chosen. Any future light theme would need this
+  ramp retuned, since ring 4 nearly vanishes on a light background.
+- **Graph 2 now fills its container width instead of a fixed 900px, with
+  its legend above the plot.** Measured at a 375px phone viewport: the
+  fixed 900px chart overflowed a 343px container with nothing to scroll
+  it, cutting off Rings 2-4 entirely. The fixed width was a deliberate
+  laptop-window choice (wider than the ~810px container-fill size); that
+  is traded back, and on a wide desktop the chart now fills the container
+  (990px at a 1400px window) with no page-level horizontal scroll. The
+  legend moved above the plot, which also removed its hardcoded dark fill
+  (a copy of the theme background) and the leftover 90px bottom padding
+  from when the axis labels were long and rotated. Full-screen mode was
+  not tested.
+
 ### 2026-09-17 — Between sessions
 
 - **Ran the full pipeline from scratch (step1 through step5) before Session
