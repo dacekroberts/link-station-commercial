@@ -15,6 +15,22 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **Added a Dark Mode option to the heatmap.** The layer control now has
+  two base maps, "Light Mode" (default) and "Dark Mode", replacing the old
+  single "Seattle 1 Line Business Density Heatmap" label. Dark Mode is the
+  same OpenStreetMap tiles recoloured with a CSS filter (invert +
+  hue-rotate) on that layer's tile container, so there is no new tile
+  provider or API key (CartoDB and other dark styles were already ruled out
+  on licensing/keys). A `baselayerchange` handler puts a `dark-base` class on
+  `<body>`; CSS under that class lightens the ring outlines (the slate
+  `#2c3e50` was invisible on dark) and restyles the legend, zoom buttons,
+  layer control, attribution and pin hover tooltip in the site's warm
+  charcoal palette. Overlays (heat, rings, pins) sit outside the filtered
+  pane, so they are unchanged. Not persisted: visitors start on Light.
+  The Heatmap page's underlined sentence now names Dark Mode.
+- **Layer-control order:** the three bold group layers (Retail, Food
+  service, Personal services) now sit together, with each group's
+  subcategories grouped by umbrella below them. Same layers and defaults.
 - **Heatmap density layer changed from red to orange.** `HEAT_GRADIENT`
   in `step5_map.py` now runs `#FBB878` -> `#F97316` -> `#DE6412` ->
   `#C0570F` -> `#8F3A05`, the same family as Schematic 1 and the ring bars.

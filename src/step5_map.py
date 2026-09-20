@@ -24,6 +24,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 from folium.plugins import HeatMap, FastMarkerCluster
+from jinja2 import Template
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (  # noqa: E402
@@ -116,7 +117,7 @@ def naics_label(name: str, prefixes: tuple) -> str:
     return f"{name} — NAICS Code: {'/'.join(prefixes)}"
 
 LEGEND_HTML = """
-<div style="
+<div class="map-legend" style="
     position: fixed; bottom: 24px; right: 24px; z-index: 9999;
     background: white; padding: 10px 14px; border: 1px solid #999;
     border-radius: 4px; font-family: sans-serif; font-size: 13px;
@@ -255,7 +256,19 @@ def main():
     )
     folium.TileLayer(
         tiles="OpenStreetMap",
-        name="Seattle 1 Line Business Density Heatmap",
+        name="Light Mode",
+    ).add_to(m)
+    # Dark option: the same OSM tiles (no new provider, no API key - see
+    # DECISIONS.md on why CartoDB was ruled out) recoloured in the browser by
+    # a CSS filter on this layer's own tile container (class defined below).
+    # Being a second *base* layer, it shows up as a radio choice next to the
+    # first one in the existing layer control; overlays (rings, heat, pins)
+    # sit in other panes and are untouched by the filter.
+    folium.TileLayer(
+        tiles="OpenStreetMap",
+        name="Dark Mode",
+        class_name="dark-osm-tiles",
+        show=False,
     ).add_to(m)
 
     # Two heat layers, same tuning, different universe. Within-rings is the
@@ -484,6 +497,9 @@ def main():
         ).add_to(fg)
         fg.add_to(m)
 
+    # Layer-control order: the three broad (bold) group layers first, then each
+    # group's finer splits below them, still grouped by umbrella. Two loops
+    # because Leaflet lists layers in the order they were added.
     for name, prefixes, color in NAICS_GROUPS:
         group_rows = businesses_in_rings[businesses_in_rings["_group"] == name]
 
@@ -495,6 +511,9 @@ def main():
         add_pin_layer(
             group_rows, f"NAICS Code: {'/'.join(prefixes)}", name, color, bold=True, show=True
         )
+
+    for name, prefixes, color in NAICS_GROUPS:
+        group_rows = businesses_in_rings[businesses_in_rings["_group"] == name]
 
         # Finer splits within it (Session 7 add-on, cheap reuse of the same
         # pattern): a few specific NAICS codes by count, plus "Other" for
@@ -536,8 +555,86 @@ def main():
                 max-height: 480px;
                 overflow-y: auto;
             }
+            /* Invert flips OSM's light map to dark, hue-rotate(180deg) undoes
+               the colour swap (water stays blue-ish, not orange), and the
+               brightness/saturate tweaks keep it from glaring. */
+            .dark-osm-tiles {
+                filter: invert(1) hue-rotate(180deg) brightness(0.85)
+                        contrast(0.9) saturate(0.7);
+            }
+            /* Everything below applies only while Dark Mode is selected (the
+               class sits on <body> so the legend, which lives outside the
+               Leaflet container, is covered too). Colours match the site's
+               warm charcoal theme. !important on the legend because its
+               light styling is inline. */
+            .dark-base { background: #171412; }
+            /* Ring outlines are dark slate (#2c3e50, used nowhere else) -
+               invisible on a dark base, so lighten them. */
+            .dark-base path.leaflet-interactive[stroke="#2c3e50"] {
+                stroke: #d9d2ca;
+            }
+            .dark-base .map-legend {
+                background: #221D19 !important;
+                color: #F3EDE6 !important;
+                border-color: #3A322B !important;
+            }
+            .dark-base .leaflet-bar,
+            .dark-base .leaflet-control-layers {
+                border: 1px solid #3A322B;
+                box-shadow: none;
+            }
+            .dark-base .leaflet-bar a,
+            .dark-base .leaflet-control-layers {
+                background-color: #221D19;
+                color: #F3EDE6;
+            }
+            .dark-base .leaflet-bar a { border-bottom-color: #3A322B; }
+            .dark-base .leaflet-bar a:hover,
+            .dark-base .leaflet-bar a:focus {
+                background-color: #2A231E;
+            }
+            .dark-base .leaflet-bar a.leaflet-disabled {
+                background-color: #1D1916;
+                color: #6B6259;
+            }
+            /* The layer-control icon is a dark-on-white image; invert it. */
+            .dark-base .leaflet-control-layers-toggle { filter: invert(1); }
+            .dark-base .leaflet-control-layers-expanded { color-scheme: dark; }
+            .dark-base .leaflet-control-layers-separator {
+                border-top-color: #3A322B;
+            }
+            .dark-base .leaflet-control-attribution {
+                background: rgba(23, 20, 18, 0.8);
+                color: #A39A90;
+            }
+            .dark-base .leaflet-control-attribution a { color: #FBB878; }
+            /* Pin hover tooltip (Leaflet's own white box) and its arrow. */
+            .dark-base .leaflet-tooltip {
+                background: #221D19;
+                color: #F3EDE6;
+                border-color: #3A322B;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+            }
+            .dark-base .leaflet-tooltip-top:before { border-top-color: #3A322B; }
+            .dark-base .leaflet-tooltip-bottom:before { border-bottom-color: #3A322B; }
+            .dark-base .leaflet-tooltip-left:before { border-left-color: #3A322B; }
+            .dark-base .leaflet-tooltip-right:before { border-right-color: #3A322B; }
         </style>
     """))
+    # Flag the map container while the dark base is selected so the CSS above
+    # can restyle overlays; no state is kept beyond that class.
+    # A MacroElement rather than a bare script Element: it renders after the
+    # map variable exists (a bare one lands above it and throws).
+    dark_toggle = folium.MacroElement()
+    dark_toggle._template = Template("""
+        {% macro script(this, kwargs) %}
+            {{ this._parent.get_name() }}.on('baselayerchange', function (e) {
+                document.body.classList.toggle(
+                    'dark-base', e.name === 'Dark Mode');
+            });
+        {% endmacro %}
+    """)
+    m.add_child(dark_toggle)
 
     HEATMAP_HTML.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(HEATMAP_HTML))
