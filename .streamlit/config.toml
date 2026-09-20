@@ -1,5 +1,20 @@
-# Sets the default theme visitors see on first load. They can still
-# switch to light mode themselves via the hamburger menu > Settings -
-# this only changes the default, not a hard lock.
+# Forces this dark theme for every visitor. Once a theme is set explicitly,
+# Streamlit removes its own light/dark toggle from the UI, so there is no
+# in-app way to switch it back - dark-only by design.
+#
+# "Warm charcoal": a brown-black page with warm neutrals, so the orange ring
+# ramp on the Findings page reads as part of the design. primaryColor is the
+# soft peach rather than the vivid orange on purpose: links and widget
+# accents stay quiet, and the strong orange is reserved for the data (the
+# ring bars), which also keeps Graph 2's red "against the pattern" lines from
+# competing with an orange UI accent. Hardcoded dark colors elsewhere (the
+# Flowchart iframe, sidebar label, social icons) are matched by hand to
+# these values; change them together.
 [theme]
 base = "dark"
+primaryColor = "#FBB878"
+backgroundColor = "#171412"
+secondaryBackgroundColor = "#221D19"
+textColor = "#F3EDE6"
+linkColor = "#FBB878"
+borderColor = "#3A322B"

@@ -23,6 +23,12 @@ from config import (
     SEATTLE_1LINE_STATIONS,
 )
 
+# The "against the pattern" red: Graph 2's lines and legend, Table 1's
+# station names, and the station write-up headers all share it, so tuning it
+# (e.g. to keep it distinct from the warm theme's orange, see
+# .streamlit/config.toml) is a one-line change.
+AGAINST_RED = "#e45756"
+
 # Static legend/schematic for Graph 1 - explains what "Concentric Ring 1-4"
 # means before the reader hits the bar chart. Pure decoration, no data
 # dependency, so it's a plain constant rather than something built from
@@ -101,8 +107,8 @@ if RING_STATS_CSV.exists():
     ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
 
     # Same 4 hex values as Schematic 1's rings (a warm orange ramp, bold
-    # burnt orange at ring 1 to cream at ring 4) so the bar colors below
-    # read as the same rings. Stays inside orange/peach/cream on purpose:
+    # burnt orange at ring 1 to soft peach at ring 4) so the bar colors below
+    # read as the same rings. Stays inside orange and peach on purpose:
     # no red (Graph 2's against-pattern lines, Table 1's highlight) and no
     # true yellow (Graph 4's Ridership dots).
     ring_colors = ["#C2500A", "#F0801F", "#FBB878", "#FDD0A2"]
@@ -226,7 +232,7 @@ if RING_STATS_CSV.exists():
                 title=None,
                 scale=alt.Scale(
                     domain=["Standard pattern", "Against the pattern"],
-                    range=["#4c78a8", "#e45756"],
+                    range=["#4c78a8", AGAINST_RED],
                 ),
                 legend=alt.Legend(
                     orient="top",
@@ -285,7 +291,7 @@ if RING_STATS_CSV.exists():
         # Same 8/8 split and colour as the line chart above: standard-
         # pattern stations first, against-the-pattern stations after,
         # alphabetical within each group; against-the-pattern station
-        # names coloured to match their line ("#e45756").
+        # names coloured to match their line (AGAINST_RED).
         detail = (
             rings.pivot(index="station", columns="ring", values="density_per_sq_mi")
             .reindex(columns=RING_LABELS)
@@ -317,7 +323,7 @@ if RING_STATS_CSV.exists():
 
         def _highlight_against(station_name):
             if station_group.get(station_name) == "Against the pattern":
-                return "color: #e45756; font-weight: 600;"
+                return f"color: {AGAINST_RED}; font-weight: 600;"
             return ""
 
         # na_rep isn't honoured by Streamlit's dataframe grid for missing
@@ -341,8 +347,10 @@ if RING_STATS_CSV.exists():
     # so it can't take the red-for-against-pattern colour, underline, or
     # larger font this section asks for. <details>/<summary> gives native
     # collapse/expand behaviour with full control over header styling
-    # instead. Red matches the same "#e45756" already used for
-    # against-pattern station names in Table 1 and the Graph 2 legend.
+    # instead. Red is AGAINST_RED, the same colour used for against-pattern
+    # station names in Table 1 and the Graph 2 lines and legend (a plain
+    # string with a placeholder, not an f-string, since the CSS braces would
+    # all need doubling).
     st.markdown(
         """
         <style>
@@ -353,10 +361,10 @@ if RING_STATS_CSV.exists():
             cursor: pointer;
             margin: 0.75rem 0 0.25rem 0;
         }
-        .station-note.against summary { color: #e45756; }
+        .station-note.against summary { color: __AGAINST_RED__; }
         .station-note p { margin: 0.35rem 0 1rem 0; }
         </style>
-        """,
+        """.replace("__AGAINST_RED__", AGAINST_RED),
         unsafe_allow_html=True,
     )
 

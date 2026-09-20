@@ -13,6 +13,34 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-20 — Between sessions
+
+- **Switched the site from Streamlit's default dark theme to a "Warm
+  charcoal" theme in `.streamlit/config.toml`.** Page `#171412`, sidebar
+  and widgets `#221D19`, text `#F3EDE6`, borders `#3A322B`, so the new warm
+  ring ramp on the Findings page reads as part of the design instead of
+  an orange accent on Streamlit's stock blue-black. Chosen over a cool
+  "Midnight slate" mainly because Graph 2's dimmed blue lines and Graph 4's
+  blue dots would have blended into a navy background, and over a light
+  "Paper" theme because it would have needed the ring palette retuned and
+  the dark-only Flowchart and heatmap reworked. `primaryColor` and links
+  are the soft peach `#FBB878`, not the vivid orange, on purpose: the strong
+  orange stays reserved for the ring bars, and a quiet accent keeps Graph 2's
+  red from competing with an orange UI. Hardcoded dark colors outside the
+  theme were matched by hand: the sidebar "Pages" label and social icons
+  (`components.py`), and the Flowchart iframe, whose Mermaid diagram moved
+  from the built-in cool gray-blue "dark" theme to a "base" theme with warm
+  variables (brown nodes, orange borders). Graph 2's old hardcoded dark
+  legend fill was already gone from the earlier Graph 2 fix.
+  Red check, done as planned: the "against the pattern" red `#e45756` was
+  kept unchanged after rendering Graph 2, Table 1 and the station write-up
+  headers on the new background, where it stays clearly red and distinct
+  from the orange ramp (about 5:1 contrast). It now lives in one
+  `AGAINST_RED` constant in `pages/2_Findings_&_EDA.py` instead of four
+  hardcoded copies, so shifting it toward crimson later is a one-line
+  change if it ever looks weak. Setting an explicit theme still removes
+  Streamlit's light/dark toggle, so the site remains dark-only.
+
 ### 2026-09-19 — Between sessions
 
 - **Recolored Schematic 1, and Graph 1/Graph 5's bars with it, from four

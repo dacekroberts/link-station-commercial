@@ -135,7 +135,7 @@ def render_sidebar_nav_label():
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: rgba(250, 250, 250, 0.5);
+            color: rgba(243, 237, 230, 0.5);
         }
         </style>
         """,
@@ -158,8 +158,8 @@ def render_social_links():
         <style>
         .social-links { display: flex; justify-content: flex-end; gap: 14px;
             margin-bottom: 0.25rem; }
-        .social-links a { color: #9aa0a6; display: inline-flex; transition: color 0.15s; }
-        .social-links a:hover { color: #d0d3d9; }
+        .social-links a { color: #A39A90; display: inline-flex; transition: color 0.15s; }
+        .social-links a:hover { color: #F3EDE6; }
         </style>
         <div class="social-links">
           <a href="https://github.com/dacekroberts" target="_blank" rel="noopener noreferrer" title="GitHub">

@@ -90,12 +90,12 @@ _FLOWCHART_HTML = f"""
   html, body {{
     margin: 0;
     padding: 0;
-    background: #0e1117;
+    background: #171412;
   }}
   .wrap {{
     overflow-x: auto;
     padding: 12px 4px;
-    border: 1px solid #30363d;
+    border: 1px solid #3A322B;
     border-radius: 10px;
     box-sizing: border-box;
   }}
@@ -112,7 +112,23 @@ _FLOWCHART_HTML = f"""
   </div>
 </div>
 <script>
-  mermaid.initialize({{ startOnLoad: true, theme: "dark", securityLevel: "loose",
+  // "base" theme with warm-charcoal variables (matching .streamlit/config.toml),
+  // not Mermaid's built-in "dark", which is a cool gray-blue that clashes with
+  // the site's warm background.
+  mermaid.initialize({{ startOnLoad: true, theme: "base", securityLevel: "loose",
+    themeVariables: {{
+      background: "#171412",
+      primaryColor: "#2A231E",
+      primaryTextColor: "#F3EDE6",
+      primaryBorderColor: "#F0801F",
+      secondaryColor: "#221D19",
+      tertiaryColor: "#1D1916",
+      lineColor: "#A39A90",
+      textColor: "#F3EDE6",
+      clusterBkg: "#1D1916",
+      clusterBorder: "#3A322B",
+      edgeLabelBackground: "#171412"
+    }},
     flowchart: {{ useMaxWidth: false, htmlLabels: true }} }});
 
   // Mermaid renders the SVG async after startOnLoad, so poll for it rather
