@@ -210,7 +210,7 @@ st.subheader("AI Use")
 
 st.markdown(
     """
-This project is based in Python and was built in tandem with Claude Code. Before starting, I
+This project is based in HTML & Python and was built in tandem with Claude Code. Before starting, I
 completed five Skilljar courses on Claude Code over about a month,
 building real working knowledge of it rather than just enough to copy
 and paste.

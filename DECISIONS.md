@@ -15,6 +15,18 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **Heatmap density layer changed from red to orange.** `HEAT_GRADIENT`
+  in `step5_map.py` now runs `#FBB878` -> `#F97316` -> `#DE6412` ->
+  `#C0570F` -> `#8F3A05`, the same family as Schematic 1 and the ring bars.
+  First attempt used the exact ring colors (`#FDD0A2` at the low end), but
+  Leaflet.heat's opacity follows density, so the palest stop nearly vanished
+  on the light OSM tiles. Shifting the ramp one step more saturated (the
+  "B: fading outward" sample) keeps it readable. Known tradeoff: the Food
+  service pins/clusters (`#eb6834`) are now close in hue to the heat layer;
+  they stay distinguishable by their white outlines and numerals.
+- **AI Use sentence now reads "based in HTML & Python and was built in
+  tandem with Claude Code."**
+
 - **Switched the site from Streamlit's default dark theme to a "Warm
   charcoal" theme in `.streamlit/config.toml`.** Page `#171412`, sidebar
   and widgets `#221D19`, text `#F3EDE6`, borders `#3A322B`, so the new warm

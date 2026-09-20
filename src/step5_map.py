@@ -62,11 +62,14 @@ HEAT_MIN_OPACITY = 0.35
 # Leaflet.heat's own default gradient runs blue -> cyan -> lime -> yellow ->
 # red - most of the visible area at typical densities reads as blue/cyan,
 # which several readers found counterintuitive for a "heat" map (blue reads
-# as cold, not low-but-nonzero). Replaced with a single-hue red ramp
-# (ColorBrewer "Reds," transparent-to-low-density through deep red at peak)
-# per that feedback - low to high density now reads as pale to saturated red
-# throughout, not a color-name change partway up the scale.
-HEAT_GRADIENT = {0.3: "#fee0d2", 0.5: "#fc9272", 0.7: "#fb6a4a", 0.85: "#de2d26", 1.0: "#a50f15"}
+# as cold, not low-but-nonzero). Replaced with a single-hue ramp - pale at
+# low density through deep at peak - so it reads as one color getting
+# stronger, not a color-name change partway up the scale. Originally
+# ColorBrewer Reds; now an orange ramp based on Schematic 1 and the Findings
+# page ring bars, shifted one step more saturated at the low end (the
+# palest peach was nearly invisible on the light OSM tiles, since
+# Leaflet.heat opacity follows density) plus a deeper #8F3A05 peak.
+HEAT_GRADIENT = {0.3: "#FBB878", 0.5: "#F97316", 0.7: "#DE6412", 0.85: "#C0570F", 1.0: "#8F3A05"}
 
 # Same three groups NAICS_STOREFRONT_PREFIXES already defines in config.py
 # (retail, food service, personal services) - every kept business falls into
