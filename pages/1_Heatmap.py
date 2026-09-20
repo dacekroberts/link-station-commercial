@@ -48,8 +48,9 @@ st.title("Commercial density around station areas")
 st.markdown(
     f"""
 Stations are represented by blue dots along the 1 Line (thick green line).
-<u>Dark Mode, concentric ring boundaries and NAICS/GIS geocoded
-storefronts are toggleable via the layer control in the top left.</u> <img src="{LAYER_CONTROL_ICON_DATA_URI}" width="18"
+<u>Concentric ring boundaries and NAICS/GIS geocoded storefronts are
+toggleable via the layer control in the top left, and the button beneath
+it switches between light and dark mode.</u> <img src="{LAYER_CONTROL_ICON_DATA_URI}" width="18"
 height="18" style="vertical-align: middle;" alt="Layer control icon"/> When
 enabled, business density will display as numbered circles summing areas
 when zoomed out. Zooming in will show individual dots; hover over those to

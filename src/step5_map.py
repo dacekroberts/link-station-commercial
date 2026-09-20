@@ -254,21 +254,24 @@ def main():
         width=1000,
         height=650,
     )
-    folium.TileLayer(
+    light_tiles = folium.TileLayer(
         tiles="OpenStreetMap",
         name="Light Mode",
+        control=False,
     ).add_to(m)
     # Dark option: the same OSM tiles (no new provider, no API key - see
     # DECISIONS.md on why CartoDB was ruled out) recoloured in the browser by
     # a CSS filter on this layer's own tile container (class defined below).
-    # Being a second *base* layer, it shows up as a radio choice next to the
-    # first one in the existing layer control; overlays (rings, heat, pins)
-    # sit in other panes and are untouched by the filter.
-    folium.TileLayer(
+    # Both base layers are kept out of the layer control (control=False): a
+    # separate button, added near the end of main(), swaps between them, so
+    # the layer control lists only overlays. Overlays (rings, heat, pins) sit
+    # in other panes and are untouched by the filter.
+    dark_tiles = folium.TileLayer(
         tiles="OpenStreetMap",
         name="Dark Mode",
         class_name="dark-osm-tiles",
         show=False,
+        control=False,
     ).add_to(m)
 
     # Two heat layers, same tuning, different universe. Within-rings is the
@@ -555,6 +558,57 @@ def main():
                 max-height: 480px;
                 overflow-y: auto;
             }
+            /* Light/dark switch: one opaque 30x60 box (sun cell over moon
+               cell) with a thumb behind the active mode - top in light, bottom
+               in dark. Selectors carry .leaflet-touch to out-rank Leaflet's own
+               30x30 .leaflet-bar a sizing. */
+            .leaflet-touch .leaflet-bar a.mode-switch-btn,
+            .leaflet-bar a.mode-switch-btn {
+                position: relative;
+                display: block;
+                width: 30px;
+                height: 60px;
+                padding: 0;
+                line-height: 0;
+                border-bottom: none;
+                overflow: hidden;
+            }
+            .mode-switch-btn .mode-thumb {
+                position: absolute;
+                left: 2px;
+                top: 2px;
+                width: 26px;
+                height: 26px;
+                border-radius: 3px;
+                background: #C2500A;
+                transition: transform 0.2s ease, background 0.2s ease;
+            }
+            .mode-switch-btn[data-mode="dark"] .mode-thumb {
+                transform: translateY(30px);
+                background: #FBB878;
+            }
+            .mode-switch-btn .mode-icon {
+                position: absolute;
+                left: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #6B6B6B;
+            }
+            .mode-switch-btn .mode-sun { top: 0; }
+            .mode-switch-btn .mode-moon { top: 30px; }
+            .mode-switch-btn .mode-icon svg {
+                width: 16px;
+                height: 16px;
+                display: block;
+            }
+            .mode-switch-btn[data-mode="light"] .mode-sun { color: #FFFFFF; }
+            .mode-switch-btn[data-mode="dark"] .mode-moon { color: #171412; }
+            .dark-base .mode-switch-btn[data-mode="dark"] .mode-sun {
+                color: #A39A90;
+            }
             /* Invert flips OSM's light map to dark, hue-rotate(180deg) undoes
                the colour swap (water stays blue-ish, not orange), and the
                brightness/saturate tweaks keep it from glaring. */
@@ -578,9 +632,11 @@ def main():
                 color: #F3EDE6 !important;
                 border-color: #3A322B !important;
             }
+            /* border-color only: keeping Leaflet's own border width means the
+               controls don't shift by a pixel when the mode changes. */
             .dark-base .leaflet-bar,
             .dark-base .leaflet-control-layers {
-                border: 1px solid #3A322B;
+                border-color: #3A322B;
                 box-shadow: none;
             }
             .dark-base .leaflet-bar a,
@@ -621,20 +677,85 @@ def main():
             .dark-base .leaflet-tooltip-right:before { border-right-color: #3A322B; }
         </style>
     """))
-    # Flag the map container while the dark base is selected so the CSS above
-    # can restyle overlays; no state is kept beyond that class.
-    # A MacroElement rather than a bare script Element: it renders after the
-    # map variable exists (a bare one lands above it and throws).
-    dark_toggle = folium.MacroElement()
-    dark_toggle._template = Template("""
+    # Light/dark button, top-left under the layer control (Leaflet stacks
+    # topleft controls in the order they are added, and this is added after
+    # LayerControl). Top-left rather than top-right for the same reason as the
+    # layer control: the map is a fixed 1000px wide, so a top-right button can
+    # sit past the visible edge. It swaps the two base layers directly and
+    # puts a `dark-base` class on <body> so the CSS above can restyle the
+    # overlays and controls (body, not the map container, so the legend -
+    # which lives outside the container - is covered too). No state is kept
+    # beyond that class. A MacroElement rather than a bare script Element: it
+    # renders after the map variable exists (a bare one lands above it and
+    # throws).
+    mode_toggle = folium.MacroElement()
+    mode_toggle.light_tiles = light_tiles
+    mode_toggle.dark_tiles = dark_tiles
+    mode_toggle._template = Template("""
         {% macro script(this, kwargs) %}
-            {{ this._parent.get_name() }}.on('baselayerchange', function (e) {
-                document.body.classList.toggle(
-                    'dark-base', e.name === 'Dark Mode');
-            });
+            (function () {
+                var map = {{ this._parent.get_name() }};
+                var light = {{ this.light_tiles.get_name() }};
+                var dark = {{ this.dark_tiles.get_name() }};
+                var svg = '<svg viewBox="0 0 24 24" fill="none" ' +
+                    'stroke="currentColor" stroke-width="2" ' +
+                    'stroke-linecap="round" stroke-linejoin="round" ' +
+                    'aria-hidden="true">';
+                var MOON = svg + '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+                var SUN = svg + '<circle cx="12" cy="12" r="4"/>' +
+                    '<path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4' +
+                    'M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+                var ModeControl = L.Control.extend({
+                    options: {position: 'topleft'},
+                    onAdd: function () {
+                        // A two-position switch: sun (top) and moon (bottom)
+                        // are always both shown, and a thumb sits behind
+                        // whichever mode is active.
+                        var bar = L.DomUtil.create('div', 'leaflet-bar leaflet-control mode-switch');
+                        var btn = L.DomUtil.create('a', 'mode-switch-btn', bar);
+                        btn.href = '#';
+                        btn.setAttribute('role', 'switch');
+                        btn.setAttribute('aria-label', 'Dark mode');
+                        btn.innerHTML = '<span class="mode-thumb"></span>' +
+                            '<span class="mode-icon mode-sun">' + SUN + '</span>' +
+                            '<span class="mode-icon mode-moon">' + MOON + '</span>';
+                        function render(isDark) {
+                            btn.setAttribute('data-mode', isDark ? 'dark' : 'light');
+                            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+                            btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+                        }
+                        render(false);
+                        function toggle() {
+                            var toDark = !map.hasLayer(dark);
+                            if (toDark) {
+                                map.addLayer(dark);
+                                map.removeLayer(light);
+                            } else {
+                                map.addLayer(light);
+                                map.removeLayer(dark);
+                            }
+                            document.body.classList.toggle('dark-base', toDark);
+                            render(toDark);
+                        }
+                        L.DomEvent.disableClickPropagation(bar);
+                        L.DomEvent.on(btn, 'click', function (e) {
+                            L.DomEvent.preventDefault(e);
+                            toggle();
+                        });
+                        L.DomEvent.on(btn, 'keydown', function (e) {
+                            if (e.key === ' ') {
+                                L.DomEvent.preventDefault(e);
+                                toggle();
+                            }
+                        });
+                        return bar;
+                    }
+                });
+                new ModeControl().addTo(map);
+            })();
         {% endmacro %}
     """)
-    m.add_child(dark_toggle)
+    m.add_child(mode_toggle)
 
     HEATMAP_HTML.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(HEATMAP_HTML))

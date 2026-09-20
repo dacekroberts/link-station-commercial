@@ -28,6 +28,20 @@ each; detail lives in the sections below.
   charcoal palette. Overlays (heat, rings, pins) sit outside the filtered
   pane, so they are unchanged. Not persisted: visitors start on Light.
   The Heatmap page's underlined sentence now names Dark Mode.
+- **Light/dark control moved out of the layer control into its own
+  switch.** Both tile layers are now `control=False`, so the layer control
+  lists only overlays; a custom Leaflet control (a `MacroElement`) sits
+  top-left directly under the layer icon and swaps the tile layers itself,
+  toggling the `dark-base` class on `<body>`. Top-left, not the top-right
+  first asked for, because the map is a fixed 1000px wide and a top-right
+  control can sit past the visible edge (same reason the layer control is
+  top-left). Drawn as one opaque 30x60 two-position switch (sun over moon)
+  with a thumb behind the active mode - top in light, bottom in dark -
+  rather than a single icon that changes, after the first version's icon
+  looked off-centre and the box looked cut off. The dark border keeps
+  Leaflet's own width (only the colour changes) so controls don't shift a
+  pixel when the mode changes. The Heatmap page's underlined sentence now
+  mentions the button instead of listing Dark Mode among layer-control items.
 - **Layer-control order:** the three bold group layers (Retail, Food
   service, Personal services) now sit together, with each group's
   subcategories grouped by umbrella below them. Same layers and defaults.
