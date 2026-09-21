@@ -1,13 +1,12 @@
 """Heatmap page - embeds the pre-rendered Folium HTML.
 
-Reading the saved file as a raw component is faster than re-rendering the
-map through streamlit-folium, and avoids pulling folium into the deployed
-app's dependencies. Switch to st_folium only if you later want click and
-pan events flowing back into Python.
+Embedding the saved file in an iframe is faster than re-rendering the map
+through streamlit-folium, and avoids pulling folium into the deployed app's
+dependencies. Switch to st_folium only if you later want click and pan
+events flowing back into Python.
 """
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from components import (
     render_sidebar_nav_label,
@@ -64,18 +63,20 @@ cluster" and take the numbers from the findings page.
 )
 
 if HEATMAP_HTML.exists():
-    # folium always saves this file as UTF-8. On Windows, Path.read_text()
-    # without an explicit encoding falls back to the OS codepage (cp1252),
-    # which mangles every multi-byte character (em dashes in particular) -
-    # not a bug in the saved file, only in how it's read back here.
-    heatmap_html = HEATMAP_HTML.read_text(encoding="utf-8")
+    # st.iframe, not the deprecated st.components.v1.html (removal was
+    # announced for 2026-06-01). It takes the Path directly and reads the
+    # file itself as UTF-8, which also retires the explicit encoding= that
+    # used to be needed here: on Windows, Path.read_text() without one falls
+    # back to the OS codepage (cp1252) and mangles every multi-byte
+    # character, em dashes in the layer names in particular.
+    #
     # Matches the Folium map's own fixed pixel size (width=1000, height=650
     # in step5_map.py) exactly - the iframe previously had no explicit width
     # (defaulting to the full page container, wider than the 1000px map) and
     # a taller height=700 than the map's own 650, leaving dead white space
-    # to the right and below the map itself. scrolling stays on as a safety
-    # net against a stray pixel of overflow, not because it's expected to
-    # trigger.
-    components.html(heatmap_html, width=1000, height=650, scrolling=True)
+    # to the right and below the map itself. st.iframe has no scrolling
+    # argument; the browser default (auto) is the same safety net the old
+    # scrolling=True provided against a stray pixel of overflow.
+    st.iframe(HEATMAP_HTML, width=1000, height=650)
 else:
     st.info("No map yet. Run `python src/step5_map.py` to generate it.")

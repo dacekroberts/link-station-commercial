@@ -6,8 +6,9 @@ content is drawn from Initial Build Development Context.md and the src/step*.py 
 not hardcoded from memory.
 """
 
+import base64
+
 import streamlit as st
-import streamlit.components.v1 as components
 
 from components import (
     render_sidebar_nav_label,
@@ -43,10 +44,9 @@ visual more decisions and workflow items went into this project.
 
 # Mermaid loaded from a CDN inside an iframe, not st.graphviz_chart - keeps
 # requirements.txt at streamlit/pandas/altair rather than adding a new pip
-# dependency for one diagram. Fixed height with scrolling=True, same
-# workaround as the heatmap embed above (percentage-sized iframes have
-# already caused one real rendering bug in this project - see
-# step5_map.py's Leaflet.heat fix).
+# dependency for one diagram. Fixed pixel height, same workaround as the
+# heatmap embed (percentage-sized iframes have already caused one real
+# rendering bug in this project - see step5_map.py's Leaflet.heat fix).
 _MERMAID_SOURCE = """
 flowchart TD
     subgraph INPUTS["Manual data collection"]
@@ -66,7 +66,7 @@ flowchart TD
     RID --> S4
 
     S4 --> DCHAIN{"'Chain' defined as<br/>station_count > 1 -<br/>does hand-verification hold up?"}
-    DCHAIN -- "no - single location<br/>touching 4 stations isn't a chain" --> FIX["Redefine as location_count >= 2<br/>(45.7% -> 8.5% of locations)"]
+    DCHAIN -- "no - single location<br/>touching 4 stations isn't a chain" --> FIX["Redefine as location_count >= 2<br/>(45.5% -> 8.5% of locations)"]
     FIX --> OUT[("outputs/*.csv<br/>committed to git")]
 
     S1 --> S5["step5_map.py<br/>Build heatmap"]
@@ -77,7 +77,7 @@ flowchart TD
 
     OUT --> APP["Streamlit app<br/>reads outputs/ only"]
     MAP --> APP
-    APP --> PAGES["4 pages:<br/>Intro &middot; Heatmap &middot; Findings &middot; Methodology"]
+    APP --> PAGES["5 pages:<br/>Intro &middot; Heatmap &middot; Findings &middot;<br/>Methodology &middot; Flowchart"]
 """
 
 _FLOWCHART_HTML = f"""
@@ -151,8 +151,20 @@ _FLOWCHART_HTML = f"""
 </html>
 """
 
+# st.iframe, not the deprecated st.components.v1.html (removal was
+# announced for 2026-06-01). st.iframe takes a src rather than an HTML
+# string, so this document goes in as a base64 data: URL - it is generated
+# here in Python, not saved anywhere on disk. st.html would take the string
+# directly but renders it INLINE rather than in an iframe: tested, and this
+# document's `html, body { background: ... }` rule and Mermaid's own
+# injected styles then leak out into the Streamlit page itself. The iframe
+# keeps them contained, and Mermaid still loads from its CDN inside it.
+#
 # Scale (0.6) and height (905) chosen together, live-tested in the
 # rendered DOM: at 0.6 the diagram's own content is ~899px tall, fitting
 # inside 905px with a small margin - large enough that no scrollbar
 # appears at all (905 was previously 940, sized for the old 0.75 scale).
-components.html(_FLOWCHART_HTML, height=905, scrolling=True)
+_FLOWCHART_DATA_URL = "data:text/html;base64," + base64.b64encode(
+    _FLOWCHART_HTML.encode("utf-8")
+).decode("ascii")
+st.iframe(_FLOWCHART_DATA_URL, width="stretch", height=905)

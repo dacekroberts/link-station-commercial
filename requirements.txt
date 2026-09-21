@@ -2,6 +2,12 @@
 # Keep it lean: no geopandas, no GDAL, no compiled geo stack.
 # The heavy dependencies live in requirements-pipeline.txt and are only
 # needed on your machine when you regenerate outputs/.
-streamlit>=1.40
-pandas>=2.2
-altair>=5
+#
+# Upper bounds are deliberate. Streamlit Cloud re-resolves this file on
+# every rebuild, so an unbounded pin means a future major release can break
+# the deployed site with no warning and no code change - this app already
+# outlived two deprecations (st.components.v1.html, use_container_width)
+# whose removal dates passed while it was live.
+streamlit>=1.40,<2
+pandas>=2.2,<4
+altair>=5,<7

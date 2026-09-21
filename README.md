@@ -22,6 +22,7 @@ committed to git for the same reason — the app cannot regenerate it.
 config.py                    every tunable: rings, CRS, station list, NAICS
 requirements.txt             app deps only (Streamlit Cloud reads this)
 requirements-pipeline.txt    geo stack, local only
+.streamlit/config.toml       site theme (dark; see DECISIONS.md)
 
 src/step1_stations.py        GTFS -> station coordinates
 src/step2_clean_businesses.py  license data -> cleaned Seattle addresses
@@ -29,10 +30,12 @@ src/step3_geocode.py         GIS geometry join, Census geocoder for the rest
 src/step4_rings.py           buffers, spatial join, three analyses
 src/step5_map.py             Folium -> outputs/heatmap.html
 
+components.py                          shared sidebar, fonts, social links
 Overview_&_Introduction.py             Streamlit entry
 pages/1_Heatmap.py                     embeds the saved map
 pages/2_Findings_&_EDA.py              gradient, ridership, chains
 pages/3_Methodology_&_Limitations.py   sources and limitations
+pages/4_Flowchart.py                   how the pipeline got built (Mermaid)
 
 data/raw/                    manual downloads (gitignored, see its README)
 data/processed/              intermediate CSVs (gitignored, regenerable)

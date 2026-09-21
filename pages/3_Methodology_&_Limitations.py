@@ -373,9 +373,9 @@ buffer reaches it, which inflates downtown density relative to more
 isolated stations. I'm disclosing this rather than correcting it,
 because assigning each business to only its nearest station would
 understate how many stations genuinely serve a downtown block. This
-isn't a marginal effect either: of the 4,116 businesses that fall within
-any station's ring at all, **1,767 (42.9%)** are claimed by more than
-one station's ring set. That's computed directly from the spatial join,
+isn't a marginal effect either: of the businesses that fall within any
+station's ring at all, **1,767 (42.9%)** are claimed by more than one
+station's ring set. That's computed directly from the spatial join,
 not estimated.
 
 **That same overlap distorts the chain analysis even more severely, and

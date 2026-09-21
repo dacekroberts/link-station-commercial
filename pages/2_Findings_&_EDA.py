@@ -147,7 +147,7 @@ if RING_STATS_CSV.exists():
                 ],
             )
         )
-        st.altair_chart(bar_chart, use_container_width=True)
+        st.altair_chart(bar_chart, width="stretch")
 
     with schematic_col:
         st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
@@ -265,7 +265,7 @@ if RING_STATS_CSV.exists():
     # legend moved above the plot (horizontal) so it no longer overlays the
     # lines at narrow widths, which also made its old opaque dark fill, a
     # hardcoded copy of the theme background, unnecessary.
-    st.altair_chart(per_station_chart, use_container_width=True)
+    st.altair_chart(per_station_chart, width="stretch")
 
     st.markdown(
         """
@@ -338,7 +338,7 @@ if RING_STATS_CSV.exists():
             detail.style
             .map(_highlight_against, subset=["Station Name"])
             .format("{:.0f} businesses/sq mi", subset=numbered_ring_labels),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
@@ -586,7 +586,7 @@ if STATION_STATS_CSV.exists():
             )
             st.altair_chart(
                 (points + trend).properties(height=420),
-                use_container_width=True,
+                width="stretch",
             )
             st.subheader("Correlation")
             st.markdown(f"**r = {r:.3f}**")
@@ -652,7 +652,7 @@ if STATION_STATS_CSV.exists():
                 ridership_detail.style.format(
                     "{:,.0f}", subset=["Avg. Monthly Boardings", "Businesses Within 0.3mi"]
                 ),
-                use_container_width=True,
+                width="stretch",
             )
 
         # ridership_rank feeds the Symphony/Pioneer Square caption below.
@@ -813,7 +813,7 @@ if STATION_STATS_CSV.exists():
             )
             .properties(height=320)
         )
-        st.altair_chart(dot_chart, use_container_width=True)
+        st.altair_chart(dot_chart, width="stretch")
 
         # Quick-glance insight for the chart itself: where's the biggest
         # single jump in each metric's sorted z-scores, and who sits past
@@ -885,7 +885,7 @@ if STATION_STATS_CSV.exists():
                 cv_table.style.format(
                     {"Mean": "{:,.1f}", "Std. Dev.": "{:,.1f}", "CV": "{:.3f}"}
                 ),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
             )
         # Quick-glance insight for the table: the CV ratio itself, spelled
@@ -935,7 +935,7 @@ if CHAIN_STATS_CSV.exists():
             "station_count": "# of Stations within Proximity",
             "location_count": "# of Locations within Station Proximity",
         })
-        st.dataframe(chains_display, use_container_width=True, hide_index=True)
+        st.dataframe(chains_display, width="stretch", hide_index=True)
 
     st.markdown(
         """
@@ -1005,7 +1005,7 @@ if CHAIN_STATS_CSV.exists():
                     ],
                 )
             )
-            st.altair_chart(chain_ring_chart, use_container_width=True)
+            st.altair_chart(chain_ring_chart, width="stretch")
 
         with schematic_col:
             st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
@@ -1061,7 +1061,7 @@ if CHAIN_STATS_CSV.exists():
                     "Chain Locations": "{:,.0f}",
                     "Chain Share": "{:.1%}",
                 }),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
             )
 else:
