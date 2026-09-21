@@ -244,6 +244,37 @@ through this site," so they cover sources 1, 2 and 3. Three clauses matter:
   engaged. Recorded explicitly because "we used OSM" and "we built on the OSM
   database" are different acts with different obligations.
 
+### The tile server is a separate question from the data license
+
+Tiles come from `https://tile.openstreetmap.org/{z}/{x}/{y}.png` — the OSM
+Foundation's own servers — so the **Tile Usage Policy** applies on top of
+ODbL. It is explicit that availability is best-effort with no SLA, and it
+forbids bulk or pre-emptive downloading. Checked 2026-09-20:
+
+- **Attribution is visibly rendered, not just present in the source.** The
+  control measures 197x14px and reads "Leaflet | © OpenStreetMap
+  contributors", linking `openstreetmap.org/copyright`. Contrast is 12.6:1
+  in light mode and 6.6:1 in dark — the dark restyle lightens it rather than
+  letting the tile filter wash it out.
+- **No pre-emptive fetching.** A page load requests 15 tiles, which is the
+  visible viewport. The map draws only what a visitor looks at.
+- **Dark mode does not double tile load**, which is the one thing this
+  project's own implementation could have gotten wrong. Both base layers
+  point at the same URLs, and only one is attached to the map at a time.
+  Measured: toggling to dark produced **0 new network requests**, all 15
+  tiles served from cache.
+- **Not near the policy's limits.** Its concerns are bulk downloading, heavy
+  commercial traffic, and clients that suppress a User-Agent or Referer. A
+  portfolio site rendering a viewport per visit is ordinary use. This project
+  has already met the Referer enforcement once, in the other direction: a
+  downloadable copy of the map 403'd because a `file://` page sends no
+  Referer, and the download button was removed rather than worked around.
+- **The real exposure is availability, not compliance.** No SLA means an OSM
+  outage or policy change breaks the basemap. The Session 7 decision to use
+  OSM — after CartoDB began requiring an API key and Esri's license proved
+  unstable — is recorded in `DECISIONS.md` and still holds; a self-hosted or
+  keyed provider would only be worth it if this ever carried real traffic.
+
 ## 8. Seattle Transit Blog directional boardings — not used
 
 Referenced in `data/raw/README.md` as an optional extra and **never

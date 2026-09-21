@@ -13,12 +13,13 @@ the same day is in `Visual Design & Heatmap Review.md`.
 2. [The production risk that was closest to biting](#1-the-production-risk-that-was-closest-to-biting)
 3. [Data integrity: what was verified and what was wrong](#2-data-integrity-what-was-verified-and-what-was-wrong)
 4. [Publishing people's names](#3-publishing-peoples-names)
-5. [Repository hygiene](#4-repository-hygiene)
-6. [Map and interface changes](#5-map-and-interface-changes)
-7. [How things were verified](#6-how-things-were-verified)
-8. [Mistakes and corrections](#7-mistakes-and-corrections)
-9. [Open items](#8-open-items)
-10. [Where things live](#where-things-live)
+5. [Licenses and terms of use](#4-licenses-and-terms-of-use)
+6. [Repository hygiene](#5-repository-hygiene)
+7. [Map and interface changes](#6-map-and-interface-changes)
+8. [How things were verified](#7-how-things-were-verified)
+9. [Mistakes and corrections](#8-mistakes-and-corrections)
+10. [Open items](#9-open-items)
+11. [Where things live](#where-things-live)
 
 ## State of the project
 
@@ -34,16 +35,15 @@ the same day is in `Visual Design & Heatmap Review.md`.
   warnings per page load to zero.
 - **Dependencies bounded.** `requirements.txt` now carries upper bounds,
   tested against what the deploy actually resolves.
+- **No personal names published.** Seven sole proprietors were being mapped
+  by name at their home addresses; the map now withholds them.
+- **Every data source's terms read and logged** for the first time, in
+  `data_sources.md`. One conflict found, and a permission request sent.
 
-Commits, oldest first: `f8a045c` (API migration and stale figures), `adec3fa`
-(review doc), `33c5f9b` (system theme, delist build notes), `f6ab63b`
-(DECISIONS entries), `34dd114` (magenta pins), `3bcbad7` (pin/purge log),
-`e287391` (hash remap), `1d4ff46` and `4088768` (skill file untrack and log),
-`8645dd5` (hash-fragility note), `5efa741` (docs move), `fa21f6c` (privacy
-script), `5ad3cbf` (methodology section).
-
-Those hashes are only valid until the next history rewrite. See the note in
-`Visual Design & Heatmap Review.md` on recovering a commit by subject line.
+Commits are listed against each section below rather than here, since four
+history rewrites in one day renumbered them repeatedly. If a hash does not
+resolve, find the commit by its subject line — see the note in
+`Visual Design & Heatmap Review.md`.
 
 ---
 
@@ -247,7 +247,70 @@ the site's own voice.
 
 ---
 
-## 4. Repository hygiene
+---
+
+## 4. Licenses and terms of use
+
+No source's license had ever been read. The Citations section cited two
+academic papers and no datasets; the only attribution anywhere was the
+OpenStreetMap credit Folium emits automatically, which nobody had chosen.
+
+This matters more here than for a project that only displays data, because
+this repository **redistributes derived data publicly** — `heatmap.html`
+carries 4,120 business records with coordinates, and the station geometry is
+republished as map data. Full log in `data_sources.md`; the short version:
+
+**The first pass looked in the wrong place.** Dataset-level metadata answered
+three sources and left three open. Two of those three were settled by
+**portal- and site-level** terms, which is where I should have looked next
+rather than concluding they could only be resolved by asking.
+
+| Source | Outcome |
+|---|---|
+| Seattle business licenses | Public Domain, explicit |
+| Seattle GIS donor layer | no dataset grant, but covered by the portal terms |
+| Seattle zoning | PDDL |
+| Sound Transit GTFS | revocable, with a **flow-down** clause — now discharged |
+| Sound Transit ridership | **conflict**, see below |
+| US Census geocoder | notice required, now displayed |
+| OpenStreetMap | ODbL + tile policy, compliant |
+
+**Two obligations were unmet and are now met.** Sound Transit's GTFS terms
+require passing them to anyone who receives the data — this project
+republishes GTFS-derived geometry and passed nothing on. The Methodology
+page's new "Attribution and terms" note does that. Separately, the Census
+API terms prescribe a notice, now displayed verbatim.
+
+**One condition worth remembering.** Seattle's portal bars commercial use of
+data that "can be readily sorted, filtered, or configured as a list of
+individuals." This data demonstrably can — `check_personal_exposure.py` does
+exactly that. A portfolio is not a commercial purpose, so the project is
+within it; monetizing would change that.
+
+**One genuine conflict, unresolved.** Ridership was transcribed from a page
+on `soundtransit.org`, so its **website** terms govern, not the Open Transit
+Data terms. They license content "as an informative resource" and prohibit
+"reproduction... distribution... republication" without prior written
+permission, with no carve-out for data or statistics. This project
+republishes those figures in `station_stats.csv`, Graph 3, Graph 4 and
+Table 2, and derives r = 0.684 and the 1.8x comparison from them.
+
+Recorded as a gap between what the page says and what the repo does, **not
+as a legal conclusion** — facts are generally not copyrightable while site
+terms operate as contract, and that is not a question this project resolves.
+A permission request went to Sound Transit on 2026-09-20; their terms invite
+one, and designate the Marketing Division by post as the formal route.
+
+**OpenStreetMap passes, including the part our own code could have broken.**
+ODbL requires visible attribution: the control renders at 197x14px in both
+modes, 12.6:1 contrast light and 6.6:1 dark. The tile usage policy forbids
+pre-emptive fetching: a page load requests 15 tiles, the visible viewport.
+The risk the dark mode introduced was double-fetching, since it adds a second
+tile layer — measured, and toggling produces **0 new network requests**, all
+15 served from cache. The real exposure is availability rather than
+compliance: the policy offers no SLA, so an outage breaks the basemap.
+
+## 5. Repository hygiene
 
 ### The email, purged from history
 
@@ -299,7 +362,7 @@ the third purge left those particular hashes untouched.
 
 ---
 
-## 5. Map and interface changes
+## 6. Map and interface changes
 
 **Food service pins recoloured orange → magenta `#C2185B`.** Turning the heat
 layer orange earlier the same day left the pins 6 degrees of hue from the heat
@@ -327,7 +390,7 @@ that is four pieces of work, not a config flip.
 
 ---
 
-## 6. How things were verified
+## 7. How things were verified
 
 - **The architecture invariant was proven, not assumed.** `data/` was deleted
   entirely and all five pages loaded in a venv installed from
@@ -356,7 +419,7 @@ that is four pieces of work, not a config flip.
 
 ---
 
-## 7. Mistakes and corrections
+## 8. Mistakes and corrections
 
 1. **A file was published before anyone read it.** A skill write-up passed
    over from the sibling project was swept into a commit by a blanket
@@ -379,14 +442,33 @@ that is four pieces of work, not a config flip.
    "0.10% confirmed" was a measurement gap, not a clean bill of health.
 6. **A draft of a `DECISIONS.md` entry quoted the purged email verbatim**,
    which would have reintroduced it to the public repo. Caught before writing.
+7. **The license probe stopped at the wrong level.** Dataset metadata
+   answered three sources; I reported the other three as unresolvable by
+   reading and needing to be asked. Two were answered by portal- and
+   site-level terms, which is the obvious next place to look. Checking
+   `data.seattle.gov`'s own Terms of Use resolved the GIS layer outright and
+   surfaced a non-commercial condition nothing else had mentioned.
+8. **The permission contact in the first draft email was wrong.**
+   `main@soundtransit.org` is listed in the terms for intellectual-property
+   complaints, unsubscribing and general feedback — not for reuse requests,
+   which are directed by post to the Marketing Division. Caught by checking
+   the address before the email was sent rather than after.
 
 ---
 
-## 8. Open items
+## 9. Open items
+
+**Waiting on someone else**
+- **Sound Transit's answer on the ridership figures** (section 4). A
+  permission request went out 2026-09-20. It is the only open item that could
+  change what the site publishes: a "no" would touch Graph 3, Graph 4,
+  Table 2 and one of the three analyses. A reminder is scheduled for
+  2026-09-27, with the postal route to the Marketing Division as the
+  escalation if there is no reply.
 
 **Checks not yet done**
 - Graph 2 on a real phone, as opposed to an emulated 375px viewport.
-- The map following a real OS theme switch mid-session (see section 6).
+- The map following a real OS theme switch mid-session (see section 7).
 
 **Resolved: the storefront percentages behind the NAICS calls**
 
@@ -410,12 +492,23 @@ there as hand samples of 40 and 25 rows. The seeded sample is reproducible
 from `scripts/`-adjacent code in `DECISIONS.md` if anyone wants to revisit it.
 
 **Deferred, deliberately**
-- A visitor-facing light/dark toggle for the whole site (see section 5).
+- A visitor-facing light/dark toggle for the whole site (see section 6).
 - Zoning as a pipeline input (see section 3).
+- A keyed or self-hosted tile provider. Current usage is ordinary and
+  compliant; the reason to revisit is traffic or an OSM outage, not
+  licensing (see section 4).
+
+**Conditional, worth not forgetting**
+- Seattle's portal bars commercial use of data that can be configured as a
+  list of individuals, which this data can. Monetizing the project would
+  engage that condition (see section 4).
 
 **Documentation**
 - `Initial Build Development Context.md` is now local-only. Anything that
   needs its content must read it from the working tree or `.backups/`.
+- `.backups/` holds the only copies of the two build-notes files purged from
+  history, alongside the pre-rewrite bundle. Do not clear the directory
+  wholesale when deleting the bundle.
 
 ---
 
@@ -430,4 +523,6 @@ from `scripts/`-adjacent code in `DECISIONS.md` if anyone wants to revisit it.
 | Dependency bounds | `requirements.txt` |
 | Reasoning and exact values | `docs/DECISIONS.md`, entries dated 2026-09-20 |
 | Visual work from earlier the same day | `docs/Visual Design & Heatmap Review.md` |
+| Source licenses and terms | `docs/data_sources.md` |
+| Attribution, and Sound Transit's flow-down terms | `pages/3_Methodology_&_Limitations.py`, Data Sources |
 | Pre-rewrite history, build notes | `.backups/` (local only) |
