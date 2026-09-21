@@ -15,6 +15,85 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **Migrated off two Streamlit APIs that were already past their announced
+  removal dates.** `st.components.v1.html` (removal announced for
+  2026-06-01) and `use_container_width` (2025-12-31) were both still in use
+  while the site was live, and `requirements.txt` pinned `streamlit>=1.40`
+  with no upper bound — Streamlit Cloud re-resolves that file on every
+  rebuild, so a future release would have taken the heatmap and flowchart
+  pages down with no code change on my part. The heatmap now uses
+  `st.iframe(HEATMAP_HTML)`, which takes the `Path` directly and reads it as
+  UTF-8, retiring the explicit `encoding=` that Windows needed to stop it
+  mangling the em dashes in the layer names. The flowchart builds its HTML
+  in Python, so it goes through `st.iframe` as a base64 `data:` URL. I
+  tested `st.html`, which takes a string directly and would have been
+  simpler, and rejected it: it renders **inline rather than in an iframe**,
+  so the document's own `html, body { background }` rule and Mermaid's
+  injected styles leak into the Streamlit page. Ten `use_container_width=True`
+  on the Findings page became `width="stretch"`. `requirements.txt` now
+  carries upper bounds (`streamlit<2`, `pandas<4`, `altair<7`), verified
+  against what the deploy actually resolves: pandas 3.0.6, Streamlit 1.64.0,
+  altair 6.3.0. Server log went from 14 deprecation warnings to zero.
+- **Purged my email address from the whole git history.** `Initial Build
+  Development Context.md` carried my personal email in plaintext, in a
+  public repo — which defeated the point of the repo-local GitHub noreply
+  identity chosen precisely so no personal email would sit in history. It
+  was in two commits, not one (`90ae9af` as well as `04e9cc0`). Rewrote all
+  190 commits with `git filter-repo --replace-text` and force-pushed.
+  Verified the diff between the old remote tip and its rewritten twin is
+  exactly that one line, with commit count and both author identities
+  intact. The rewrite changed every commit hash from `90ae9af` onward, which
+  invalidated the six hashes cited in `Visual Design & Heatmap Review.md`;
+  those were remapped from filter-repo's `commit-map`. Chose this over
+  simply deleting the line going forward, which would have left the address
+  readable in history.
+- **Fixed two stale figures a reader of the live site could see.** The
+  flowchart diagram said the app has "4 pages" while the reader was standing
+  on the fifth, and quoted the chain correction as `45.7% -> 8.5%` — the
+  pre-contractor-exclusion number. Recomputed from `chain_stats.csv`:
+  **45.5%**, not 45.7%. Also dropped the "4,116" total from the Methodology
+  page's overlap paragraph. It was correct for its own computation (unique
+  businesses in step 4's spatial join) but disagreed with the Overview's
+  **4,120**, which comes from step 5's distance-based count — the gap is
+  four businesses sitting 965.399 m from their nearest station, 20.7 cm
+  inside the true 0.6-mile circle but outside the 64-sided polygon
+  `shapely.buffer()` actually draws. The `1,767 (42.9%)` the sentence exists
+  to report is unchanged.
+- **Verified the project from scratch against a deploy-only environment.**
+  Re-ran all five pipeline steps: the five `outputs/*.csv` came back
+  byte-identical, and `heatmap.html` matched after normalising Folium's
+  random element IDs. Confirmed the app reads only `outputs/` by deleting
+  `data/` entirely and loading all five pages in a venv installed from
+  `requirements.txt` alone — zero errors, which rules out a repeat of the
+  Session 9 `FileNotFoundError`. Re-derived every headline figure from the
+  committed CSVs: ring densities 957/550/592/311 and the 67.5% fall,
+  r = 0.684, the 1.8x variance ratio (1.757), 152 chain brands at 8.5%, and
+  16/16 station names matching across every file.
+- **The map now opens on the visitor's own light/dark setting** rather than
+  always light, and follows later OS changes until they work the switch
+  themselves, at which point their choice wins until reload. Nothing is
+  stored. I verified both initial directions and that a manual choice
+  survives a system flip; live mid-session following is **not** verified,
+  because the browser's media emulation updates `matchMedia().matches`
+  without dispatching a `change` event inside the iframe, and a known-good
+  probe listener saw none either.
+- **Confirmed a site-wide light/dark toggle is possible, and deferred it.**
+  Adding `[theme.light]` and `[theme.dark]` blocks to
+  `.streamlit/config.toml` does bring Streamlit's System/Light/Dark control
+  back, and the choice follows in-app navigation — so the earlier "an
+  explicit theme removes the toggle permanently" is only true of a single
+  `[theme]` block. Not adopting it, because light mode breaks three colours
+  hardcoded outside the theme: the sidebar "Pages" label renders at
+  **1.01:1** contrast (invisible), the flowchart's Mermaid iframe stays a
+  dark box on a white page, and the social icons fall to **2.77:1**. With
+  the ring-ramp retune already known about, that is four pieces of work, not
+  a config flip. Experiment reverted; `config.toml` is byte-identical.
+- **Stopped tracking `Initial Build Development Context.md`.** A
+  session-by-session build log is working material rather than part of a
+  portfolio deliverable, and this repo is public and read by hiring
+  managers. Kept locally and gitignored; it remains reachable in history
+  before today, which I'd purge too if it should be gone entirely rather
+  than just delisted.
 - **Added a Dark Mode option to the heatmap.** The layer control now has
   two base maps, "Light Mode" (default) and "Dark Mode", replacing the old
   single "Seattle 1 Line Business Density Heatmap" label. Dark Mode is the
