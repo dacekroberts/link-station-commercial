@@ -179,7 +179,7 @@ def nearest_station_and_ring(businesses: pd.DataFrame, stations: pd.DataFrame):
 
     Deliberately separate from step4_rings.py's ring_stats: that analysis
     assigns a business to every station whose buffer contains it (including
-    downtown overlap, on purpose - see DECISIONS.md). This is a single
+    downtown overlap, on purpose - see docs/DECISIONS.md). This is a single
     nearest-station view, built only for the pin tooltip, not a
     re-derivation of the ring analysis or a replacement for it.
     """
@@ -270,7 +270,7 @@ def main():
         control=False,
     ).add_to(m)
     # Dark option: the same OSM tiles (no new provider, no API key - see
-    # DECISIONS.md on why CartoDB was ruled out) recoloured in the browser by
+    # docs/DECISIONS.md on why CartoDB was ruled out) recoloured in the browser by
     # a CSS filter on this layer's own tile container (class defined below).
     # Both base layers are kept out of the layer control (control=False): a
     # separate button, added near the end of main(), swaps between them, so
@@ -286,7 +286,7 @@ def main():
 
     # Two heat layers, same tuning, different universe. Within-rings is the
     # default (matches what the rest of the project actually analyzes - see
-    # DECISIONS.md); all-Seattle is an explicit opt-in for citywide context,
+    # docs/DECISIONS.md); all-Seattle is an explicit opt-in for citywide context,
     # off by default so the map opens on the same scope as the Findings
     # page rather than the broader, less-meaningful citywide picture.
     HeatMap(
@@ -323,7 +323,7 @@ def main():
         layer.add_to(m)
 
     # Ridership (Session 5: 2025 average of monthly totals - see
-    # DECISIONS.md for why that metric, not "average weekday boardings").
+    # docs/DECISIONS.md for why that metric, not "average weekday boardings").
     # Left join, not inner: a station missing from the CSV should still get
     # a marker, just with no ridership figure, rather than vanish silently.
     if RIDERSHIP_CSV.exists():
@@ -347,7 +347,7 @@ def main():
         # "NAICS code: 722513" convention, not "722513 NAICS code". Spells
         # out "average of monthly totals" rather than just "avg. monthly
         # boardings" - this project deliberately is NOT average WEEKDAY or
-        # average DAILY boardings (see DECISIONS.md, Session 5), and a
+        # average DAILY boardings (see docs/DECISIONS.md, Session 5), and a
         # label ambiguous between those and this metric is exactly the kind
         # of mislabeling this project has been careful to avoid elsewhere.
         ridership_line = (

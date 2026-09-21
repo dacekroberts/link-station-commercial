@@ -15,6 +15,24 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **Moved the project's documentation into `docs/`.** `DECISIONS.md`,
+  `PLAN.md`, `initialscript.md`, `Development Process Insights.md` and
+  `Visual Design & Heatmap Review.md` now live there; `README.md` and
+  `CLAUDE.md` stay in the root, because GitHub renders the first and Claude
+  Code reads the second. The root had seven markdown files competing with
+  the code for a reader's attention, which is the wrong first impression for
+  a portfolio repo. Moved with `git mv` so each keeps its history as a
+  rename rather than a delete-plus-add. No Python reads a `.md` at runtime,
+  so the app and the deploy were never at risk; the 21 references that did
+  need rewriting are all prose mentions in code comments, `CLAUDE.md`,
+  `README.md` and `data/raw/README.md`, plus 28 more in the local-only
+  `.claude/` skills.
+  **The dated entries in this file and the checked-off items in `PLAN.md`
+  were deliberately not rewritten**, per the `safe-rename` skill's rule that
+  they are records of what was true when written. That turned out to cost
+  nothing: every reference between the moved files is a bare filename, and
+  since they all moved together they still resolve. Only references from
+  files that stayed behind needed the `docs/` prefix.
 - **A file was published to the public repo before anyone had read it, and
   was purged.** A portable privacy-check write-up passed over from the
   sibling multi-city project was sitting in the repo root; a blanket

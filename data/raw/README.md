@@ -19,7 +19,7 @@ Used by: `src/step1_stations.py`
 City of Seattle Open Data portal, **"Active Business License Tax Certificate"**
 (dataset `wnbq-64tb`). Export as CSV, save here as `business_licenses.csv`.
 
-Inspected 2026-09-06 (see `DECISIONS.md` for the full record):
+Inspected 2026-09-06 (see `docs/DECISIONS.md` for the full record):
 
 - Columns: Business Legal Name, Trade Name, Ownership Type, NAICS Code, NAICS
   Description, License Start Date, Street Address, City, State, Zip, Business
@@ -44,7 +44,7 @@ ArcGIS Hub, **"Seattle Business License"** (SeattleCityGIS; catalog stub
 This is the same businesses as file 2, pre-geocoded by the City. Step 3 joins
 its coordinates onto the CSV by City Account Number so that only the unmatched
 remainder goes to the Census geocoder. It is **not** the primary source — it
-silently omits ~10% of Seattle businesses (see `DECISIONS.md`).
+silently omits ~10% of Seattle businesses (see `docs/DECISIONS.md`).
 
 Used by: `src/step3_geocode.py`
 

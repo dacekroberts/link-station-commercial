@@ -101,7 +101,7 @@ def main():
     df = df.rename(columns={v: k for k, v in COLUMN_MAP.items()})
 
     # --- Small per-field data-quality fixes -------------------------------
-    # Found by hand review during Session 3 (see DECISIONS.md "Open items").
+    # Found by hand review during Session 3 (see docs/DECISIONS.md "Open items").
     # Fixed here, at the source, rather than worked around downstream.
     blank_name = df["business_name"].fillna("").str.strip() == ""
     if blank_name.any():

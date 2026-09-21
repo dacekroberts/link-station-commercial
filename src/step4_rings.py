@@ -85,7 +85,7 @@ def build_rings(stations_gdf):
 # Known same-chain name variants that exact-match-after-normalization still
 # can't merge on its own - a compound-word spacing difference in how the
 # license was filed, not a typo or a formatting quirk. Found via a
-# prefix-collision spot-check of chain_stats.csv (see DECISIONS.md), the same
+# prefix-collision spot-check of chain_stats.csv (see docs/DECISIONS.md), the same
 # kind of explicit lookup as GTFS_NAME_ALIASES in step1_stations.py, for the
 # same reason: safer than a general rule that would risk merging unrelated
 # brands. Keys and values are both already-normalized (post-regex) strings.

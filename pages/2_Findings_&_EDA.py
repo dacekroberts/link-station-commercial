@@ -727,7 +727,7 @@ if STATION_STATS_CSV.exists():
         # Graph 4: the same "density concentrates more than ridership"
         # point from the caption above Graph 3, but across the whole
         # sample rather than just the min/max extremes. Dot plot, not a
-        # strip plot - simulated both first (see DECISIONS.md): a strip
+        # strip plot - simulated both first (see docs/DECISIONS.md): a strip
         # plot's jitter is random and carries no information of its own,
         # while a dot plot's stack height is a deterministic count a
         # reader can actually trust. "Businesses" is used as the category
@@ -1021,7 +1021,7 @@ if CHAIN_STATS_CSV.exists():
         # drive this one - Stadium's ring 4 (0.3-0.6mi) carries 31 chain
         # matches out of 373 businesses, largely borrowed from International
         # District/Chinatown per the existing "largely borrowed" finding in
-        # DECISIONS.md; SODO's ring 4 carries 18 of 149, consistent with its
+        # docs/DECISIONS.md; SODO's ring 4 carries 18 of 149, consistent with its
         # own "real commerce only appearing toward Pioneer Square at the
         # buffer's edge" finding. Removing just those two stations turns the
         # aggregate ring-3-to-4 move back into a clean decline (8.7% -> 8.4%).

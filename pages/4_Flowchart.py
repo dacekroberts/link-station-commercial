@@ -2,7 +2,7 @@
 
 Renders via Mermaid loaded from a CDN inside an iframe, not a new pip
 dependency - keeps requirements.txt lean (see CLAUDE.md). Diagram content is
-drawn from DECISIONS.md, the local build-context notes, and the
+drawn from docs/DECISIONS.md, the local build-context notes, and the
 src/step*.py scripts, not hardcoded from memory.
 """
 

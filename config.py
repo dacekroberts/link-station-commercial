@@ -230,7 +230,7 @@ KING_COUNTY_BBOX = {
 # outputs/, and data/processed/businesses_geocoded.csv (where these come
 # from) is local-only, regenerable, gitignored. Re-run step3_geocode.py and
 # update these by hand if the source data changes. Full detail in
-# DECISIONS.md.
+# docs/DECISIONS.md.
 GEOCODE_DONOR_MATCHED = 10345
 GEOCODE_CENSUS_MATCHED = 1064
 GEOCODE_TOTAL = 11466
@@ -250,7 +250,7 @@ GEOCODE_FAILED_RATE = GEOCODE_TOTAL_FAILED / GEOCODE_TOTAL
 # captured by hand (screenshots -> Google Doc -> transcribed), and
 # avg_monthly_boardings in ridership_by_station.csv is the average of each
 # station's twelve monthly totals - not a single-month snapshot. See
-# data/raw/README.md and DECISIONS.md.
+# data/raw/README.md and docs/DECISIONS.md.
 RIDERSHIP_SNAPSHOT = "Jan-Dec 2025 (average of monthly totals)"
 RIDERSHIP_SOURCE = "Sound Transit System Performance Tracker"
 LICENSE_SNAPSHOT = "2026-09-06"

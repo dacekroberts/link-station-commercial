@@ -20,7 +20,7 @@ Two sources, in order:
    batches, so a timeout partway through costs you one batch, not the run.
 
 The donor layer is NOT the canonical business-license source - see
-CLAUDE.md and DECISIONS.md. It contributes geometry only, for rows the clean
+CLAUDE.md and docs/DECISIONS.md. It contributes geometry only, for rows the clean
 CSV already decided to keep.
 
 Run:  python src/step3_geocode.py

@@ -1,8 +1,8 @@
 # Project conventions
 
 Seattle Link light rail / commercial density analysis. Full context in
-`initialscript.md` — read it at the start of a new session. Working plan in
-`PLAN.md`.
+`docs/initialscript.md` — read it at the start of a new session. Working plan in
+`docs/PLAN.md`.
 
 ## Invariants
 
@@ -20,7 +20,7 @@ Seattle Link light rail / commercial density analysis. Full context in
   every analysis. The GIS layer (`business_licenses_geocoded.geojson`) is a
   geometry donor only — joined by account number in step 3. Do not swap the
   pipeline to the GIS layer as its primary source (it hides a ~10% coverage
-  gap). See `DECISIONS.md`.
+  gap). See `docs/DECISIONS.md`.
 
 ## Working with this user
 
@@ -32,7 +32,7 @@ Do not write the prose in the `TODO — write this up` blocks in
 of the project. Discuss the numbers with them; let them write the
 interpretation.
 
-Scope is locked (see `initialscript.md`). Flag scope additions rather than
+Scope is locked (see `docs/initialscript.md`). Flag scope additions rather than
 building them.
 
 ## Commands
@@ -47,4 +47,4 @@ streamlit run "Overview_&_Introduction.py"
 ```
 
 Commit after each step that succeeds. Prompt the user to fill in
-`DECISIONS.md` after each session.
+`docs/DECISIONS.md` after each session.
