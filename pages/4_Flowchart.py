@@ -1,9 +1,9 @@
 """Flowchart page - how the pipeline actually got built.
 
-Renders via Mermaid loaded from a CDN inside an iframe component, not a new
-pip dependency - keeps requirements.txt lean (see CLAUDE.md). Diagram
-content is drawn from Initial Build Development Context.md and the src/step*.py scripts,
-not hardcoded from memory.
+Renders via Mermaid loaded from a CDN inside an iframe, not a new pip
+dependency - keeps requirements.txt lean (see CLAUDE.md). Diagram content is
+drawn from DECISIONS.md, the local build-context notes, and the
+src/step*.py scripts, not hardcoded from memory.
 """
 
 import base64

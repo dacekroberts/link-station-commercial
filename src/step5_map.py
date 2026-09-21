@@ -684,10 +684,12 @@ def main():
     # sit past the visible edge. It swaps the two base layers directly and
     # puts a `dark-base` class on <body> so the CSS above can restyle the
     # overlays and controls (body, not the map container, so the legend -
-    # which lives outside the container - is covered too). No state is kept
-    # beyond that class. A MacroElement rather than a bare script Element: it
-    # renders after the map variable exists (a bare one lands above it and
-    # throws).
+    # which lives outside the container - is covered too). The map opens on
+    # the visitor's own prefers-color-scheme and follows later OS changes
+    # until they touch the switch themselves; nothing is stored, so a reload
+    # goes back to following the system. A MacroElement rather than a bare
+    # script Element: it renders after the map variable exists (a bare one
+    # lands above it and throws).
     mode_toggle = folium.MacroElement()
     mode_toggle.light_tiles = light_tiles
     mode_toggle.dark_tiles = dark_tiles
@@ -719,23 +721,46 @@ def main():
                         btn.innerHTML = '<span class="mode-thumb"></span>' +
                             '<span class="mode-icon mode-sun">' + SUN + '</span>' +
                             '<span class="mode-icon mode-moon">' + MOON + '</span>';
-                        function render(isDark) {
-                            btn.setAttribute('data-mode', isDark ? 'dark' : 'light');
-                            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
-                            btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
-                        }
-                        render(false);
-                        function toggle() {
-                            var toDark = !map.hasLayer(dark);
-                            if (toDark) {
+                        function setMode(isDark) {
+                            if (isDark) {
                                 map.addLayer(dark);
                                 map.removeLayer(light);
                             } else {
                                 map.addLayer(light);
                                 map.removeLayer(dark);
                             }
-                            document.body.classList.toggle('dark-base', toDark);
-                            render(toDark);
+                            document.body.classList.toggle('dark-base', isDark);
+                            btn.setAttribute('data-mode', isDark ? 'dark' : 'light');
+                            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+                            btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+                        }
+
+                        // Start on the visitor's own OS/browser setting rather
+                        // than always light. prefers-color-scheme resolves
+                        // inside this iframe the same as it would top-level.
+                        // Once the visitor works the switch themselves, their
+                        // choice wins and the system is no longer followed
+                        // (until reload) - an OS auto-switch at sunset should
+                        // not silently undo a deliberate click.
+                        var mq = window.matchMedia
+                            ? window.matchMedia('(prefers-color-scheme: dark)')
+                            : null;
+                        var manual = false;
+                        setMode(!!(mq && mq.matches));
+                        if (mq) {
+                            var onSystemChange = function (e) {
+                                if (!manual) setMode(e.matches);
+                            };
+                            if (mq.addEventListener) {
+                                mq.addEventListener('change', onSystemChange);
+                            } else if (mq.addListener) {
+                                mq.addListener(onSystemChange);  // older Safari
+                            }
+                        }
+
+                        function toggle() {
+                            manual = true;
+                            setMode(!map.hasLayer(dark));
                         }
                         L.DomEvent.disableClickPropagation(bar);
                         L.DomEvent.on(btn, 'click', function (e) {

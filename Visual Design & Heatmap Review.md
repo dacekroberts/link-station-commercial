@@ -4,7 +4,8 @@ Covers the visual-polish work of 2026-09-19 and 2026-09-20, organized by
 concept rather than by date. **This is a map, not the record of truth:**
 `DECISIONS.md` is authoritative for exact reasoning and values, and
 `git log` for exact changes. Earlier work (the initial build, Sessions
-1-9) is in `Initial Build Development Context.md`.
+1-9) is in `Initial Build Development Context.md`, kept locally rather
+than in the repo.
 
 ## Contents
 
@@ -193,7 +194,10 @@ CartoDB and similar providers were already ruled out on keys and licensing.
   panes, so the tile filter does not touch them.
 - Ring outlines (`#2c3e50`, used nowhere else) are invisible on dark tiles,
   so they are lightened under `.dark-base`.
-- Not persisted: visitors start on light each time.
+- Opens on the visitor's own `prefers-color-scheme` rather than always
+  light, and follows later OS changes until they work the switch
+  themselves, after which their choice wins. Nothing is stored, so a
+  reload goes back to following the system.
 
 ### The switch (UI design)
 
@@ -229,8 +233,18 @@ and the thumb), and the box positions are identical in both modes.
 ### Limits
 
 It is a recolor, not a designed dark map, so labels and road colors are a
-bit muddier than a purpose-built dark style. It does not follow the
-visitor's system theme, and the page around the map stays dark regardless.
+bit muddier than a purpose-built dark style. The page around the map stays
+dark regardless of which way the map is set, since the site itself is
+dark-only.
+
+One caveat on the system-following added 2026-09-20: the initial load is
+verified in both directions, and a manual choice is verified to survive a
+system flip. Live following of an OS change *mid-session* could not be
+verified, because the browser's media emulation updates
+`matchMedia().matches` without dispatching a `change` event inside the
+iframe - a freshly attached, known-good listener saw zero events too. The
+code is the standard `addEventListener('change')` pattern, but it is
+untested on a real OS theme switch.
 
 ---
 
@@ -314,6 +328,7 @@ Both held files are gitignored (`.claude/`) and unsent.
 
 **Checks not yet done**
 - Graph 2 on a real phone, as opposed to an emulated 375px viewport.
+- The map following a real OS theme switch mid-session (see section 5).
 - Midnight slate on a real page (it was never built; see section 2).
 - The hand-sampling percentages behind the NAICS exclusions. A 3x sample
   (120 rows of 812990, 75 of 459999, seeded 20260920) was drawn for review;
@@ -327,8 +342,15 @@ Both held files are gitignored (`.claude/`) and unsent.
 
 **Design follow-ups**
 - Food service pins are close in hue to the orange heat (see section 4).
-- The light/dark choice is not persisted and does not follow the system
-  theme (see section 5).
+
+**Deferred, deliberately**
+- **A visitor-facing light/dark toggle for the whole site.** Confirmed
+  possible via `[theme.light]`/`[theme.dark]` (see section 2). Deferred
+  2026-09-20 because it needs four prerequisites first: the sidebar
+  "Pages" label (1.01:1 in light mode, invisible), the Flowchart's
+  Mermaid iframe (hardcoded dark), the social icons (2.77:1), and a
+  retune of the ring ramp, whose pale ring 4 nearly vanishes on white.
+  Revisit as a piece of work in its own right, not a config flip.
 
 **Documentation**
 - `DECISIONS.md` has no entry yet for the cross-project boundary or the two

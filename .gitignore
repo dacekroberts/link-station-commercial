@@ -23,3 +23,17 @@ data/processed/*
 
 # Outputs ARE committed - Streamlit Cloud needs them at runtime,
 # and the pipeline does not run there.
+
+# Internal development notes. Kept locally as project history, but this is
+# a public portfolio repo read by hiring managers, and a session-by-session
+# build log is working material rather than part of the deliverable.
+# Still reachable in git history before 2026-09-20 - purge that too if the
+# file should be gone entirely, not just delisted.
+Initial Build Development Context.md
+
+# Working review files - analyst scratch, not part of the deliverable.
+naics_sample_3x_review.csv
+
+# Local safety copy of pre-history-rewrite state. Large, and specific to
+# this machine.
+.backups/
