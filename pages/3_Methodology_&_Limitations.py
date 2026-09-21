@@ -295,9 +295,18 @@ rather than sample, and reading them, seven are genuinely someone's name
 and five are trade names that happen to match the legal one. **Seven
 pins, 0.17% of the map, three of them on single-family land.**
 
-I didn't filter anything as a result. Excluding NAICS `812990` above had
-already removed the category where home-based sole proprietors
-concentrate, which is most of why this number is small. The check itself
+Those seven names are not published. The map withholds a pin's name
+wherever it is the registrant's own identity by the test above, showing
+*Name withheld (sole proprietor)* in its place; the pin, its location,
+its category and its ring all stay, so no figure anywhere on this site
+changes. That covers 41 pins rather than seven, because the rule
+deliberately over-reaches: around three dozen of them are trade names
+that happen to match the legal name, and they lose their label too. I
+preferred that to a hand-written list of the seven, which would go stale
+against a newer license export without ever saying so. Excluding NAICS
+`812990` above had already removed the category where home-based sole
+proprietors concentrate, which is most of why the number was small to
+begin with. The check itself
 can be re-run after any change to filtering, and it prints numbers rather
 than a verdict. Its limits are worth stating plainly: matching a name
 against the legal entity name can't tell a real shop trading under its

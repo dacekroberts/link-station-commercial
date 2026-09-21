@@ -15,6 +15,37 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **The map now withholds a pin's name where that name is the registrant's
+  own identity.** Having measured the exposure at 7 names in 4,120 pins
+  (0.17%), the first decision was to publish them anyway and disclose the
+  number — which quietly let "the proportion is small" stand in for "and so
+  it is appropriate to publish them." Those are different questions, and
+  proportion does not answer the second. `step5_map.py` now substitutes
+  "Name withheld (sole proprietor)" for the name, rendered italic rather than
+  bold so it reads as a label and not as a business called that.
+  Three properties made this cheap enough to be obvious in hindsight. It
+  needs **no zoning**: the test reads only `business_name`,
+  `Business Legal Name` and `Ownership Type`, all already carried in
+  `businesses_geocoded.csv`, so zoning was only ever needed to size the
+  problem, not to find the rows. It **changes a label, not a row**: the pin,
+  its coordinates, category and ring all stay, so no figure anywhere on the
+  site moves — the regenerated map still carries 4,120 pins and the same
+  1,703/1,786/631 group counts. And it **recomputes itself** each run, where
+  a hand-written list of the seven would go stale against a newer license
+  export without saying so. It covers **41 pins rather than 7**, deliberately
+  over-reaching: roughly three dozen are trade names that happen to equal
+  their legal name ("Hami Salon", "Boy Scout Troop 151") and lose their label
+  too. That is the price of a rule that cannot rot.
+  **Substituted where the pin arrays are built, not in the tooltip's own
+  JavaScript** — the pin data is baked into `heatmap.html` as a literal
+  array, so hiding a name only at render time would have left all seven
+  readable in the page source. Verified at coordinate level rather than by
+  name search: 8,240 pin entries (4,120 x 2 layers, nothing dropped), all 41
+  carrying the substitution at their own coordinates, zero real names
+  surviving in any escaping. A name search alone would have reported a false
+  leak on "JULIUS", where two businesses share that trade name: one whose
+  legal name is "JUJU SOLO PROJECT" (correctly still shown) and one whose
+  legal name is also "JULIUS" (correctly withheld).
 - **Checked whether the map publishes people's names at their home
   addresses, and added `scripts/check_personal_exposure.py` as a re-runnable
   gate rather than wiring the check into the pipeline.** Prompted by a

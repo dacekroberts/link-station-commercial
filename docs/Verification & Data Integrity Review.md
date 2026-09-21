@@ -188,17 +188,55 @@ names that happen to match the legal one ("Boy Scout Troop 151", "Hami
 Salon", "Tigi's Fragrance Corner"). **About 7 of 4,120 — 0.17%** — three of
 them on single-family land.
 
-### What was built, and what deliberately was not
+### The seven names are withheld from the map
 
-`scripts/check_personal_exposure.py` prints numbers rather than a pass/fail.
-Nothing was filtered as a result: excluding `812990` had already removed the
-category where home-based sole proprietors concentrate, which is most of why
-the number is small.
+Measuring the exposure was not the same as acting on it, and for a while it
+stood in for acting on it: the number was small, so the names stayed up. That
+conflated two different questions. "0.17% is negligible" is a judgment about
+proportion; whether it is appropriate to publish seven identifiable people at
+their homes is not a question proportion answers.
+
+`step5_map.py` now substitutes `Name withheld (sole proprietor)` wherever a
+pin's name is the registrant's own identity by the test above. Three things
+made this cheap:
+
+- **It needs no zoning.** The test reads only `business_name`,
+  `Business Legal Name` and `Ownership Type`, all already in
+  `businesses_geocoded.csv`. Zoning was only ever needed to *size* the
+  problem, not to identify the rows, so the filter adds no data source and no
+  dependency.
+- **It changes a label, not a row.** The pin, its coordinates, its category
+  and its ring all stay, so every figure on the site is untouched — the
+  regenerated map still carries 4,120 pins and the same 1,703 / 1,786 / 631
+  group counts.
+- **It recomputes itself.** A hand-written list of the seven would go stale
+  against a newer license export with no warning; this rule re-derives from
+  the registry on every run.
+
+It covers **41 pins**, not seven, because it deliberately over-reaches: about
+three dozen are trade names that happen to equal the legal name ("Hami
+Salon", "Boy Scout Troop 151") and lose their label too. That is the accepted
+price of a rule that cannot rot.
+
+**Substituted where the pin arrays are built, not in the tooltip's
+JavaScript.** The pin data is baked into `heatmap.html` as a literal array, so
+hiding a name at render time would have left all seven readable in the page
+source. Verified at coordinate level: 8,240 pin entries (4,120 × 2 layers, so
+nothing dropped), all 41 carrying the substitution at their own coordinates,
+and zero real names surviving in any escaping — checked against JSON-escaped
+forms too, since two of the 41 contain apostrophes.
+
+One case worth keeping: a search for surviving names returns `JULIUS`, which
+is **not** a leak. Two businesses trade under that name — one whose legal name
+is `JUJU SOLO PROJECT`, a chosen trade name that is correctly still shown, and
+one whose legal name is also `JULIUS`, correctly withheld. Only the
+coordinate-level check could tell them apart; a name search alone would have
+reported a false leak.
 
 **Zoning stays out of the pipeline.** Wiring it in would add a fourth manual
 data source, a failure mode when the city republishes the layer, a full
-re-run, and a Methodology paragraph disclosing it as an input — all to
-support a number that says there is nothing to fix. The layer
+re-run, and a Methodology paragraph disclosing it as an input — and the
+withholding rule above does not need it. The layer
 (`data/raw/seattle_zoning.geojson`, 3,627 polygons, matched 100% of pins) is
 gitignored and the script degrades to the name signals without it. Both paths
 are tested. The fetch URL lives in the script's docstring, not in
@@ -349,11 +387,27 @@ that is four pieces of work, not a config flip.
 **Checks not yet done**
 - Graph 2 on a real phone, as opposed to an emulated 375px viewport.
 - The map following a real OS theme switch mid-session (see section 6).
-- Whether the ~90% and ~70% storefront hand-sample percentages behind the
-  `812990` exclusion and the `459999` keep hold up at 3x sample size. A
-  seeded 195-row sample was drawn and then retired once the owner-identity
-  signal answered the privacy question; the *filtering* question it was
-  originally drawn for remains open, and is a different question.
+
+**Resolved: the storefront percentages behind the NAICS calls**
+
+The `812990` exclusion rests on a 40-row hand sample finding ~90%
+non-storefront, and the `459999` keep on a 25-row sample finding ~70%
+plausible storefronts. A seeded 195-row sample was drawn to re-test both at
+3x, then retired unread: the sibling project's write-up corroborates both
+calls from a **different city's data**, which is stronger evidence than a
+larger sample of the same Seattle rows would have been. It reports that
+excluding `812990` there cut fallback-traceable personal names from 3,998 to
+1,803 — exactly the effect "~90% home-based sole proprietors" predicts — and
+endorses keeping `459999`. Seattle's own numbers point the same way: after
+the exclusion, this map publishes 0 fallback-traceable names and 7
+owner-identity names in 4,120 pins.
+
+Worth being clear about what that does and does not settle. It corroborates
+the *character* of the two categories across two independent registries. It
+does not re-measure the Seattle percentages themselves, so the figures on the
+Methodology page remain the original hand-sample numbers, correctly described
+there as hand samples of 40 and 25 rows. The seeded sample is reproducible
+from `scripts/`-adjacent code in `DECISIONS.md` if anyone wants to revisit it.
 
 **Deferred, deliberately**
 - A visitor-facing light/dark toggle for the whole site (see section 5).

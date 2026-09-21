@@ -15,6 +15,7 @@ are what carry your quantitative claims.
 Run:  python src/step5_map.py
 """
 
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -59,6 +60,12 @@ RAIL_LINE_SHAPE_ID = "N23:S07"
 HEAT_RADIUS = 8
 HEAT_BLUR = 10
 HEAT_MIN_OPACITY = 0.35
+
+# Shown in place of a pin's name where that name is the registrant's own
+# identity rather than a trade name they chose. Says why, so it reads as a
+# deliberate omission rather than missing data; rendered in italics by the
+# tooltip callback for the same reason. See the withholding block in main().
+WITHHELD_NAME = "Name withheld (sole proprietor)"
 
 # Leaflet.heat's own default gradient runs blue -> cyan -> lime -> yellow ->
 # red - most of the visible area at typical densities reads as blue/cyan,
@@ -426,6 +433,51 @@ def main():
         print(f"WARNING: {unmatched} businesses matched no NAICS group - "
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
 
+    # --- Withhold names that are a person's own identity -------------------
+    # A trade name someone chose for their shop is commercial information and
+    # mapping it is the point of this project. A sole proprietor's own name is
+    # not, and this registry publishes one wherever no trade name was filed.
+    #
+    # The test: the published name IS the legal entity name (someone who chose
+    # a trade name has two different strings) AND the entity is a natural
+    # person rather than a company. The second half is load-bearing - without
+    # it, single-member LLCs dominate, because an LLC's legal name is its
+    # brand ("Barking Gorgeous LLC"). It deliberately does not catch someone
+    # who filed an LLC under their own name, which is a commercial identity
+    # they chose to file.
+    #
+    # Substituted HERE, where the pin arrays are built, not in the tooltip's
+    # own JavaScript: the pin data is baked into heatmap.html as a literal
+    # array, so hiding a name only at render time would leave it readable in
+    # the page source. It must never enter the file.
+    #
+    # This costs a label on roughly three dozen pins whose trade name happens
+    # to equal their legal name ("Hami Salon"), which is the accepted price of
+    # a rule that recomputes itself from the registry on every run rather than
+    # a hand-maintained list that would rot silently against a newer export.
+    # See scripts/check_personal_exposure.py and the Methodology page.
+    def _entity_key(name):
+        if not isinstance(name, str):
+            return ""
+        s = re.sub(r"[^A-Z0-9 ]", " ", name.upper())
+        s = re.sub(r"\b(?:LLC|INC|CORP|CO|LTD|LP|LLP|PLLC|THE)\b", " ", s)
+        return " ".join(s.split())
+
+    _published = businesses_in_rings["business_name"].map(_entity_key)
+    _legal = businesses_in_rings.get(
+        "Business Legal Name", pd.Series("", index=businesses_in_rings.index)
+    ).map(_entity_key)
+    _is_person = (
+        businesses_in_rings.get(
+            "Ownership Type", pd.Series("", index=businesses_in_rings.index)
+        ).fillna("").str.strip() == "Sole proprietorship"
+    )
+    _withhold = (_published != "") & (_published == _legal) & _is_person
+    if _withhold.any():
+        businesses_in_rings.loc[_withhold, "business_name"] = WITHHELD_NAME
+        print(f"{_withhold.sum()} pin name(s) withheld as a registrant's own "
+              "identity (see scripts/check_personal_exposure.py)")
+
     def add_pin_layer(rows, sublabel, group_name, color, bold=False, show=False):
         """One toggleable, clustered, coloured pin layer - the one pattern
         reused for every business layer below, broad or fine-grained.
@@ -459,7 +511,13 @@ def main():
                     radius: 5, color: '{color}', fillColor: '{color}',
                     fillOpacity: 0.85, weight: 1
                 }});
-                var html = '<b>' + esc(row[2]) + '</b><br>' +
+                // Withheld names render italic rather than bold, so they read
+                // as a label rather than as a business actually called that.
+                var name = esc(row[2]);
+                var head = row[2] === {WITHHELD_NAME!r}
+                    ? '<i>' + name + '</i>'
+                    : '<b>' + name + '</b>';
+                var html = head + '<br>' +
                     'NAICS code: ' + row[3] + '<br>' +
                     'Nearest station: ' + row[4] + '<br>' +
                     row[5];
