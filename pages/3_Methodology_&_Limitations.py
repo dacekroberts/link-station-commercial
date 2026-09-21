@@ -304,7 +304,7 @@ distribution among survivors, not survival itself.
 """
 )
 
-st.subheader("Am I publishing people's names at their homes?")
+st.subheader("Self-imposed privacy restrictions")
 
 st.markdown(
     """
