@@ -34,6 +34,11 @@ Initial Build Development Context.md
 # Working review files - analyst scratch, not part of the deliverable.
 naics_sample_3x_review.csv
 
+# Portable skill write-up passed over from the sibling multi-city project.
+# Local working material, and it belongs in .claude/skills/ rather than the
+# repo root - see its own header.
+passover_name_filtering_skill.md
+
 # Local safety copy of pre-history-rewrite state. Large, and specific to
 # this machine.
 .backups/
