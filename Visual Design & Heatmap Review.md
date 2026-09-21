@@ -39,6 +39,13 @@ Commits, for reference: `7282174` (warm ring palette, responsive Graph 2),
 (orange heat, AI Use wording), `22920a3` (Dark Mode), `0771eff`
 (light/dark switch).
 
+These hashes are only valid until the next history rewrite, and this repo
+had four on 2026-09-20 alone. A rewrite renumbers every commit from its
+earliest change onward, so if a hash above does not resolve, find the
+commit by its subject line instead — `git log --all --oneline --grep=...`.
+`filter-repo`'s own `commit-map` only retains its most recent run, so it
+cannot chain across several.
+
 ---
 
 ## 1. Color system
