@@ -121,6 +121,41 @@ exported by hand from the published Power BI dashboard.
 """
 )
 
+# Sound Transit's terms carry a flow-down obligation: "If you provide the
+# Data to others, you agree to include provisions substantially similar to
+# these Terms in the term of use that apply to your provision of Data to
+# others." This project republishes GTFS-derived geometry (station points and
+# the rail alignment) in outputs/ and the map, so that clause applies. The
+# "those terms come with them" sentence below is what discharges it. See
+# docs/data_sources.md for every source's stated terms, read 2026-09-20.
+st.markdown("**Attribution and terms**")
+
+st.markdown(
+    """
+Station locations and the 1 Line's route geometry come from Sound Transit's
+Open Transit Data feed, used under [Sound Transit's Transit Data Terms of
+Use](https://www.soundtransit.org/help-contacts/business-information/open-transit-data-otd/transit-data-terms-use).
+That data is provided "AS IS" by the contributing transit agencies, and the
+license to use and display it is limited and revocable. If you take the
+station coordinates or the route alignment from this project, those terms
+come with them.
+
+Business records come from the City of Seattle's Department of Finance and
+Administrative Services, published as public domain on the City's open data
+portal. Land use zoning, used only for a privacy check and not for any
+figure on this site, is the City's Current Land Use Zoning Detail, published
+under the Open Data Commons PDDL. Addresses the City's own geocoded layer
+didn't cover were geocoded with the U.S. Census Bureau's bulk geocoder.
+
+The basemap is © OpenStreetMap contributors, used under the Open Database
+License. This project draws its own data over those tiles rather than
+deriving anything from OpenStreetMap's database.
+
+I read each source's stated terms on 20 September 2026. The full record,
+including the two I couldn't settle by reading, is in `docs/data_sources.md`.
+"""
+)
+
 st.subheader("What Was Filtered Out")
 
 st.markdown(

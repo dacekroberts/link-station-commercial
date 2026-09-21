@@ -1,7 +1,7 @@
-# Data sources, licences and terms
+# Data sources, licenses and terms
 
 Every dataset this project reads, what it is used for, and what its publisher
-actually says about reuse. **Licence fields were read on 2026-09-20**, not
+actually says about reuse. **License fields were read on 2026-09-20**, not
 inferred from the fact that a source sits on an open-data portal.
 
 This matters more here than for a project that only displays data, because
@@ -19,9 +19,9 @@ are ambiguous the entry says so rather than resolving it.
 
 ## Summary
 
-| Source | Licence as stated | Redistribution | Status |
+| Source | License as stated | Redistribution | Status |
 |---|---|---|---|
-| Seattle business licences (CSV) | **Public Domain** | permitted | clear |
+| Seattle business licenses (CSV) | **Public Domain** | permitted | clear |
 | Seattle Business License (GIS layer) | *disclaimer only, no grant* | not stated | **gap** |
 | Seattle land use zoning | **PDDL** | permitted | clear (not redistributed) |
 | Sound Transit GTFS | limited, **revocable** | permitted **with flow-down** | **action needed** |
@@ -37,7 +37,7 @@ are ambiguous the entry says so rather than resolving it.
   Services, via `data.seattle.gov` (Socrata dataset `wnbq-64tb`)
 - **Used by:** `step2_clean_businesses.py`; every analysis on the site
 - **Obtained:** manual CSV export, snapshot `2026-09-06`
-- **Licence:** `"Public Domain"` (`licenseId: PUBLIC_DOMAIN`), stated in the
+- **License:** `"Public Domain"` (`licenseId: PUBLIC_DOMAIN`), stated in the
   dataset's own Socrata metadata
 - **Attribution:** the metadata carries
   `attribution: "Department of Finance and Administrative Services"` and
@@ -55,7 +55,7 @@ are ambiguous the entry says so rather than resolving it.
   on `data.seattle.gov` as `wmtg-dzy4`
 - **Used by:** `step3_geocode.py`, geometry only, joined by account number
 - **Obtained:** manual GeoJSON download
-- **Licence:** **none stated.** The metadata's `license` field holds an
+- **License:** **none stated.** The metadata's `license` field holds an
   accuracy *disclaimer* — "The City of Seattle makes no representation or
   warranty as to its accuracy..." — not a grant of rights. There is no
   `licenseId`.
@@ -73,8 +73,8 @@ are ambiguous the entry says so rather than resolving it.
 - **Used by:** `scripts/check_personal_exposure.py` only — a developer check,
   never the pipeline
 - **Obtained:** ArcGIS REST query, paged at 2000, 2026-09-20
-- **Licence:** **PDDL** — Open Data Commons Public Domain Dedication and
-  Licence, `https://opendatacommons.org/licenses/pddl/summary`
+- **License:** **PDDL** — Open Data Commons Public Domain Dedication and
+  License, `https://opendatacommons.org/licenses/pddl/summary`
 - **Redistribution:** permitted. Moot in practice: the layer is gitignored and
   nothing derived from it is published.
 
@@ -84,7 +84,7 @@ are ambiguous the entry says so rather than resolving it.
 - **Used by:** `step1_stations.py` (16 station coordinates),
   `step5_map.py` (the real rail alignment, shape `N23:S07`)
 - **Obtained:** manual download, feed dated `2026-08-28`
-- **Licence:** *"Each of the Transit Agencies grant to you a limited,
+- **License:** *"Each of the Transit Agencies grant to you a limited,
   revocable license to use, and display the Data in accordance with these
   terms."* Not public domain, and revocable.
 - **Attribution:** data may be identified as provided "AS IS" by the
@@ -114,7 +114,7 @@ are ambiguous the entry says so rather than resolving it.
 - **Obtained:** **manually transcribed** from an embedded Power BI dashboard —
   screenshots of twelve 2025 months, into a document, into a CSV. No export
   endpoint exists.
-- **Licence: unresolved.** The dashboard is a public web page on
+- **License: unresolved.** The dashboard is a public web page on
   `soundtransit.org`, not a dataset on the OTD portal. Whether the OTD
   "Transit Data Terms of Use" reach it is genuinely unclear: those terms
   govern *"the Data"* made available through OTD, and this was read off a
@@ -133,8 +133,8 @@ are ambiguous the entry says so rather than resolving it.
 - **Used by:** `step3_geocode.py`, for the 1,121 rows the GIS donor missed;
   1,064 matched
 - **Obtained:** batch API, cached under `data/raw/geocode_cache/`
-- **Licence: not stated on the service.** `geocoding.geo.census.gov` publishes
-  no terms-of-use, licence or attribution requirement on the geocoder itself;
+- **License: not stated on the service.** `geocoding.geo.census.gov` publishes
+  no terms-of-use, license or attribution requirement on the geocoder itself;
   it links only to privacy, information-quality and accessibility policies.
 - **Redistribution:** not addressed. The coordinates it returned are published
   in `heatmap.html`.
@@ -147,7 +147,7 @@ are ambiguous the entry says so rather than resolving it.
 
 - **Used by:** `step5_map.py`, as the Leaflet base layer in both light and
   dark modes
-- **Licence:** OSM **data** is ODbL — share-alike, attribution required. Tile
+- **License:** OSM **data** is ODbL — share-alike, attribution required. Tile
   imagery is served under the OSM Foundation's tile usage policy.
 - **Attribution:** present and verified — Folium emits
   `© OpenStreetMap contributors` into the map, and it renders.
@@ -180,15 +180,15 @@ Ordered by how much it matters:
 4. **Add source attribution to the site.** The Methodology page's Data Sources
    section names the sources but credits none of them in the form their
    publishers ask for.
-5. **Re-check on any refresh.** The business licence dataset refreshes daily
+5. **Re-check on any refresh.** The business license dataset refreshes daily
    and its terms could change; this log is a snapshot of 2026-09-20.
 
 ## Checking these again
 
-Socrata states licence terms per dataset in machine-readable metadata, which
+Socrata states license terms per dataset in machine-readable metadata, which
 is faster and more reliable than reading the portal page — the human-facing
 page for `wnbq-64tb` shows nothing useful, while its metadata states the
-licence outright:
+license outright:
 
 ```
 https://data.seattle.gov/api/views/<dataset-id>.json
@@ -197,4 +197,4 @@ https://data.seattle.gov/api/views/<dataset-id>.json
 Read `license`, `licenseId`, `attribution`, `attributionLink` and
 `custom_fields`. ArcGIS feature services expose `copyrightText` and
 `licenseInfo` at `<service-url>?f=json`, though Seattle's zoning service
-leaves both empty — its licence is only in the Socrata catalogue entry.
+leaves both empty — its license is only in the Socrata catalogue entry.
