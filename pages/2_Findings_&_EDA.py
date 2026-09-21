@@ -811,7 +811,16 @@ if STATION_STATS_CSV.exists():
                     alt.Tooltip("z:Q", title="SD from mean", format="+.2f"),
                 ],
             )
-            .properties(height=320)
+            # Left padding reserved by hand. Vega autosizes the axis gutter
+            # to 72px, but the "Businesses" label is 61px wide and sits at a
+            # 16px offset from the axis, needing 77 - so its first character
+            # was clipped off the left edge of the SVG ("Ridership", 51px,
+            # cleared it and hid the bug). Measured in the rendered DOM, not
+            # eyeballed; re-check if the category names change.
+            .properties(
+                height=320,
+                padding={"left": 12, "top": 5, "right": 5, "bottom": 5},
+            )
         )
         st.altair_chart(dot_chart, width="stretch")
 

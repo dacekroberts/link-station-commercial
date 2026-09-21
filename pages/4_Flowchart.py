@@ -160,11 +160,17 @@ _FLOWCHART_HTML = f"""
 # injected styles then leak out into the Streamlit page itself. The iframe
 # keeps them contained, and Mermaid still loads from its CDN inside it.
 #
-# Scale (0.6) and height (905) chosen together, live-tested in the
-# rendered DOM: at 0.6 the diagram's own content is ~899px tall, fitting
-# inside 905px with a small margin - large enough that no scrollbar
-# appears at all (905 was previously 940, sized for the old 0.75 scale).
+# Scale (0.6) and height (925) chosen together, live-tested in the
+# rendered DOM: at 0.6 the SVG is 886.8px tall, plus 24px of .wrap padding
+# and 2px of border, so the document measures 913px. 925 clears that with
+# a margin and no scrollbar appears. The measurement holds at any viewport
+# width - the SVG is a flex item, so it shrinks rather than overflowing,
+# and the document height doesn't change with the iframe's width.
+# Re-measure after any edit to the diagram: adding a line to a node grows
+# the SVG and silently reintroduces the scrollbar (905 was correct until
+# the PAGES node went to three lines; before that, 940 at the old 0.75
+# scale).
 _FLOWCHART_DATA_URL = "data:text/html;base64," + base64.b64encode(
     _FLOWCHART_HTML.encode("utf-8")
 ).decode("ascii")
-st.iframe(_FLOWCHART_DATA_URL, width="stretch", height=905)
+st.iframe(_FLOWCHART_DATA_URL, width="stretch", height=925)
