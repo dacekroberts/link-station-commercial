@@ -378,15 +378,16 @@ degrees from the retail blue, and the two read alike at cluster size).
 until the visitor works the switch themselves, after which their choice wins.
 Nothing is stored, so a reload resumes following the system.
 
-**A site-wide light/dark toggle was confirmed possible and deferred.** Adding
-`[theme.light]` and `[theme.dark]` blocks *does* bring Streamlit's
+**A site-wide light/dark toggle was confirmed possible and decided against.**
+Adding `[theme.light]` and `[theme.dark]` blocks *does* bring Streamlit's
 System/Light/Dark control back, so the earlier "an explicit theme removes the
-toggle permanently" is only true of a single `[theme]` block. Not adopted,
-because light mode breaks three colors hardcoded outside the theme: the
-sidebar "Pages" label renders at **1.01:1** contrast (invisible), the
-Flowchart's Mermaid iframe stays a dark box on a white page, and the social
-icons fall to **2.77:1**. With the ring-ramp retune already known about,
-that is four pieces of work, not a config flip.
+toggle permanently" is only true of a single `[theme]` block. Light mode
+breaks three colors hardcoded outside the theme — the sidebar "Pages" label
+renders at **1.01:1** contrast (invisible), the Flowchart's Mermaid iframe
+stays a dark box on a white page, and the social icons fall to **2.77:1** —
+and the ring ramp would need retuning on top. Two of those are one-line
+fixes; the ring ramp is not, and that is what settles it. Full reasoning in
+section 9, recorded as a decision rather than a pending task.
 
 ---
 
@@ -467,8 +468,16 @@ that is four pieces of work, not a config flip.
   escalation if there is no reply.
 
 **Checks not yet done**
-- Graph 2 on a real phone, as opposed to an emulated 375px viewport.
-- The map following a real OS theme switch mid-session (see section 7).
+- The map following a real OS theme switch mid-session (see section 7). The
+  browser's media emulation updates `matchMedia().matches` without
+  dispatching a `change` event inside an iframe, so this cannot be tested
+  from here — it needs a real theme switch in a real browser.
+
+**Checked on a real device 2026-09-20**
+- Graph 2 on a phone, confirmed rendering correctly. It had previously only
+  been measured at an emulated 375px viewport, which is not the same thing:
+  the original bug was a fixed 900px chart overflowing its container with
+  nothing to scroll it, and only Ring 1 visible.
 
 **Resolved: the storefront percentages behind the NAICS calls**
 
@@ -491,11 +500,45 @@ Methodology page remain the original hand-sample numbers, correctly described
 there as hand samples of 40 and 25 rows. The seeded sample is reproducible
 from `scripts/`-adjacent code in `DECISIONS.md` if anyone wants to revisit it.
 
-**Deferred, deliberately**
-- A visitor-facing light/dark toggle for the whole site (see section 6).
-- Zoning as a pipeline input (see section 3).
-- A keyed or self-hosted tile provider. Current usage is ordinary and
-  compliant; the reason to revisit is traffic or an OSM outage, not
+**Decided against, with reasons**
+
+These are settled, not pending. Recorded with their reasoning so a later
+reader can disagree on the merits rather than assume they were overlooked.
+
+- **A visitor-facing light/dark toggle for the whole site.** Confirmed
+  technically possible — `[theme.light]`/`[theme.dark]` blocks do restore
+  Streamlit's control. Not doing it, for four reasons:
+  1. **The thing most likely to matter already works.** The heatmap, the
+     project's visual anchor and the only page a visitor lingers on, already
+     follows the system theme and carries its own switch.
+  2. **The ring ramp is not a one-time retune.** That palette encodes
+     meaning — bold ring 1 to pale ring 4 maps to near-to-far. On white,
+     pale ring 4 vanishes, so it would need either two ramps that read
+     differently from one another or one compromise ramp that is worse on
+     both. Ring 4 alone took four iterations to settle on dark. This is a
+     design regression risk, not a CSS chore.
+  3. **The flowchart is dark by design.** Its Mermaid theme uses warm
+     charcoal variables chosen deliberately over Mermaid's cool built-in
+     dark; theme-awareness means maintaining two variable sets.
+  4. **It converts a finished decision into permanent overhead.** Every
+     future color choice would need checking against two backgrounds.
+
+  The other two blockers are trivial by comparison: the sidebar "Pages"
+  label at 1.01:1 and the social icons at 2.77:1 are one-line fixes.
+
+  *What would change this:* accessibility feedback that the dark theme is
+  hard to read, the site acquiring daily users, or the ring ramp being
+  redesigned for other reasons anyway.
+
+  *Worth knowing:* light mode was never implemented here. Before the theme
+  file existed, visitors had Streamlit's built-in toggle with stock colors;
+  setting a theme removed it as an unnoticed side effect, which this
+  session's audit is what caught.
+- **Zoning as a pipeline input.** The withholding rule needs only registry
+  columns already present, so zoning sized the problem and is not needed to
+  solve it (see section 3).
+- **A keyed or self-hosted tile provider.** Current usage is ordinary and
+  compliant; the reason to revisit would be traffic or an OSM outage, not
   licensing (see section 4).
 
 **Conditional, worth not forgetting**
