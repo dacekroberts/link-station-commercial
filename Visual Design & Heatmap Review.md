@@ -33,9 +33,9 @@ concept rather than by date. **This is a map, not the record of truth:**
 - **Deployment:** the changes described here were pushed to `main`; the live
   site was not re-checked afterwards (see Open items).
 
-Commits, for reference: `396b8bf` (warm ring palette, responsive Graph 2),
-`c213fe2` (ring 4 tuning), `63bdbca` (Warm charcoal theme), `454d756`
-(orange heat, AI Use wording), `3fe1d57` (Dark Mode), `69e0615`
+Commits, for reference: `2bfc6ad` (warm ring palette, responsive Graph 2),
+`5790f5b` (ring 4 tuning), `a30c5e6` (Warm charcoal theme), `24fd959`
+(orange heat, AI Use wording), `8df83ed` (Dark Mode), `55954dd`
 (light/dark switch).
 
 ---
@@ -120,8 +120,16 @@ before, which is the trade-off.
 **Streamlit behavior to remember:** setting an explicit `[theme]` removes
 Streamlit's light/dark toggle, so the site is dark-only. An earlier claim
 that visitors could still toggle was wrong and has been corrected in the
-config comment and `DECISIONS.md`. Whether separate `[theme.light]` and
-`[theme.dark]` blocks bring the toggle back is untested.
+config comment and `DECISIONS.md`.
+
+Adding `[theme.light]` and `[theme.dark]` blocks **does** bring the toggle
+back (tested 2026-09-20: System / Light / Dark appear in the main menu, and
+the choice follows in-app navigation). It is not adopted, because the app
+has dark-only colors hardcoded outside the theme, and light mode breaks
+them: the sidebar "Pages" label renders at 1.01:1 contrast, effectively
+invisible, the Flowchart's Mermaid iframe stays a dark box on a white page,
+and the social icons fall to 2.77:1. Restoring the toggle means fixing
+those three first, on top of retuning the ring ramp.
 
 **Midnight slate** was never built; only a mock-up palette exists
 (page `#0B1220`, surface `#131C2E`, border `#23304A`, text `#E6EDF7`).
@@ -136,7 +144,8 @@ viewport, not assumed). Fixed by filling the container width and moving the
 legend above the plot (top, horizontal). That also removed a hardcoded dark
 legend fill and 90px of leftover bottom padding. Trade-off: the fixed 900px
 was a deliberate laptop-window choice, and it is given up. Full-screen mode
-was not tested.
+was tested afterwards (2026-09-20) and fills correctly at both desktop and
+375px, with all four rings visible.
 
 **Ring colors on Graph 1 and Graph 5** follow the shared ramp in section 1.
 
@@ -304,10 +313,17 @@ Both held files are gitignored (`.claude/`) and unsent.
 ## 10. Open items
 
 **Checks not yet done**
-- Re-check the live site after the last push: the heatmap switch, the
-  orange heat, the theme on all five pages, and Graph 2 on a real phone.
-- Untested: Graph 2 full-screen mode; `[theme.light]`/`[theme.dark]`
-  restoring a toggle; Midnight slate on a real page.
+- Graph 2 on a real phone, as opposed to an emulated 375px viewport.
+- Midnight slate on a real page (it was never built; see section 2).
+- The hand-sampling percentages behind the NAICS exclusions. A 3x sample
+  (120 rows of 812990, 75 of 459999, seeded 20260920) was drawn for review;
+  the storefront judgments are the analyst's, not automated.
+
+**Checked on 2026-09-20** (previously listed here as untested)
+- Live site: up, dark theme, switch and 21 overlays serving correctly.
+- Graph 2 full-screen: fills correctly at desktop and 375px.
+- `[theme.light]`/`[theme.dark]`: restores the toggle, but three hardcoded
+  dark-only colors break in light mode (see section 2).
 
 **Design follow-ups**
 - Food service pins are close in hue to the orange heat (see section 4).
