@@ -21,13 +21,19 @@ are ambiguous the entry says so rather than resolving it.
 
 | Source | License as stated | Redistribution | Status |
 |---|---|---|---|
-| Seattle business licenses (CSV) | **Public Domain** | permitted | clear |
-| Seattle Business License (GIS layer) | *disclaimer only, no grant* | not stated | **gap** |
+| Seattle business licenses (CSV) | **Public Domain** + portal terms | permitted, **non-commercial condition** | clear |
+| Seattle Business License (GIS layer) | covered by the portal terms | as above | resolved |
 | Seattle land use zoning | **PDDL** | permitted | clear (not redistributed) |
-| Sound Transit GTFS | limited, **revocable** | permitted **with flow-down** | **action needed** |
-| Sound Transit ridership dashboard | not stated for this surface | not stated | **unresolved** |
-| US Census geocoder | not stated on the service | not stated | **gap** |
+| Sound Transit GTFS | limited, **revocable** | permitted **with flow-down** | note added |
+| Sound Transit ridership dashboard | website terms: informational use only | **prohibited without prior permission** | **conflict** |
+| US Census geocoder | API terms require a notice | not restricted | **notice missing** |
 | OpenStreetMap tiles | ODbL (data), attribution required | see entry | attribution present |
+
+**The one that needs a decision:** Sound Transit's ridership figures were
+transcribed from a page on `soundtransit.org`, which its website terms treat
+as "Website Content" and license for informational use only, prohibiting
+republication "without prior permission." This project republishes those
+figures. See source 5.
 
 ---
 
@@ -49,23 +55,49 @@ are ambiguous the entry says so rather than resolving it.
   pins. It is also the one with the cleanest grant, which is fortunate given
   how much of the site rests on it.
 
+### The portal terms, which govern every Seattle dataset here
+
+`data.seattle.gov`'s Terms of Use bind anyone "using data made available
+through this site," so they cover sources 1, 2 and 3. Three clauses matter:
+
+- **A non-commercial condition, and it reaches this data.** *"To the extent
+  the data consists of a list of individuals or can be readily sorted,
+  filtered, or configured as a list of individuals, it is not to be used for
+  a commercial purpose."* The business register is not a list of individuals
+  on its face, but it demonstrably **can** be configured as one — that is
+  precisely what `scripts/check_personal_exposure.py` does, and it found 41
+  such rows. So the condition applies. A portfolio piece is not a commercial
+  purpose on any ordinary reading, so the project is within it today; the
+  constraint would bite if this were ever monetised.
+- **Attribution is not required.** *"Unless otherwise indicated, data on this
+  site does not require specific attribution."* The Methodology page credits
+  Seattle anyway, since the dataset supplies an attribution string and
+  crediting sources is good practice regardless.
+- **No warranty**, and the City reserves the right to discontinue any dataset
+  without notice — which is a reason the snapshot dates recorded here matter.
+
 ## 2. Seattle Business License — GIS layer (geometry donor)
 
 - **Publisher:** City of Seattle ArcGIS Online (`SeattleCityGIS`), cataloged
   on `data.seattle.gov` as `wmtg-dzy4`
 - **Used by:** `step3_geocode.py`, geometry only, joined by account number
 - **Obtained:** manual GeoJSON download
-- **License:** **none stated.** The metadata's `license` field holds an
+- **License at dataset level:** none. The metadata's `license` field holds an
   accuracy *disclaimer* — "The City of Seattle makes no representation or
-  warranty as to its accuracy..." — not a grant of rights. There is no
+  warranty as to its accuracy..." — not a grant of rights, and there is no
   `licenseId`.
-- **Attribution:** `"City of Seattle ArcGIS Online"`
-- **Redistribution:** not addressed.
-- **Gap.** This is the same underlying business data as source 1, published by
-  the same city, marked `Public Access Level: public`. Those are reasons to
-  expect permissive terms; they are not the permissive terms themselves. The
-  coordinates it donated are published in `heatmap.html`. Worth an email to
-  `mapgis.mapgis@seattle.gov` if certainty is wanted.
+- **Resolved at portal level.** The Seattle Open Data Terms of Use apply "by
+  using data made available through this site," without carving out
+  individual datasets, and this layer is catalogued and served through
+  `data.seattle.gov`. Those terms are the grant the dataset entry lacks; see
+  the portal terms under source 1.
+- **Attribution:** `"City of Seattle ArcGIS Online"`. The portal states
+  attribution is not required.
+- **Residual ambiguity, small:** the catalogue entry lives on
+  `data.seattle.gov` while the file itself is served from ArcGIS Online. The
+  natural reading is that a dataset reached through the portal is "made
+  available through this site." If certainty is ever needed,
+  `mapgis.mapgis@seattle.gov`.
 
 ## 3. Current Land Use Zoning Detail
 
@@ -78,7 +110,7 @@ are ambiguous the entry says so rather than resolving it.
 - **Redistribution:** permitted. Moot in practice: the layer is gitignored and
   nothing derived from it is published.
 
-## 4. Sound Transit GTFS feed — needs action
+## 4. Sound Transit GTFS feed
 
 - **Publisher:** Sound Transit, Open Transit Data (OTD)
 - **Used by:** `step1_stations.py` (16 station coordinates),
@@ -98,12 +130,12 @@ are ambiguous the entry says so rather than resolving it.
 - **Usage metrics:** *"You agree to provide relevant usage metrics to Sound
   Transit... on request."*
 - **Commercial use:** not restricted.
-- **The gap:** GTFS-derived geometry is republished in `heatmap.html` and
-  `outputs/`, and **nothing in this repository passes those terms on.** That
-  is a flow-down obligation the project currently does not meet. Closing it is
-  cheap: a short terms note naming Sound Transit OTD as the source of the
-  station and alignment geometry, linking the OTD terms, in the Methodology
-  page's Data Sources section and/or this repository's README.
+- **The gap, now closed:** GTFS-derived geometry is republished in
+  `heatmap.html` and `outputs/`, and for a while nothing in this repository
+  passed those terms on. The Methodology page's "Attribution and terms" note
+  now names Sound Transit OTD as the source of the station and alignment
+  geometry, links the OTD terms, and states that they travel with the data —
+  which is what the flow-down clause asks for.
 - **Terms read at:** `soundtransit.org/help-contacts/business-information/open-transit-data-otd/transit-data-terms-use`
 
 ## 5. Sound Transit System Performance Tracker — ridership
@@ -114,18 +146,54 @@ are ambiguous the entry says so rather than resolving it.
 - **Obtained:** **manually transcribed** from an embedded Power BI dashboard —
   screenshots of twelve 2025 months, into a document, into a CSV. No export
   endpoint exists.
-- **License: unresolved.** The dashboard is a public web page on
-  `soundtransit.org`, not a dataset on the OTD portal. Whether the OTD
-  "Transit Data Terms of Use" reach it is genuinely unclear: those terms
-  govern *"the Data"* made available through OTD, and this was read off a
-  reporting surface instead.
-- **Why this one was checked first:** every other source is a published export
-  designed for reuse. This is the only one obtained by reading a rendered
-  dashboard by hand, and it is also the source behind the site's most
-  prominent secondary figures.
-- **To close:** ask Sound Transit directly which terms cover the System
-  Performance Tracker's published figures. `main@soundtransit.org`, or the OTD
-  contact.
+- **License: resolved, and it conflicts with what this project does.** The
+  dashboard is a page on `soundtransit.org`, so it is governed by Sound
+  Transit's **website** Terms of Use, not the OTD Transit Data Terms. Those
+  website terms state:
+
+  > *"Sound Transit grants you a personal, royalty-free, non-assignable, and
+  > non-exclusive license to use the Website Content in the United States only
+  > as an informative resource. Any other use, including the reproduction,
+  > modification, distribution, transmission, republication, framing, display
+  > or performance of Website Content, without prior permission of Sound
+  > Transit, is strictly prohibited."*
+
+  and separately:
+
+  > *"You may not download, print, copy, distribute, or otherwise use Website
+  > Content for commercial purposes, including publication, sale, or personal
+  > gain."*
+
+  They do **not** distinguish data, statistics or reports from other content.
+- **What this project does with it:** the transcribed figures are committed in
+  `outputs/station_stats.csv`, rendered on the Findings page in Graph 3,
+  Graph 4 and Table 2, and underpin the published r = 0.684 correlation and
+  the 1.8x variance comparison. That is reproduction and republication of
+  Website Content, which the terms condition on prior permission this project
+  does not have.
+- **Not a legal conclusion.** Whether those terms are enforceable against
+  numerical facts is a real question — facts are generally not copyrightable,
+  while a site's terms operate as contract, and the two do not resolve each
+  other. **That judgment is not mine to make**, and nothing here should be
+  read as advice. What is certain is the gap between what the page says and
+  what this repository does.
+- **Options, cheapest first:**
+  1. **Ask.** The terms name their own route: prior permission, via
+     `main@soundtransit.org` or the Marketing Division at Union Station. A
+     non-commercial portfolio analysis citing them as the source is the
+     easy case for a transit agency to say yes to.
+  2. **Ask which terms apply.** Sound Transit may well regard published
+     performance statistics as freely usable despite the blanket website
+     terms, in which case a one-line answer settles it.
+  3. **Re-source it.** Ridership does not appear as an OTD dataset, but
+     Sound Transit publishes performance reports and responds to public
+     records requests; Seattle Transit Blog obtained directional counts that
+     way. Records obtained by PRR carry a different status.
+  4. **Remove it.** This would cost Graph 3, Graph 4, Table 2 and one of the
+     project's three analyses. Listed for completeness, not recommended
+     before options 1-3 are tried.
+- **Terms read at:**
+  `soundtransit.org/help-contacts/business-information/terms-use`
 
 ## 6. US Census Bureau — Geocoding Services API
 
@@ -133,15 +201,26 @@ are ambiguous the entry says so rather than resolving it.
 - **Used by:** `step3_geocode.py`, for the 1,121 rows the GIS donor missed;
   1,064 matched
 - **Obtained:** batch API, cached under `data/raw/geocode_cache/`
-- **License: not stated on the service.** `geocoding.geo.census.gov` publishes
-  no terms-of-use, license or attribution requirement on the geocoder itself;
-  it links only to privacy, information-quality and accessibility policies.
-- **Redistribution:** not addressed. The coordinates it returned are published
-  in `heatmap.html`.
-- **Note:** US federal government works are generally not subject to domestic
-  copyright, which is a reason to expect this to be unproblematic. As above,
-  that is an expectation, not a stated term. Recorded as a gap rather than
-  resolved.
+- **License: nothing on the service itself**, but the Census Bureau publishes
+  API Terms of Service covering its data APIs. Those permit use "to search,
+  display, analyze, retrieve, view and otherwise 'get' information from
+  Census Bureau data", place no commercial restriction, and require one
+  thing this project does not currently do:
+
+  > *"All services, which utilize or access the API, should display the
+  > following notice prominently within the application: 'This product uses
+  > the Census Bureau Data API but is not endorsed or certified by the Census
+  > Bureau.'"*
+
+- **Does it apply here?** Genuinely unclear. The batch geocoder at
+  `geocoding.geo.census.gov` is a different endpoint from the data API those
+  terms are written for, and it publishes no terms of its own. **The cheap
+  move is to display the notice regardless** — it costs one line on the
+  Methodology page, removes the question entirely, and is accurate either way.
+- **Redistribution:** not restricted. The coordinates it returned are
+  published in `heatmap.html`.
+- **Copyright:** US federal government works are generally not subject to
+  domestic copyright. A reason to expect no problem, still not a stated term.
 
 ## 7. OpenStreetMap — basemap tiles
 
@@ -167,21 +246,26 @@ reviewed, because nothing from it reaches this project.
 
 ## What to do about it
 
-Ordered by how much it matters:
+Ordered by how much it matters. Items 1-3 were the three open questions at
+first writing; all three are now answered, and two produced actions.
 
-1. **Pass Sound Transit's terms on.** A short attribution-and-terms note
-   naming OTD as the source of the station and alignment geometry, linking
-   their terms. This is a stated obligation the project does not currently
-   meet, and it is the cheapest to fix.
-2. **Resolve the ridership dashboard's terms** by asking, since they cannot be
-   determined by reading.
-3. **Ask about the GIS donor layer**, or note in the methodology that its
-   terms are a disclaimer rather than a grant.
-4. **Add source attribution to the site.** The Methodology page's Data Sources
-   section names the sources but credits none of them in the form their
-   publishers ask for.
-5. **Re-check on any refresh.** The business license dataset refreshes daily
-   and its terms could change; this log is a snapshot of 2026-09-20.
+1. **Decide what to do about the ridership figures (source 5).** This is the
+   only item where what a source says and what this project does are in
+   conflict. Options are listed in that entry; asking is the cheapest.
+2. **Add the Census API notice.** One line on the Methodology page: "This
+   product uses the Census Bureau Data API but is not endorsed or certified
+   by the Census Bureau." Whether it is strictly required here is unclear,
+   which is exactly why adding it is easier than deciding.
+3. **Pass Sound Transit's GTFS terms on.** *Done* — the Methodology page's
+   "Attribution and terms" note carries them, discharging the flow-down
+   clause for the station and alignment geometry.
+4. **Keep the non-commercial condition in view.** Seattle's portal terms bar
+   commercial use of data that can be configured as a list of individuals,
+   which this data can. A portfolio is not a commercial purpose; monetising
+   the project later would change that.
+5. **Re-check on any refresh.** The business license dataset refreshes daily,
+   the City may discontinue a dataset without notice, and terms change. This
+   log is a snapshot of 2026-09-20.
 
 ## Checking these again
 
