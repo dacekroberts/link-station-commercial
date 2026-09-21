@@ -146,6 +146,8 @@ portal. Land use zoning, used only for a privacy check and not for any
 figure on this site, is the City's Current Land Use Zoning Detail, published
 under the Open Data Commons PDDL. Addresses the City's own geocoded layer
 didn't cover were geocoded with the U.S. Census Bureau's bulk geocoder.
+This product uses the Census Bureau Data API but is not endorsed or
+certified by the Census Bureau.
 
 The basemap is © OpenStreetMap contributors, used under the Open Database
 License. This project draws its own data over those tiles rather than
