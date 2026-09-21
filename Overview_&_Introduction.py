@@ -91,8 +91,6 @@ with st.container(key="overview_columns"):
             "the transit corridor"
         )
 
-st.subheader("Introduction")
-
 st.markdown(
     """
 Businesses cluster near transit. In Seattle, much of that clustering
@@ -108,7 +106,7 @@ not which came first at each station.
 
 st.divider()
 
-st.subheader("What's here")
+st.subheader("Introduction")
 
 st.markdown(
     """
@@ -264,8 +262,8 @@ st.subheader("Starting Assumptions")
 st.markdown(
     """
 Through my relevant education and research, I've come to believe
-contemporary relocation trends increasingly suggest a rural exodus amongst
-young people in developed nations. These trends point towards an inevitable
+contemporary relocation trends increasingly suggest a rural exodus among
+young people in developed nations. These trends point toward an inevitable
 outcome of increased urban density, and all the logistical changes that
 follow that outcome. American cities, long defined by the private vehicle
 as a mode of transport, have been forced to consider adaptation strategies

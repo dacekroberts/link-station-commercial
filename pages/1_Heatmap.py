@@ -56,7 +56,7 @@ when zoomed out. Zooming in will show individual dots; hover over those to
 see further details.
 
 The heat layer is illustrative. Leaflet applies a visual blur rather than a
-statistical density estimate, so read the colour as "roughly where things
+statistical density estimate, so read the color as "roughly where things
 cluster" and take the numbers from the findings page.
 """,
     unsafe_allow_html=True,

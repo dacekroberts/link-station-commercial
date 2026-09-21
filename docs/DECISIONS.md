@@ -199,7 +199,7 @@ each; detail lives in the sections below.
   to report is unchanged.
 - **Verified the project from scratch against a deploy-only environment.**
   Re-ran all five pipeline steps: the five `outputs/*.csv` came back
-  byte-identical, and `heatmap.html` matched after normalising Folium's
+  byte-identical, and `heatmap.html` matched after normalizing Folium's
   random element IDs. Confirmed the app reads only `outputs/` by deleting
   `data/` entirely and loading all five pages in a venv installed from
   `requirements.txt` alone — zero errors, which rules out a repeat of the
@@ -220,7 +220,7 @@ each; detail lives in the sections below.
   `.streamlit/config.toml` does bring Streamlit's System/Light/Dark control
   back, and the choice follows in-app navigation — so the earlier "an
   explicit theme removes the toggle permanently" is only true of a single
-  `[theme]` block. Not adopting it, because light mode breaks three colours
+  `[theme]` block. Not adopting it, because light mode breaks three colors
   hardcoded outside the theme: the sidebar "Pages" label renders at
   **1.01:1** contrast (invisible), the flowchart's Mermaid iframe stays a
   dark box on a white page, and the social icons fall to **2.77:1**. With
@@ -255,8 +255,8 @@ each; detail lives in the sections below.
   top-left). Drawn as one opaque 30x60 two-position switch (sun over moon)
   with a thumb behind the active mode - top in light, bottom in dark -
   rather than a single icon that changes, after the first version's icon
-  looked off-centre and the box looked cut off. The dark border keeps
-  Leaflet's own width (only the colour changes) so controls don't shift a
+  looked off-center and the box looked cut off. The dark border keeps
+  Leaflet's own width (only the color changes) so controls don't shift a
   pixel when the mode changes. The Heatmap page's underlined sentence now
   mentions the button instead of listing Dark Mode among layer-control items.
 - **Layer-control order:** the three bold group layers (Retail, Food
@@ -1166,7 +1166,7 @@ Consolidated from several separate decisions made across the session - the
   after the fix: every layer renders, and interaction (zoom, pan, toggling
   each layer) surfaces no new errors. One harmless residual console line
   (a Canvas2D performance hint, not the exception) can still appear once on
-  load; confirmed it does not recur or affect behaviour.
+  load; confirmed it does not recur or affect behavior.
 - Checked in both contexts the file needs to work in: standalone (opened
   directly) and embedded inside Streamlit's `components.html` iframe
   (`pages/1_Heatmap.py`) - both load cleanly.
@@ -1238,8 +1238,8 @@ Consolidated from several separate decisions made across the session - the
   (1,258), Mobile food (385), Other (984); Personal services into Beauty
   salons (1,141), Pet care (261), Barber shops (174), Other (703). Every
   split sums exactly to its parent group's total.
-  Sub-layers keep their parent's colour throughout (no new legend rows) -
-  they refine *which* businesses of a colour show, not what the colour
+  Sub-layers keep their parent's color throughout (no new legend rows) -
+  they refine *which* businesses of a color show, not what the color
   means.
 - Renamed the base tile layer from Folium's default "openstreetmap" label
   to "Seattle 1 Line Business Density Heatmap," at the user's request.

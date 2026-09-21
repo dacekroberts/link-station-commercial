@@ -4,7 +4,7 @@ Input:  data/raw/gtfs.zip  (download from Sound Transit's Open Transit Data page
 Output: data/processed/stations.csv
 
 GTFS spreads what you need across four tables. Link stations are not
-labelled as such anywhere - you find them by walking the relationships:
+labeled as such anywhere - you find them by walking the relationships:
 
     routes.txt     find the 1 Line's route_id
       -> trips.txt      find trip_ids on that route

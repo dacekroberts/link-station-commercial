@@ -7,7 +7,7 @@ Seattle Link light rail / commercial density analysis. Full context in
 ## Invariants
 
 - **Never buffer or measure distance in EPSG:4326.** Project to EPSG:32610
-  (metres), do the geometry, project back to 4326 for display.
+  (meters), do the geometry, project back to 4326 for display.
 - **Keep `requirements.txt` lean** (streamlit, pandas only). Streamlit Cloud
   installs from it; geopandas there breaks the deploy. Pipeline dependencies
   go in `requirements-pipeline.txt`.

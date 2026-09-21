@@ -288,10 +288,10 @@ if RING_STATS_CSV.exists():
     )
 
     with st.expander("Table 1: Commercial Density by Concentric Ring"):
-        # Same 8/8 split and colour as the line chart above: standard-
+        # Same 8/8 split and color as the line chart above: standard-
         # pattern stations first, against-the-pattern stations after,
         # alphabetical within each group; against-the-pattern station
-        # names coloured to match their line (AGAINST_RED).
+        # names colored to match their line (AGAINST_RED).
         detail = (
             rings.pivot(index="station", columns="ring", values="density_per_sq_mi")
             .reindex(columns=RING_LABELS)
@@ -311,7 +311,7 @@ if RING_STATS_CSV.exists():
             + [s for s in station_order if station_group.get(s) == "Against the pattern"]
         )
         # station moved out of the index into a plain column - Streamlit's
-        # dataframe grid doesn't forward Styler.map_index() colour to the
+        # dataframe grid doesn't forward Styler.map_index() color to the
         # index column (tried it, confirmed via direct DOM inspection: text
         # stayed default white), but does respect column-cell styling via
         # Styler.map() on a regular column.
@@ -344,10 +344,10 @@ if RING_STATS_CSV.exists():
 
     # Per-station write-up, one collapsible <details> per station/pair.
     # Not st.expander() - its label is plain text only (no markdown/HTML),
-    # so it can't take the red-for-against-pattern colour, underline, or
+    # so it can't take the red-for-against-pattern color, underline, or
     # larger font this section asks for. <details>/<summary> gives native
-    # collapse/expand behaviour with full control over header styling
-    # instead. Red is AGAINST_RED, the same colour used for against-pattern
+    # collapse/expand behavior with full control over header styling
+    # instead. Red is AGAINST_RED, the same color used for against-pattern
     # station names in Table 1 and the Graph 2 lines and legend (a plain
     # string with a placeholder, not an f-string, since the CSS braces would
     # all need doubling).
@@ -422,7 +422,7 @@ if RING_STATS_CSV.exists():
             "body": """Uniquely placed station with primary purpose being to serve
                 sports fans for football, soccer, and baseball at Lumen Field/T-Mobile
                 Park. The surrounding area has been reserved for Metro
-                operations/employees and not catered towards spontaneous foot traffic.
+                operations/employees and not catered toward spontaneous foot traffic.
                 Concentric Ring 4 touches Chinatown Station, which spikes commercial
                 density there.""",
         },
@@ -559,9 +559,9 @@ if STATION_STATS_CSV.exists():
                     "exact numbers."
                 )
 
-            # Single colour, no legend - only 2 of 16 stations (UW,
+            # Single color, no legend - only 2 of 16 stations (UW,
             # Northgate) are access-mode outliers, not enough to warrant a
-            # colour split. Station names still available via tooltip.
+            # color split. Station names still available via tooltip.
             base = alt.Chart(clean)
             points = base.mark_circle(size=110, color="#4c78a8").encode(
                 x=alt.X(f"{col}:Q", title="Average monthly boardings"),
@@ -952,7 +952,7 @@ if CHAIN_STATS_CSV.exists():
         at least two locations within the sample range of Seattle
         stations, with all chain brands accounting for 8.5% of total
         businesses in the corridor. Topping the line of individual brands
-        angling towards transit is Subway, which is currently operating
+        angling toward transit is Subway, which is currently operating
         seven locations within a range of eight stations. The other 24
         brands listed in Table 4 also have noteworthy presences in the
         transit corridor, suggesting at least a share of the corporate
@@ -966,7 +966,7 @@ if CHAIN_STATS_CSV.exists():
     if CHAIN_RING_STATS_CSV.exists():
         chain_ring = pd.read_csv(CHAIN_RING_STATS_CSV)
         # Same ring_number_map/numbered_ring_labels built for Graph 1/2
-        # above - reused here for the same "Ring N: <range>" labelling.
+        # above - reused here for the same "Ring N: <range>" labeling.
         chain_ring = chain_ring.assign(
             ring_label=lambda d: d["ring"].map(ring_number_map),
             chain_share_pct=lambda d: d["chain_share"] * 100,

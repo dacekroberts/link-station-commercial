@@ -32,7 +32,7 @@ RIDERSHIP_CSV = DATA_RAW / "ridership_by_station.csv"
 # Lat/lon. Degrees. Never buffer in this.
 CRS_GEOGRAPHIC = "EPSG:4326"
 
-# UTM zone 10N. Metres. Project to this before any distance operation,
+# UTM zone 10N. Meters. Project to this before any distance operation,
 # then project back to CRS_GEOGRAPHIC for Folium.
 CRS_PROJECTED = "EPSG:32610"
 

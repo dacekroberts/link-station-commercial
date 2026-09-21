@@ -122,7 +122,7 @@ good idea that doesn't fit the hours, and belongs in the future-work section.
 
 **The CRS rule.** EPSG:4326 measures in degrees; a degree of longitude is
 about 75 km at Seattle's latitude. Never buffer or measure distance in it.
-Project to EPSG:32610 (UTM 10N, metres), do the geometry, project back to
+Project to EPSG:32610 (UTM 10N, meters), do the geometry, project back to
 4326 for Folium. Any new spatial code follows this pattern.
 
 **Keep `requirements.txt` lean.** Streamlit Cloud installs from that filename

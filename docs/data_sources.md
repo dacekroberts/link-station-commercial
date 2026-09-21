@@ -51,7 +51,7 @@ are ambiguous the entry says so rather than resolving it.
 
 ## 2. Seattle Business License — GIS layer (geometry donor)
 
-- **Publisher:** City of Seattle ArcGIS Online (`SeattleCityGIS`), catalogued
+- **Publisher:** City of Seattle ArcGIS Online (`SeattleCityGIS`), cataloged
   on `data.seattle.gov` as `wmtg-dzy4`
 - **Used by:** `step3_geocode.py`, geometry only, joined by account number
 - **Obtained:** manual GeoJSON download
@@ -197,4 +197,4 @@ https://data.seattle.gov/api/views/<dataset-id>.json
 Read `license`, `licenseId`, `attribution`, `attributionLink` and
 `custom_fields`. ArcGIS feature services expose `copyrightText` and
 `licenseInfo` at `<service-url>?f=json`, though Seattle's zoning service
-leaves both empty — its license is only in the Socrata catalogue entry.
+leaves both empty — its license is only in the Socrata catalog entry.

@@ -75,7 +75,7 @@ SINGLE_FAMILY = "Neighborhood Residential"
 MULTI_FAMILY = "Multi-Family"
 
 
-def normalise(name) -> str:
+def normalize(name) -> str:
     """Strip punctuation and entity suffixes so two spellings compare equal."""
     if not isinstance(name, str):
         return ""
@@ -104,8 +104,8 @@ def own_identity(row) -> bool:
     registered an LLC under their own name ("Anne McGowan LLC") - that is a
     commercial identity they chose to file.
     """
-    published = normalise(row.get("business_name"))
-    legal = normalise(row.get("Business Legal Name"))
+    published = normalize(row.get("business_name"))
+    legal = normalize(row.get("Business Legal Name"))
     is_sole = str(row.get("Ownership Type", "")).strip() == "Sole proprietorship"
     return bool(published) and published == legal and is_sole
 

@@ -28,7 +28,7 @@ the same day is in `Visual Design & Heatmap Review.md`.
   against `outputs/`, `config.py`, or a fresh recomputation. Three were stale;
   all three are fixed.
 - **Pipeline reproduces exactly.** A full from-scratch re-run produced five
-  byte-identical CSVs and a `heatmap.html` identical after normalising
+  byte-identical CSVs and a `heatmap.html` identical after normalizing
   Folium's random element ids.
 - **No deprecated Streamlit APIs remain.** The app went from 14 deprecation
   warnings per page load to zero.
@@ -338,7 +338,7 @@ that is four pieces of work, not a config flip.
   `.venv` can pass while depending on a package Streamlit Cloud never
   installs.
 - **The pipeline was re-run from scratch** and diffed, with Folium's random
-  element ids normalised first.
+  element ids normalized first.
 - **Measurement beats eyeballing**, but has its own traps. Three readings
   during this session were artifacts, not findings:
   - The switch thumb read as an identity transform because the browser pane

@@ -13,7 +13,7 @@ This is the analytical core. Three things happen:
   2. Ridership        - does station volume relate to commercial density?
   3. Chain footprint  - do multi-location brands cluster near transit?
 
-THE CRS RULE: buffer in CRS_PROJECTED (metres), never in CRS_GEOGRAPHIC
+THE CRS RULE: buffer in CRS_PROJECTED (meters), never in CRS_GEOGRAPHIC
 (degrees). A degree of longitude is about 75 km at this latitude and a
 degree of latitude about 111 km, so buffering in degrees produces ovals
 of the wrong size. Project, buffer, project back.

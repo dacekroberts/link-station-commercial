@@ -108,8 +108,8 @@ NAICS_GROUPS = [
 # Finer, toggleable splits within each broad group (Session 7 add-on) - the
 # top few specific NAICS codes by count, plus an "Other" residual for
 # everything else in that group. Same color as the parent group throughout:
-# these layers refine WHICH businesses of a colour show, they don't add new
-# colours, so the legend (3 rows, unchanged) still tells the whole story.
+# these layers refine WHICH businesses of a color show, they don't add new
+# colors, so the legend (3 rows, unchanged) still tells the whole story.
 # Real category names and codes pulled from the actual data, not guessed.
 NAICS_SUBCATEGORIES = {
     "Retail": [
@@ -479,7 +479,7 @@ def main():
               "identity (see scripts/check_personal_exposure.py)")
 
     def add_pin_layer(rows, sublabel, group_name, color, bold=False, show=False):
-        """One toggleable, clustered, coloured pin layer - the one pattern
+        """One toggleable, clustered, colored pin layer - the one pattern
         reused for every business layer below, broad or fine-grained.
 
         bold=True marks a macro (whole-NAICS-group) layer in the layer
@@ -588,7 +588,7 @@ def main():
 
         # Finer splits within it (Session 7 add-on, cheap reuse of the same
         # pattern): a few specific NAICS codes by count, plus "Other" for
-        # the rest of the group. Same colour throughout - see
+        # the rest of the group. Same color throughout - see
         # NAICS_SUBCATEGORIES comment above for why.
         named_codes = {code for _, code in NAICS_SUBCATEGORIES[name]}
         for sublabel, code in NAICS_SUBCATEGORIES[name]:
@@ -678,7 +678,7 @@ def main():
                 color: #A39A90;
             }
             /* Invert flips OSM's light map to dark, hue-rotate(180deg) undoes
-               the colour swap (water stays blue-ish, not orange), and the
+               the color swap (water stays blue-ish, not orange), and the
                brightness/saturate tweaks keep it from glaring. */
             .dark-osm-tiles {
                 filter: invert(1) hue-rotate(180deg) brightness(0.85)
@@ -686,7 +686,7 @@ def main():
             }
             /* Everything below applies only while Dark Mode is selected (the
                class sits on <body> so the legend, which lives outside the
-               Leaflet container, is covered too). Colours match the site's
+               Leaflet container, is covered too). Colors match the site's
                warm charcoal theme. !important on the legend because its
                light styling is inline. */
             .dark-base { background: #171412; }
