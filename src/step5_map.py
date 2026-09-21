@@ -74,9 +74,19 @@ HEAT_GRADIENT = {0.3: "#FBB878", 0.5: "#F97316", 0.7: "#DE6412", 0.85: "#C0570F"
 
 # Same three groups NAICS_STOREFRONT_PREFIXES already defines in config.py
 # (retail, food service, personal services) - every kept business falls into
-# exactly one, so no top-level "Other" bucket is needed. Colors from the
-# Cove categorical palette (blue/orange/aqua), chosen for mutual
-# distinguishability rather than picked arbitrarily.
+# exactly one, so no top-level "Other" bucket is needed. Blue and aqua come
+# from the Cove categorical palette, chosen for mutual distinguishability
+# rather than picked arbitrarily.
+#
+# Food service was that palette's orange (#eb6834) until the heat layer
+# itself became orange - at 6 degrees of hue from the heat ramp, its pins
+# and clusters sank into the densest areas, which are exactly where food
+# service matters most. Magenta sits 47 degrees off the ramp while staying
+# 123 from the retail blue and 177 from the personal-services aqua, so it
+# separates from the heat without crowding either sibling category. A
+# violet was compared and rejected: better against the heat, but only 43
+# degrees from the retail blue, and the two read alike at cluster size.
+# Chosen over plum by eye, on a side-by-side render of the same view.
 #
 # name / prefixes / color. Labels spell out "NAICS Code:" rather than just
 # putting the digits in parens - "Retail (44/45)" sat right next to a
@@ -84,7 +94,7 @@ HEAT_GRADIENT = {0.3: "#FBB878", 0.5: "#F97316", 0.7: "#DE6412", 0.85: "#C0570F"
 # and the two different kinds of number were easy to mistake for each other.
 NAICS_GROUPS = [
     ("Retail", ("44", "45"), "#2a78d6"),
-    ("Food service", ("722",), "#eb6834"),
+    ("Food service", ("722",), "#C2185B"),
     ("Personal services", ("812",), "#1baf7a"),
 ]
 
