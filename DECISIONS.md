@@ -15,6 +15,34 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **Recoloured the Food service pins from orange to magenta `#C2185B`.**
+  Turning the heat layer orange earlier today left the Food service pins
+  and clusters (`#eb6834`, the Cove palette's orange) sitting **6 degrees
+  of hue** from the heat ramp, so they sank into the densest areas —
+  exactly where food service is most worth reading. Magenta sits 47 degrees
+  off the ramp while staying 123 from the retail blue and 177 from the
+  personal-services aqua, so it separates from the heat without crowding
+  either sibling category, and it lifts the white numeral contrast on a pin
+  from 3.2 to 5.9. Compared plum `#8E24AA` and violet `#7C4DFF` against it
+  on a side-by-side render of the same downtown view, generated from the
+  real pipeline rather than judged from swatches. Violet was ruled out on
+  measurement before the render even mattered: 43 degrees from the retail
+  blue, and the two do read alike at cluster size. Plum separated best on
+  paper; magenta was chosen by eye, keeping the legend warm. Checked on
+  both the light and dark base maps. One line in `NAICS_GROUPS` in
+  `step5_map.py` — the legend swatch and the cluster icons both read from
+  it — plus the regenerated map.
+- **Purged `Initial Build Development Context.md` from git history
+  entirely**, superseding the entry below that merely stopped tracking it.
+  Delisting left the file readable in every commit before today, which
+  achieved the tidiness goal but not the removal one. Second
+  `git filter-repo` pass of the day, this time `--invert-paths` on that one
+  path, then force-pushed. The file is kept locally and gitignored, with
+  copies in `.backups/` first, since it is still the fastest way to
+  reconstruct the Sessions 1-9 build context. The cost, paid knowingly: a
+  second rewrite of every commit hash, so the hashes cited in
+  `Visual Design & Heatmap Review.md` were remapped a second time, and
+  anyone holding a clone of this repo has to re-clone rather than pull.
 - **Migrated off two Streamlit APIs that were already past their announced
   removal dates.** `st.components.v1.html` (removal announced for
   2026-06-01) and `use_container_width` (2025-12-31) were both still in use
