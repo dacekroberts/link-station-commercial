@@ -467,17 +467,24 @@ section 9, recorded as a decision rather than a pending task.
   2026-09-27, with the postal route to the Marketing Division as the
   escalation if there is no reply.
 
-**Checks not yet done**
-- The map following a real OS theme switch mid-session (see section 7). The
-  browser's media emulation updates `matchMedia().matches` without
-  dispatching a `change` event inside an iframe, so this cannot be tested
-  from here — it needs a real theme switch in a real browser.
+**Checked outside the tooling, 2026-09-20**
 
-**Checked on a real device 2026-09-20**
-- Graph 2 on a phone, confirmed rendering correctly. It had previously only
-  been measured at an emulated 375px viewport, which is not the same thing:
-  the original bug was a fixed 900px chart overflowing its container with
+Both of these needed a real device or a real browser, and both passed. They
+are recorded because neither could have been settled from here, and because
+one of them is the only confirmation that a piece of shipped behaviour
+actually works.
+
+- **Graph 2 on a phone**, confirmed rendering correctly. Previously only
+  measured at an emulated 375px viewport, which is not the same thing: the
+  original bug was a fixed 900px chart overflowing its container with
   nothing to scroll it, and only Ring 1 visible.
+- **The map following a real OS theme switch.** Windows was flipped between
+  light and dark with the live site open in an ordinary browser; the map
+  followed without a reload and the sun/moon switch slid with it. This was
+  untestable from here — the browser's media emulation updates
+  `matchMedia().matches` without dispatching a `change` event inside an
+  iframe, and a known-good probe listener saw none either. Until this, the
+  mid-session listener was shipped but unverified.
 
 **Resolved: the storefront percentages behind the NAICS calls**
 

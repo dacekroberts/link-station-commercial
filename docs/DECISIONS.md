@@ -211,10 +211,14 @@ each; detail lives in the sections below.
   always light, and follows later OS changes until they work the switch
   themselves, at which point their choice wins until reload. Nothing is
   stored. I verified both initial directions and that a manual choice
-  survives a system flip; live mid-session following is **not** verified,
-  because the browser's media emulation updates `matchMedia().matches`
-  without dispatching a `change` event inside the iframe, and a known-good
-  probe listener saw none either.
+  survives a system flip. Live mid-session following could not be verified
+  from the tooling — the browser's media emulation updates
+  `matchMedia().matches` without dispatching a `change` event inside the
+  iframe, and a known-good probe listener saw none either, which is how that
+  was identified as an emulation limit rather than a bug. **Confirmed
+  separately** by flipping Windows between light and dark with the live site
+  open in an ordinary browser: the map followed without a reload, and the
+  switch slid with it. All three behaviours now verified.
 - **Confirmed a site-wide light/dark toggle is possible, and deferred it.**
   Adding `[theme.light]` and `[theme.dark]` blocks to
   `.streamlit/config.toml` does bring Streamlit's System/Light/Dark control

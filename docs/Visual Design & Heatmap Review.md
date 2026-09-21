@@ -249,14 +249,18 @@ bit muddier than a purpose-built dark style. The page around the map stays
 dark regardless of which way the map is set, since the site itself is
 dark-only.
 
-One caveat on the system-following added 2026-09-20: the initial load is
-verified in both directions, and a manual choice is verified to survive a
-system flip. Live following of an OS change *mid-session* could not be
-verified, because the browser's media emulation updates
-`matchMedia().matches` without dispatching a `change` event inside the
-iframe - a freshly attached, known-good listener saw zero events too. The
-code is the standard `addEventListener('change')` pattern, but it is
-untested on a real OS theme switch.
+The system-following added 2026-09-20 is verified in all three directions:
+initial load in both light and dark, a manual choice surviving a later
+system flip, and live following of an OS change mid-session.
+
+That last one could not be tested from the tooling here. The browser's media
+emulation updates `matchMedia().matches` without dispatching a `change`
+event inside an iframe — a freshly attached, known-good probe listener saw
+zero events either, which is how it was identified as an emulation limit
+rather than a bug in the map. It was confirmed instead by flipping Windows
+between light and dark with the live site open in an ordinary browser: the
+map followed on its own, without a reload, and the sun/moon switch slid with
+it.
 
 ---
 
@@ -339,12 +343,18 @@ Both held files are gitignored (`.claude/`) and unsent.
 ## 10. Open items
 
 **Checks not yet done**
-- Graph 2 on a real phone, as opposed to an emulated 375px viewport.
-- The map following a real OS theme switch mid-session (see section 5).
 - Midnight slate on a real page (it was never built; see section 2).
-- The hand-sampling percentages behind the NAICS exclusions. A 3x sample
-  (120 rows of 812990, 75 of 459999, seeded 20260920) was drawn for review;
-  the storefront judgments are the analyst's, not automated.
+
+**Since closed**
+- **Graph 2 on a real phone** — confirmed rendering correctly on a device,
+  not just at an emulated 375px viewport.
+- **The map following a real OS theme switch** — confirmed by flipping
+  Windows with the live site open: the map followed without a reload and the
+  switch slid with it (see section 5).
+- **The NAICS hand-sample percentages** — a seeded 3x sample was drawn, then
+  retired once the sibling project's write-up corroborated both the `812990`
+  exclusion and the `459999` keep from a different city's data. See
+  `Verification & Data Integrity Review.md`, section 9.
 
 **Checked on 2026-09-20** (previously listed here as untested)
 - Live site: up, dark theme, switch and 21 overlays serving correctly.
