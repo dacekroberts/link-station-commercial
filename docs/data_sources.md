@@ -178,10 +178,18 @@ through this site," so they cover sources 1, 2 and 3. Three clauses matter:
   read as advice. What is certain is the gap between what the page says and
   what this repository does.
 - **Options, cheapest first:**
-  1. **Ask.** The terms name their own route: prior permission, via
-     `main@soundtransit.org` or the Marketing Division at Union Station. A
-     non-commercial portfolio analysis citing them as the source is the
-     easy case for a transit agency to say yes to.
+  1. **Ask.** The terms invite it: *"Sound Transit welcomes requests from
+     the media or other organizations to use Website Content. Sound Transit
+     must approve all uses in advance in writing."* The designated route is
+     **postal, to the Marketing Division**, Union Station, 401 S. Jackson
+     St., Seattle, WA 98104 — no email is given for it.
+     `main@soundtransit.org` is **not** that route; the terms list it for
+     intellectual-property complaints, unsubscribing, and general website
+     feedback. The practical approach is to email that address asking to be
+     forwarded to the Marketing Division, since it is the published channel
+     for website communications, and to post the same request if a written
+     reply is wanted. A non-commercial portfolio analysis citing them as the
+     source is an easy case for a transit agency to approve.
   2. **Ask which terms apply.** Sound Transit may well regard published
      performance statistics as freely usable despite the blanket website
      terms, in which case a one-line answer settles it.
