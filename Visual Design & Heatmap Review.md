@@ -31,12 +31,12 @@ than in the repo.
   the layer icon; the layer control lists overlays only.
 - **Not touched:** the analysis, the pipeline, the `outputs/` CSVs, and the
   user's own `TODO — write this up` prose on the Findings page.
-- **Deployment:** the changes described here were pushed to `main`; the live
-  site was not re-checked afterwards (see Open items).
+- **Deployment:** the changes described here are pushed to `main` and were
+  verified on the live site on 2026-09-20.
 
-Commits, for reference: `2bfc6ad` (warm ring palette, responsive Graph 2),
-`5790f5b` (ring 4 tuning), `a30c5e6` (Warm charcoal theme), `24fd959`
-(orange heat, AI Use wording), `8df83ed` (Dark Mode), `55954dd`
+Commits, for reference: `7282174` (warm ring palette, responsive Graph 2),
+`984a343` (ring 4 tuning), `e2b8034` (Warm charcoal theme), `ffcc3f2`
+(orange heat, AI Use wording), `22920a3` (Dark Mode), `0771eff`
 (light/dark switch).
 
 ---
@@ -164,10 +164,15 @@ density, so the palest stop nearly vanished on the light OpenStreetMap
 tiles. Shifting the ramp one step more saturated (the "B: fading outward"
 sample the user pointed to) keeps low-density areas readable.
 
-**Known trade-off:** Food service pins and clusters (`#eb6834`) are now
-close in hue to the heat layer. They stay distinguishable through white
-outlines and numerals. If it bothers you on the live map, recolor Food
-service (teal or purple).
+**Knock-on, since resolved:** going orange left the Food service pins and
+clusters (the Cove palette's orange `#eb6834`) only 6 degrees of hue from
+the heat ramp, so they sank into the densest areas - exactly where food
+service is most worth reading. They are now magenta `#C2185B`: 47 degrees
+off the ramp, still 123 from the retail blue and 177 from the
+personal-services aqua, with white numeral contrast up from 3.2 to 5.9.
+Plum and violet were rendered side by side on the same downtown view
+before choosing; violet was ruled out because it sits 43 degrees from the
+retail blue and the two read alike at cluster size.
 
 ---
 
@@ -339,9 +344,6 @@ Both held files are gitignored (`.claude/`) and unsent.
 - Graph 2 full-screen: fills correctly at desktop and 375px.
 - `[theme.light]`/`[theme.dark]`: restores the toggle, but three hardcoded
   dark-only colors break in light mode (see section 2).
-
-**Design follow-ups**
-- Food service pins are close in hue to the orange heat (see section 4).
 
 **Deferred, deliberately**
 - **A visitor-facing light/dark toggle for the whole site.** Confirmed
