@@ -15,6 +15,54 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **Checked whether the map publishes people's names at their home
+  addresses, and added `scripts/check_personal_exposure.py` as a re-runnable
+  gate rather than wiring the check into the pipeline.** Prompted by a
+  portable write-up passed over from the sibling multi-city project, where
+  the same question found a real problem. Three of its four recommendations
+  were already in place here: `812990` and `812930` are excluded, `459999`
+  kept. The fourth does not apply — its largest finding was NAICS `454`
+  (nonstore retailers: mail-order, direct selling) being swept in by a broad
+  `45` prefix, which this project's prefix list also matches, but Seattle has
+  only 29 such rows and **all of them sit beyond the outer ring, so zero
+  reach the map.**
+  Two signals were measured against the 4,120 published pins. The
+  blank-trade-name fallback in step 2 fires on 22 of 84,390 raw rows and
+  **none of them reach the map**. A person-like-name regex fires on 42.4% of
+  all pins, which is noise, not exposure — the sibling project saw the same
+  17-23% floor. Intersecting it with a zoning join (City of Seattle "Current
+  Land Use Zoning Detail", 3,627 polygons, matched 100% of pins) gives 230
+  pins (5.58%) that are person-like-named on residentially zoned land, which
+  reads alarming until you compare rates: 48.3% of pins in residential zones
+  are person-like against 41.9% in commercial ones, a difference of only
+  **+6.4 points**. Almost all of that 5.58% is the heuristic's own floor
+  redistributed, not evidence of home addresses, and reading the flagged
+  names confirms it — "Haute Tip", "Gear By Julian", "What's Your Mood" are
+  trade names.
+  Rather than hand-review that set, a third signal replaced the guesswork.
+  The registry carries both a trade name and a legal entity name: someone who
+  picked a trade name has two different strings, someone who never picked one
+  is published under whatever the registry holds, which for a natural person
+  is their name. Requiring **published name == legal entity name AND a sole
+  proprietorship** identifies that case directly. The second condition is
+  load-bearing: without it single-member LLCs swamp the result, because an
+  LLC's legal name *is* its brand ("Barking Gorgeous LLC", "Blue Sky
+  Bridal"). It deliberately does not flag someone who filed an LLC under
+  their own name, which is a commercial identity they chose. That narrows
+  4,120 pins to **41 (1.00%)**, and to **12 on residentially zoned land** —
+  small enough to read in full rather than sample. Reading them, 7 are
+  genuine personal names and 5 are trade names that happen to match the legal
+  name ("Boy Scout Troop 151", "Hami Salon", "Tigi's Fragrance Corner"). So
+  the real figure is **about 7 of 4,120, 0.17%**, of which 3 are on
+  single-family land.
+  **Zoning stays out of the pipeline deliberately.** Wiring it in would add
+  a fourth manual data source, a new failure mode when the city republishes
+  the layer, a full re-run, and a Methodology paragraph disclosing it as an
+  input — all to support a number that currently says there is nothing to
+  fix. The script fetches nothing and ships nothing: `data/raw/` is
+  gitignored, and it degrades to the name signal alone when the layer is
+  absent. Promote it into the pipeline only if the hand review says the
+  exposure is real.
 - **Moved the project's documentation into `docs/`.** `DECISIONS.md`,
   `PLAN.md`, `initialscript.md`, `Development Process Insights.md` and
   `Visual Design & Heatmap Review.md` now live there; `README.md` and

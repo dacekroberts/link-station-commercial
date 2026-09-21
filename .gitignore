@@ -33,6 +33,7 @@ Initial Build Development Context.md
 
 # Working review files - analyst scratch, not part of the deliverable.
 naics_sample_3x_review.csv
+personal_exposure_flagged.csv
 
 # Portable skill write-up passed over from the sibling multi-city project.
 # Local working material, and it belongs in .claude/skills/ rather than the
