@@ -15,6 +15,19 @@ each; detail lives in the sections below.
 
 ### 2026-09-20 — Between sessions
 
+- **A file was published to the public repo before anyone had read it, and
+  was purged.** A portable privacy-check write-up passed over from the
+  sibling multi-city project was sitting in the repo root; a blanket
+  `git add -A` swept it into a commit, which was then pushed, before it had
+  been opened. Caught roughly twenty minutes later while auditing the root
+  directory. Purged from history with a third `git filter-repo` pass and
+  force-pushed; kept locally and gitignored, with a copy in `.backups/`.
+  The content was harmless — it is the project owner's own working notes —
+  but "harmless in hindsight" is not the standard, since nothing about the
+  sweep depended on the file being harmless. **The practice that caused it:
+  staging with `git add -A` rather than naming paths.** Worth not repeating,
+  particularly in a repo that had spent the same day having unreviewed
+  internal material removed from it.
 - **Recoloured the Food service pins from orange to magenta `#C2185B`.**
   Turning the heat layer orange earlier today left the Food service pins
   and clusters (`#eb6834`, the Cove palette's orange) sitting **6 degrees
