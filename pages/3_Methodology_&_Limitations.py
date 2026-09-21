@@ -267,6 +267,46 @@ distribution among survivors, not survival itself.
 """
 )
 
+st.subheader("Am I publishing people's names at their homes?")
+
+st.markdown(
+    """
+The heatmap plots each business as a pin carrying its name at a geocoded
+address, and as above, this registry lists home-based sole proprietors
+alongside physical storefronts. A trade name someone chose for their shop
+is commercial information, and mapping it is the entire point of this
+project. A registrant's own name at what is really their house is not,
+even though the registry holding it is public: a registry entry sits
+behind a search box, while a map pin is a plotted coordinate. So I
+checked which of the two I was about to publish, before publishing it.
+
+Two things could put a person's name on this map. The first is the
+fallback in step 2 that fills a blank trade name from the legal business
+name; that fires on 22 of the 84,390 raw rows, and none of those 22 reach
+the map. The second is a sole proprietor with no trade name at all, who
+gets published under whatever the registry holds. I can identify that
+case exactly rather than guess at it, because the registry carries both
+names: if someone chose a trade name, the two strings differ. Requiring
+that the published name *be* the legal entity name, and that the entity
+be a sole proprietorship rather than a company, narrows 4,120 pins to 41,
+and to 12 once I keep only residentially zoned addresses (using the
+City's published land use zoning layer). That is few enough to read
+rather than sample, and reading them, seven are genuinely someone's name
+and five are trade names that happen to match the legal one. **Seven
+pins, 0.17% of the map, three of them on single-family land.**
+
+I didn't filter anything as a result. Excluding NAICS `812990` above had
+already removed the category where home-based sole proprietors
+concentrate, which is most of why this number is small. The check itself
+can be re-run after any change to filtering, and it prints numbers rather
+than a verdict. Its limits are worth stating plainly: matching a name
+against the legal entity name can't tell a real shop trading under its
+owner's name from a registrant sitting at home, zoning describes
+permitted use rather than actual use, no individual record here was
+verified, and nobody was contacted. Checked 2026-09-20.
+"""
+)
+
 st.subheader("Ridership as a foot-traffic proxy")
 
 st.markdown(
