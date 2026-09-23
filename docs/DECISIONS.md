@@ -92,6 +92,13 @@ each; detail lives in the sections below.
   interpretation is mine) is restated without the stale detail. The "Open
   items" section below holds only items resolved in Session 3; it got a
   note instead of a new heading.
+- **Dropped `usaddress`, `rapidfuzz` and `jupyterlab` from
+  `requirements-pipeline.txt`.** Nothing imports them. `usaddress` was the
+  planned fallback for a match rate under 80%, which never happened
+  (99.5%); `rapidfuzz` is named on the Methodology page as future work,
+  not used; `notebooks/` is empty. The two places that suggest `usaddress`
+  as a fallback now say it has to be installed first. `requirements.txt`
+  (the deployed one) is untouched.
 
 ### 2026-09-21 — Between sessions
 

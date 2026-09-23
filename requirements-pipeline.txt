@@ -9,6 +9,3 @@ shapely>=2.0
 pyproj>=3.6
 folium>=0.17
 requests>=2.32
-usaddress>=0.5.10
-rapidfuzz>=3.9
-jupyterlab>=4.2

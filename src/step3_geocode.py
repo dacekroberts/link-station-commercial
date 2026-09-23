@@ -171,7 +171,8 @@ def main():
     if census_rate < 0.80 and len(remainder) > 0:
         print(
             "Below 80%. Usually address formatting. Try the `usaddress` "
-            "library in step 2 to parse street strings into components."
+            "library in step 2 to parse street strings into components "
+            "(pip install usaddress - not installed by default)."
         )
 
     # --- Combine both sources ---------------------------------------------

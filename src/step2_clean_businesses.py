@@ -63,7 +63,9 @@ def normalize_address(street: str) -> str:
     directional suffixes (N, NE, S, SW, W) matter and are deliberately kept.
 
     For harder cases, the `usaddress` library parses a string into components
-    and is worth reaching for if your match rate comes back poor.
+    and is worth reaching for if your match rate comes back poor. It was
+    never needed here (99.5% overall), so it is not in
+    requirements-pipeline.txt - `pip install usaddress` first.
     """
     if not isinstance(street, str):
         return ""
