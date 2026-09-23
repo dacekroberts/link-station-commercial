@@ -454,7 +454,7 @@ if RING_STATS_CSV.exists():
             "title": "Capitol Hill",
             "against": False,
             "body": """Another station in the pattern-adhering group, despite having a
-                concentric ring 2-&gt;3 jump like in Graph 1. The best reasonable
+                concentric ring 2-&gt;3 jump like the slight rise in Graph 1. The best reasonable
                 explanation is that, for as dense a location as Capitol Hill, having
                 concentric ring 2 absorbing the bulk of Cal Anderson Park, the largest
                 of its kind in the area, potentially skews the density data. I feel

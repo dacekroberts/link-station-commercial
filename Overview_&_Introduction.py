@@ -198,8 +198,8 @@ st.markdown(
     """
 - **Density falls off fast, but not cleanly.** Businesses per square mile
   drop 62.9% between the innermost and outermost rings, 837 to 310, with
-  a real uptick at the third ring that turned out to have a specific,
-  checkable cause rather than just being noise.
+  a slight uptick at the third ring. It's small, but it traces back to a
+  specific, checkable cause rather than just being noise.
 - **Ridership and density move together, moderately.** The correlation
   across all sixteen stations lands at r = 0.684, strong enough to
   matter, not strong enough to lean on by itself.
