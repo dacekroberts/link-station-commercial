@@ -1,5 +1,11 @@
 # Briefing for a Claude Code session
 
+> **Status as of 2026-09-23:** all nine sessions in `PLAN.md` are complete
+> and the site is deployed (five pages, not the three described below). This
+> file is the original briefing, kept as written: its scope, invariants and
+> "don't do these" still apply, but its "Progress" section stops at Session
+> 2. For current state read `DECISIONS.md` (newest first) and `CLAUDE.md`.
+
 Read this before touching anything. It covers what the project is, what has
 already been settled, and where the boundaries are.
 

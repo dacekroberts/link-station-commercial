@@ -1,7 +1,8 @@
-"""Findings page - the three analyses, with space for your written insight.
+"""Findings page - the three analyses and the written interpretation of each.
 
-The charts are scaffolding. The prose sections marked TODO are the part a
-reviewer actually reads; the numbers only set up what you argue.
+The charts are scaffolding. The prose sections are the part a reviewer
+actually reads; the numbers only set up what they argue. Hand-typed figures
+in the prose are checked by scripts/check_published_numbers.py.
 """
 
 import altair as alt

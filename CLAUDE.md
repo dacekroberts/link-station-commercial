@@ -8,7 +8,7 @@ Seattle Link light rail / commercial density analysis. Full context in
 
 - **Never buffer or measure distance in EPSG:4326.** Project to EPSG:32610
   (meters), do the geometry, project back to 4326 for display.
-- **Keep `requirements.txt` lean** (streamlit, pandas only). Streamlit Cloud
+- **Keep `requirements.txt` lean** (streamlit, pandas, altair). Streamlit Cloud
   installs from it; geopandas there breaks the deploy. Pipeline dependencies
   go in `requirements-pipeline.txt`.
 - **`outputs/` is committed to git.** The deployed app cannot regenerate it.
@@ -27,10 +27,13 @@ Seattle Link light rail / commercial density analysis. Full context in
 Introductory Python, no GIS background. Explain geospatial concepts as they
 come up rather than only producing working code.
 
-Do not write the prose in the `TODO — write this up` blocks in
-`pages/2_Findings_&_EDA.py`. That analysis is the user's and is the point
-of the project. Discuss the numbers with them; let them write the
-interpretation.
+Do not write or rewrite the interpretive prose in
+`pages/2_Findings_&_EDA.py` (originally `TODO — write this up` blocks, now
+written by the user). That analysis is the user's and is the point of the
+project. Discuss the numbers with them; let them write the interpretation.
+When a figure in it changes, update the number and flag any sentence whose
+wording no longer fits; don't reword it yourself. Draft prose elsewhere only
+when asked, and show the draft before inserting it.
 
 Scope is locked (see `docs/initialscript.md`). Flag scope additions rather than
 building them.
@@ -49,6 +52,10 @@ streamlit run "Overview_&_Introduction.py"
 After any change to `outputs/` or to page prose that carries a figure, run
 `python scripts/check_published_numbers.py`. The same number is typed in
 several pages; a failure names each stale copy.
+
+After any change to step 2's row filtering or to step 5, run
+`python scripts/check_personal_exposure.py` (needs the local `data/` tree).
+Its section 4 must pass before the map is published.
 
 Commit after each step that succeeds. Prompt the user to fill in
 `docs/DECISIONS.md` after each session.

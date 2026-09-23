@@ -79,6 +79,32 @@ each; detail lives in the sections below.
   the map. Regenerated and committed on its own. Privacy check figures
   unchanged: 22 fallback rows, none on the map; 41 own-identity pins, 12
   on residential land, 3 on single-family.
+- **Marked the stale current-state docs without rewriting the dated
+  ones.** `initialscript.md`, which every new session is told to read
+  first, still said "Next: Session 3" and described a three-page site; it
+  got a dated status note at the top rather than an edit, since it is the
+  original briefing. `PLAN.md`'s opening "Progress" line said only Session
+  1 was complete and now says all nine are; its per-session entries stay
+  as recorded (Session 8's "~67.5%" included). `CLAUDE.md` said
+  `requirements.txt` holds "streamlit, pandas only" (it also holds
+  altair, which the Findings charts need), and described Findings `TODO`
+  blocks that have since been written; the rule behind it (the
+  interpretation is mine) is restated without the stale detail. The "Open
+  items" section below holds only items resolved in Session 3; it got a
+  note instead of a new heading.
+
+### 2026-09-21 — Between sessions
+
+- **Fixed two clipped embeds by re-measuring them, not by making them
+  responsive.** The Flowchart iframe was 905px against a document that had
+  grown to 913px when the final node wrapped to three lines, so its
+  scrollbar came back; it is now 925px, measured in the rendered DOM (SVG
+  886.8px at 0.6 scale, plus 24px padding and 2px border). Graph 4's
+  "Businesses" axis label needed 77px against Vega's 72px auto gutter and
+  lost its first character; 12px of left padding is now reserved
+  explicitly. Both are measured values tied to content: the Flowchart
+  height has now gone stale once already, so it needs re-measuring
+  whenever the diagram's text changes (af80b32).
 
 ### 2026-09-20 — Between sessions
 
@@ -1657,6 +1683,9 @@ problems reads differently from one assembled from a template.
   that feel obviously true.
 
 ## Open items
+
+*(Note added 2026-09-23: nothing is open. The two items below were
+resolved in Session 3 and are kept as the record of that fix.)*
 
 Both fixed in step 2, at the source (raw 84,390-row file), rather than
 patched on the already-filtered set:

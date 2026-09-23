@@ -4,7 +4,10 @@ Nine sessions, roughly 14 hours. Ordered so that anything capable of killing
 the project surfaces in the first three hours, while it's still cheap to
 change course.
 
-**Progress:** Session 1 complete (2026-09-06). Deviations from this plan are
+**Progress:** all nine sessions complete; deployed 2026-09-17. Later work
+(verification, privacy, cleanup) is logged in `DECISIONS.md`, not here.
+Each session below is a dated record: its figures are what was true then,
+and some have since been corrected. Deviations from this plan are
 tracked in `DECISIONS.md` under "Changes" — notably Python 3.12/`uv` instead
 of 3.11/conda, the CSV-spine + GIS-geometry-donor split for business licenses,
 and `COLUMN_MAP` filled early.
