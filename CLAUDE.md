@@ -46,5 +46,9 @@ python src/step1_stations.py      # then 2, 3, 4, 5 in order
 streamlit run "Overview_&_Introduction.py"
 ```
 
+After any change to `outputs/` or to page prose that carries a figure, run
+`python scripts/check_published_numbers.py`. The same number is typed in
+several pages; a failure names each stale copy.
+
 Commit after each step that succeeds. Prompt the user to fill in
 `docs/DECISIONS.md` after each session.

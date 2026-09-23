@@ -142,24 +142,44 @@ def main():
     print(f"{len(joined):,} business-ring matches")
 
     # --- 1. Ring gradient -----------------------------------------------
-    ring_stats = (
-        joined.groupby(["station", "ring", "ring_index"])
+    # Start from every station-ring and count into it, not from the join:
+    # groupby().size() on the join has no row for a ring with no businesses
+    # in it, and a missing row silently drops out of every mean downstream.
+    # An empty ring is a real observation (density 0), not missing data.
+    # Northgate and UW ring 1 and Rainier Beach ring 3 are empty; averaging
+    # without them overstated ring 1 by 14% and ring 3 by 7%.
+    counts = (
+        joined.groupby(["station", "ring"])
         .size()
-        .reset_index(name="business_count")
-        .merge(
-            rings[["station", "ring", "area_sq_mi"]].drop_duplicates(),
-            on=["station", "ring"],
-        )
+        .rename("business_count")
     )
+    ring_stats = (
+        rings[["station", "ring", "ring_index", "area_sq_mi"]]
+        .drop_duplicates()
+        .merge(counts, on=["station", "ring"], how="left")
+        .fillna({"business_count": 0})
+        .astype({"business_count": int})
+        [["station", "ring", "ring_index", "business_count", "area_sq_mi"]]
+    )
+    expected = len(stations) * len(RING_LABELS)
+    if len(ring_stats) != expected:
+        sys.exit(f"ring_stats has {len(ring_stats)} rows, expected {expected} "
+                 f"({len(stations)} stations x {len(RING_LABELS)} rings). "
+                 "Either build_rings() dropped a ring, or the counts were "
+                 "merged without how='left' - an empty ring must stay as a "
+                 "row with business_count 0, not disappear.")
     ring_stats["density_per_sq_mi"] = (
         ring_stats["business_count"] / ring_stats["area_sq_mi"]
     )
     ring_stats = ring_stats.sort_values(["station", "ring_index"])
 
+    # Two decimals, not one: a one-decimal print (310.5) invites rounding a
+    # second time (to 311) when the true value is 310.48. Round once, from
+    # the unrounded mean - scripts/check_published_numbers.py does.
     print("\nMean density by ring (the gradient):")
     print(
         ring_stats.groupby("ring", sort=False)["density_per_sq_mi"]
-        .mean().round(1).to_string()
+        .mean().round(2).to_string()
     )
 
     # --- 2. Station totals, joined to ridership -------------------------

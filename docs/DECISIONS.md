@@ -13,6 +13,51 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-23 — Cleanup session
+
+- **Empty station-rings now count as zero density instead of dropping out
+  of the gradient.** `step4_rings.py` counted businesses with a groupby on
+  the spatial join, which has no row for a ring with nothing in it. Three
+  rings were empty (Northgate and UW ring 1, Rainier Beach ring 3), so
+  `ring_stats.csv` had 61 rows instead of 64, and every mean across
+  stations averaged over the stations that happened to have businesses:
+  ring 1 over 14, ring 3 over 15. The zeros themselves were known and
+  written up; what they did to the averages wasn't. An empty ring is a
+  measurement (density 0), not missing data, and leaving it out biased the
+  gradient toward exactly the result it was testing for. Corrected
+  figures: ring densities 957/550/592/311 → **837/550/555/310**, ring 1→4
+  fall 67.5% → **62.9%**, ring 2→3 rise +7.6% → **+0.9%**. Walkshed density
+  in `station_stats.csv` for the same three stations was averaged over 2
+  rings instead of 3: Northgate 75.5 → 50.3, Rainier Beach 90.3 → 60.2, UW
+  24.4 → 16.3. Unchanged: r = 0.684 (it uses business counts, not
+  density), all chain figures, the 8/8 station split with the same eight
+  against-pattern stations, and "six stations rise from ring 2 to 3, four
+  of them against the pattern." The ring-3 uptick survives (555 > 550)
+  but is now much smaller. Step 4 now builds `ring_stats` from every
+  station-ring and exits if the row count isn't stations × rings; the
+  guard was tested against both a dropped ring and the original counting
+  method (61 rows) on copies. Page numbers updated in
+  `Overview_&_Introduction.py` and `pages/2_Findings_&_EDA.py` (three
+  places); Table 1 now shows 0 where it showed "None".
+- **311 was wrong; ring 4 is 310.** The true mean is 310.48. Step 4
+  printed means to one decimal (310.5), the published figure came from
+  rounding that printed value a second time, and the 2026-09-20
+  verification endorsed it on the same reasoning. The same double rounding
+  turned ring 1's old 956.49 into 957. Step 4 now prints two decimals.
+  The 2026-09-20 figures above stay as recorded; this entry supersedes
+  them.
+- **Added `scripts/check_published_numbers.py`, so a figure typed in
+  several pages has one owner.** The fall figure was typed in three places
+  across two pages, and chain share 8.5% in four across three. The check
+  computes 18 headline figures from `outputs/` (rounded once, half-up)
+  and fails if any of 20 registered phrases across four pages doesn't
+  contain the current value, or if a figure is computed but cited
+  nowhere. Pandas only, no network. Tested against four deliberate
+  failures on copies, including the pre-fix pages with the post-fix
+  outputs. Figures it can't derive from `outputs/` (raw row counts, the
+  41 withheld pins, numbers written as words) are listed in the script as
+  `NOT_CHECKED` rather than left implicit.
+
 ### 2026-09-20 — Between sessions
 
 - **The map now withholds a pin's name where that name is the registrant's

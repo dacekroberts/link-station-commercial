@@ -167,10 +167,10 @@ if RING_STATS_CSV.exists():
         Graph 1 aligns with one of my hypotheses when starting this project:
         "Does commercial density drop off with decreased proximity to
         transit hubs"? The overall density between concentric rings 1 to 4
-        shows a net decrease of -67.5% (957 businesses/sq mi → 311).
+        shows a net decrease of -62.9% (837 businesses/sq mi → 310).
         On its own, this would appear to support my hypothesis, but
         looking closer at the data reveals a contradiction. The slight jump
-        (+7.6%) between rings 2 and 3 would seem to suggest that, although
+        (+0.9%) between rings 2 and 3 would seem to suggest that, although
         density does drop off on a macro-level, the decay is not
         monotonic. What causes this mid-level rise?
         """
@@ -326,14 +326,11 @@ if RING_STATS_CSV.exists():
                 return f"color: {AGAINST_RED}; font-weight: 600;"
             return ""
 
-        # na_rep isn't honoured by Streamlit's dataframe grid for missing
-        # values (tested directly against pandas' own HTML output: the
-        # substitution works at the pandas level, Streamlit's canvas-
-        # rendered grid just doesn't use it) - null cells show as "None"
-        # rather than an em dash. Converting the column to pre-formatted
-        # strings would fix that but make column-sort lexicographic
-        # instead of numeric (e.g. "900" sorting after "1000"), not worth
-        # trading for a cosmetic nicety.
+        # No null cells: step 4 writes an empty ring as a row with 0
+        # businesses rather than omitting it, so Northgate/UW ring 1 and
+        # Rainier Beach ring 3 show "0 businesses/sq mi". (They used to be
+        # missing rows and rendered as "None" - Streamlit's grid ignores
+        # na_rep.)
         st.dataframe(
             detail.style
             .map(_highlight_against, subset=["Station Name"])
@@ -1082,7 +1079,7 @@ st.header("In Summary")
 st.markdown(
     """
     Commercial density, ridership, and chain share all point the same way.
-    Commercial density falls 67.5% from the first ring to the last,
+    Commercial density falls 62.9% from the first ring to the last,
     ridership correlates with that commercial density at r = 0.684, and
     even chains lean into platform proximity nearly as hard as independent
     businesses do. Three separate measures agreeing is a stronger claim
