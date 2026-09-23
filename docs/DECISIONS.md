@@ -57,6 +57,28 @@ each; detail lives in the sections below.
   outputs. Figures it can't derive from `outputs/` (raw row counts, the
   41 withheld pins, numbers written as words) are listed in the script as
   `NOT_CHECKED` rather than left implicit.
+- **`check_personal_exposure.py` now verifies the map actually withholds
+  the names it identifies, and fails if it doesn't.** Before this, the
+  script measured exposure in `businesses_geocoded.csv`, which is upstream
+  of step 5's withholding, so re-running it after the 2026-09-20 fix still
+  reported 12 rows "for hand review" with no way to tell they were already
+  hidden. The only proof they were hidden was a one-time hand check. The
+  new section 4 parses the pin arrays out of `outputs/heatmap.html` (8,240
+  entries, 4,120 pins x 2 layers) and, for each of the 41 own-identity
+  businesses, requires a "Name withheld" pin at its coordinates and no
+  pin carrying its real name there. Keyed on coordinates so a shared trade
+  name at another address (the "JULIUS" case) isn't a false leak. Sections
+  1-3 still only report numbers; section 4 is a yes/no question and exits
+  non-zero. Tested on copies against a restored name, all labels removed,
+  and an unparseable map; each failed. Its failure message deliberately
+  doesn't print the names.
+- **From-scratch pipeline run (steps 1-5): no data drift.** Every committed
+  CSV matched exactly and step 3's Census batch came from cache (no
+  network). `heatmap.html` differed only in two CSS comments, "colour" vs
+  "color": 91bdf7f changed `step5_map.py`'s spelling without regenerating
+  the map. Regenerated and committed on its own. Privacy check figures
+  unchanged: 22 fallback rows, none on the map; 41 own-identity pins, 12
+  on residential land, 3 on single-family.
 
 ### 2026-09-20 — Between sessions
 

@@ -6,9 +6,13 @@ commercial information and mapping it is the point. A sole proprietor's own
 name at their house is not, even though the registry holding it is public: a
 registry entry sits behind a search box, a map pin is a plotted coordinate.
 
-This prints numbers, deliberately not a pass/fail. The judgment is a person's.
-A check that prints a verdict nobody reads is worse than one that prints
-numbers somebody has to think about.
+Sections 1-3 print numbers, deliberately not a pass/fail. The judgment is a
+person's. A check that prints a verdict nobody reads is worse than one that
+prints numbers somebody has to think about.
+
+Section 4 is the exception, because it asks a yes/no question: does the
+published map actually withhold the names section 3 identifies? It reads
+outputs/heatmap.html and exits non-zero if any of those names is readable.
 
 Run:  python scripts/check_personal_exposure.py
 
@@ -31,6 +35,7 @@ it the check still runs, minus the strongest signal. To fetch it:
   "Current Land Use Zoning Detail" on Seattle GeoData.
 """
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -39,14 +44,17 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from config import (  # noqa: E402
     DATA_RAW,
     STATIONS_CSV,
     BUSINESSES_GEOCODED_CSV,
     CRS_GEOGRAPHIC,
     CRS_PROJECTED,
+    HEATMAP_HTML,
     RING_EDGES_METERS,
 )
+from step5_map import WITHHELD_NAME  # noqa: E402
 
 RAW_CSV = DATA_RAW / "business_licenses.csv"
 ZONING_GEOJSON = DATA_RAW / "seattle_zoning.geojson"
@@ -251,8 +259,74 @@ def check_zoning(pub):
     return on_res
 
 
+def map_pins(html_path):
+    """Every pin entry baked into the map: [lat, lon, name, naics, ...].
+
+    step5 writes each pin layer as a literal `var data = [[...]];` array in
+    the page source. That source is what a visitor downloads, so it is the
+    thing to test - not step 5's intent.
+    """
+    pins = []
+    for block in re.findall(r"var data = (\[\[.*?\]\]);", html_path.read_text(encoding="utf-8")):
+        pins.extend(json.loads(block))
+    return pins
+
+
+def check_withholding(pub):
+    """Is every own-identity name withheld on the published map? Pass/fail.
+
+    For each in-ring business own_identity() flags, the pins at its
+    coordinates must include WITHHELD_NAME and must not include its real
+    name, in any layer. Keyed on coordinates, not name search alone: two
+    different businesses can share a trade name, and only one of them may
+    be a sole proprietor trading under their own name.
+    """
+    print("\n4. DOES THE PUBLISHED MAP WITHHOLD THEM?")
+    pins = map_pins(HEATMAP_HTML)
+    if not pins:
+        print(f"   FAIL: parsed 0 pins from {HEATMAP_HTML.name}. step5's pin")
+        print("   array format has changed - update map_pins() to match it.")
+        return 1
+
+    key = lambda lat, lon: (round(float(lat), 6), round(float(lon), 6))  # noqa: E731
+    names_at = {}
+    for p in pins:
+        names_at.setdefault(key(p[0], p[1]), set()).add(normalize(p[2]))
+
+    own = pub[pub.apply(own_identity, axis=1)]
+    withheld = normalize(WITHHELD_NAME)
+    missing_pin, not_withheld, leaked = [], [], []
+    for _, r in own.iterrows():
+        here = names_at.get(key(r["latitude"], r["longitude"]))
+        if here is None:
+            missing_pin.append(r)
+            continue
+        if withheld not in here:
+            not_withheld.append(r)
+        if normalize(r["business_name"]) in here:
+            leaked.append(r)
+
+    print(f"   pin entries parsed from {HEATMAP_HTML.name}: {len(pins):,}")
+    print(f"   own-identity businesses among published pins: {len(own)}")
+    print(f"   >> with no pin at their coordinates: {len(missing_pin)}")
+    print(f"   >> with no '{WITHHELD_NAME}' pin there: {len(not_withheld)}")
+    print(f"   >> real name still readable there: {len(leaked)}")
+
+    failures = len(missing_pin) + len(not_withheld) + len(leaked)
+    if failures:
+        print(f"\n   FAIL. Re-run `python src/step5_map.py` - the map may predate")
+        print("   the data. If it still fails, step5's withholding block no")
+        print("   longer matches own_identity() in this script; the two must")
+        print("   apply the same rule. (Names not printed: they are the thing")
+        print("   being protected. Inspect the rows locally.)")
+    else:
+        print("   OK: every one is withheld, and no real name survives at its")
+        print("   coordinates in any layer.")
+    return failures
+
+
 def main():
-    for path in (RAW_CSV, BUSINESSES_GEOCODED_CSV, STATIONS_CSV):
+    for path in (RAW_CSV, BUSINESSES_GEOCODED_CSV, STATIONS_CSV, HEATMAP_HTML):
         if not path.exists():
             sys.exit(f"Missing {path}. Run the pipeline first.")
 
@@ -261,6 +335,7 @@ def main():
 
     fallback_hits = check_fallback(pub)
     flagged = check_zoning(pub)
+    withholding_failures = check_withholding(pub)
 
     # Guard the empty case explicitly: with no zoning layer present and a
     # clean fallback, both frames are empty and pd.concat([]) raises. That is
@@ -273,7 +348,9 @@ def main():
         out = out[cols].drop_duplicates()
         out.to_csv(FLAGGED_CSV, index=False, encoding="utf-8-sig")
         print(f"\nWrote {len(out):,} flagged rows to {FLAGGED_CSV.name} "
-              "for hand review.")
+              "for hand review. Rows from section 3 are withheld on the map "
+              "if section 4 passed; the file is for judging the rule, not a "
+              "list of live exposures.")
     else:
         print("\nNothing flagged by the signals that ran.")
 
@@ -283,6 +360,9 @@ def main():
     print("use. No row here is individually verified and nobody was contacted.")
     print("Record the numbers, the date and the decision, so a later reader can")
     print("re-judge it rather than trust it.")
+
+    if withholding_failures:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
