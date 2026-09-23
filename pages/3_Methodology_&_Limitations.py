@@ -519,6 +519,38 @@ contains.
 """
 )
 
+st.subheader("Empty rings")
+
+st.markdown(
+    """
+**Three of my 64 station-rings contain no businesses at all, and the first
+version of my gradient quietly left them out.** Northgate and UW have
+nothing in their innermost ring, and Rainier Beach has nothing in its
+third. The way I originally counted businesses per ring only produced a
+row where at least one business existed, so those three rings never made
+it into the table. Every average across stations then skipped them: ring 1
+was averaged over 14 stations instead of 16, and ring 3 over 15.
+
+That mattered more than it sounds. An empty ring is a real measurement, a
+density of zero, and leaving it out pushed the inner-ring average up, the
+same direction my hypothesis predicted. With the zeros counted, ring 1
+drops from 957 to **837** businesses/sq mi, the overall ring 1 to 4
+decline goes from 67.5% to **62.9%**, and the rise between rings 2 and 3
+shrinks from +7.6% to **+0.9%**. The overall pattern held up: density
+still falls from the platform outward, the same eight stations run against
+it, and ring 3 still edges out ring 2. What changed was how strong the
+pattern looked.
+
+I caught this during a later review of the project, even though both facts
+had already been checked on their own: that those rings were empty, and
+what the ring averages were. Each claim was true by itself; the problem only
+showed up when the two were put side by side. The pipeline now writes every
+station-ring, empty or not, and stops with an error if one is missing. The
+same review caught a smaller slip: the outermost ring averages 310.48,
+which I had been reporting as 311 after rounding an already-rounded number.
+"""
+)
+
 st.subheader("Inference")
 
 st.markdown(

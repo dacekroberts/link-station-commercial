@@ -69,6 +69,12 @@ CITATIONS = [
     (FINDINGS, "commercial density at r = {r}"),
 
     (METHODOLOGY, "narrows {in_rings} pins"),
+    # "Empty rings": the old values in that passage (957, 67.5%, +7.6%, 311)
+    # describe the corrected error and are deliberately not checked.
+    (METHODOLOGY, "drops from 957 to **{r1}** businesses/sq mi"),
+    (METHODOLOGY, "decline goes from 67.5% to **{fall}**"),
+    (METHODOLOGY, "shrinks from +7.6% to **{rise_2_3}**"),
+    (METHODOLOGY, "the outermost ring averages {r4_exact}"),
     (METHODOLOGY, "**{overlap_brands} of {all_brands} ({overlap_pct})** touch"),
     (METHODOLOGY, "reported **{old_chain_share}** of locations as chains"),
     (METHODOLOGY, "**{chain_share} ({chain_brands} brands)**"),
@@ -129,6 +135,7 @@ def figures(root):
     return {
         "r1": f"{half_up(r1)}",
         "r4": f"{half_up(r4)}",
+        "r4_exact": f"{half_up(r4, 2)}",
         "fall": pct(1 - r4 / r1),
         "rise_2_3": ("+" if r3 >= r2 else "") + pct(r3 / r2 - 1),
         "r": f"{half_up(biz.corr(rides), 3)}",
