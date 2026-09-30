@@ -1,56 +1,36 @@
-"""Small pieces of UI shared across pages.
+"""UI pieces shared by every page.
 
-Streamlit's multipage app has no shared layout/header mechanism of its own -
-each page is its own top-to-bottom script - so anything meant to appear
-identically on every page (like the social links below) lives here once and
-gets called from each page, rather than duplicated four times over.
+Streamlit has no shared layout: each page is its own top-to-bottom script.
+Anything that should look the same on every page lives here once and is
+called from each page.
 """
 
 import streamlit as st
 
-# Streamlit's default expanded sidebar is 300px. The ask was 2/3 of that
-# (200px), but the longest nav label - "Methodology & Limitations" - needs
-# enough width to stop clipping under text-overflow:ellipsis. Re-measured
-# after switching the base font to Inter (set_base_font() below), which
-# renders that label wider than Streamlit's original default font did:
-# binary-searched to the exact pixel in the live DOM, 235px clips, 236px
-# doesn't. 240px is the narrowest round number with a small safety margin
-# above that threshold, so it survives minor font-rendering differences
-# across browsers rather than sitting exactly on the edge. Re-measure
-# again if the base font ever changes.
+# Streamlit's default is 300px. 240px is the narrowest width where the
+# longest nav label ("Methodology & Limitations") doesn't clip in Inter;
+# it clips at 235px. Re-measure if the base font changes.
 SIDEBAR_WIDTH_PX = 240
 
 
 def set_base_font():
-    """Swaps Streamlit's default typeface for Inter on base page text only.
+    """Use Inter for page text; keep the default font in charts and code.
 
-    Inter, not Streamlit's default Source Sans Pro - a widely-used,
-    highly-legible sans-serif on modern data/product interfaces (Notion,
-    Vercel, GitHub's newer UI, Figma), which reads as an intentional
-    typographic choice rather than an unstyled default for a portfolio site
-    aimed at hiring managers. Loaded via Google Fonts rather than a new pip
-    dependency, keeping requirements.txt lean.
-
-    Deliberately scoped, not a blanket override: embedded chart/diagram text
-    is explicitly excluded and reset back to the original default, so this
-    only touches prose, headers, captions, metrics, and tables - not "text
-    embedded in other visuals" per the user's own distinction. The Mermaid
-    flowchart and Folium heatmap need no such exclusion - both render inside
-    their own iframe documents, already isolated from this page's CSS by
-    construction.
+    Inter reads as a deliberate choice rather than an unstyled default, and
+    it loads from Google Fonts, so requirements.txt stays lean. The change
+    covers prose, headers, captions, metrics and tables only: chart text is
+    reset to Streamlit's default. The Mermaid flowchart and the Folium map
+    render in their own iframes, so this CSS never reaches them.
     """
     st.markdown(
         """
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        /* Wildcard, not just html/body: Streamlit sets font-family
-        directly on its own text elements (p, headers, etc.), and a plain
-        inherited value from an ancestor - even an !important one - always
-        loses to any rule that targets the element itself. Scoping the
-        wildcard to the app container and sidebar, rather than a bare `*`,
-        keeps this from reaching into the chart/code exclusions below at
-        a lower specificity than they need. */
+        /* Wildcard, not html/body: Streamlit sets font-family on its own
+        text elements, and an inherited value (even !important) loses to a
+        rule on the element itself. Scoped to the app container and sidebar,
+        not a bare `*`, so the chart and code resets below can still win. */
         [data-testid="stAppViewContainer"] *,
         [data-testid="stSidebar"] *,
         [data-testid="stHeader"] * {
@@ -58,19 +38,15 @@ def set_base_font():
                 "Segoe UI", sans-serif !important;
         }
 
-        /* Altair/Vega-Lite charts (Graphs 1-5) are the one place inline
-        SVG text sits inside the page's own DOM rather than an iframe, so
-        this needs an explicit reset - otherwise it would inherit the new
-        base font too. Same specificity shape as the wildcard above (one
-        attribute selector + one type selector) plus source order below
-        it, so this wins for chart text specifically. */
+        /* Altair charts (Graphs 1-5) draw SVG text inside the page, not in
+        an iframe, so they need an explicit reset. Same specificity as the
+        wildcard plus later source order, so this wins for chart text. */
         [data-testid="stVegaLiteChart"] text {
             font-family: "Source Sans Pro", sans-serif !important;
         }
 
-        /* Code stays monospace regardless of the base font - scoped to
-        match or exceed the wildcard's specificity, not a bare `code`
-        selector, which the wildcard above would otherwise outrank. */
+        /* Code stays monospace. Scoped to match the wildcard's specificity;
+        a bare `code` selector would lose to it. */
         [data-testid="stAppViewContainer"] code,
         [data-testid="stAppViewContainer"] pre,
         [data-testid="stAppViewContainer"] kbd,
@@ -79,12 +55,9 @@ def set_base_font():
             font-family: "Source Code Pro", Menlo, Consolas, monospace !important;
         }
 
-        /* Streamlit's own UI glyphs (sidebar collapse/expand arrow, etc.)
-        are rendered as ligatures in the Material Symbols icon font, not
-        images - the wildcard above was breaking these, showing the raw
-        ligature name ("keyboard_double_arrow_left") as literal text
-        instead of the arrow icon. Confirmed via the element's own
-        pre-existing rule (font-family: "Material Symbols Rounded"). */
+        /* Streamlit's UI icons (the sidebar arrow, etc.) are ligatures in
+        the Material Symbols font. Without this reset the wildcard shows
+        their raw names ("keyboard_double_arrow_left") instead of icons. */
         [data-testid="stIconMaterial"] {
             font-family: "Material Symbols Rounded" !important;
         }
@@ -95,10 +68,9 @@ def set_base_font():
 
 
 def set_sidebar_width():
-    """Shrinks the expanded sidebar from Streamlit's 300px default.
+    """Set the sidebar's starting width to SIDEBAR_WIDTH_PX.
 
-    Not user-resize-proof by design - Streamlit's own drag handle can still
-    widen it back out; this only sets the default/initial width.
+    Only the starting width: Streamlit's drag handle can still widen it.
     """
     st.markdown(
         f"""
@@ -114,15 +86,12 @@ def set_sidebar_width():
 
 
 def render_sidebar_nav_label():
-    """Small "Pages" label above the sidebar's auto-generated page nav.
+    """Add a small "Pages" label above the sidebar's page list.
 
-    Streamlit builds that nav list itself from the pages/ directory - there's
-    no API to insert a real element above it, so this uses a CSS ::before on
-    the nav container instead. Kept small (12px) on purpose: the nav
-    container itself already starts well below the sidebar's collapse arrow
-    (measured in the live DOM - collapse button bottom at 44px, nav top at
-    76px), so this can't overlap it regardless of size, but a large label
-    would still look heavy sitting above a short page list.
+    Streamlit generates that list and has no API for inserting above it, so
+    the label is a CSS ::before on the nav container. The nav starts at
+    76px, below the collapse arrow's bottom edge at 44px, so the label
+    can't overlap the arrow. 12px keeps it from looking heavy.
     """
     st.markdown(
         """
@@ -144,14 +113,12 @@ def render_sidebar_nav_label():
 
 
 def render_social_links():
-    """GitHub/LinkedIn icon links, top-right above the page title.
+    """GitHub and LinkedIn icon links, top right above the page title.
 
-    Streamlit's own toolbar (hamburger/three-dot menu, Rerun, Always rerun)
-    is native chrome with no public API to add elements into it - this sits
-    in normal page flow instead of a position:fixed overlay, so it can't
-    drift out of sync with that toolbar's height/position across Streamlit
-    versions or widths. Inline SVGs (standard GitHub octicon / LinkedIn "in"
-    mark), not <img> tags, to avoid any external network fetch on page load.
+    Streamlit's toolbar has no API for adding items, so these sit in normal
+    page flow rather than a fixed overlay that could drift out of line with
+    the toolbar across Streamlit versions. The icons are inline SVGs, so
+    they need no extra network requests.
     """
     st.markdown(
         """
