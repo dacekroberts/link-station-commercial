@@ -490,6 +490,20 @@ bound**, not an exact count. A fuzzy-matching pass, using something like
 `rapidfuzz`, could close some of that gap, but at the cost of needing
 every match checked by hand afterward.
 
+**One storefront can hold more than one business license, and my density
+figures count licenses.** Seattle's export has a row per license account,
+and a business can hold several accounts at the same address. I fixed this
+for the chain analysis, which now counts distinct locations instead of
+licenses, but not for the density figures. Across the city, 91
+name-and-location pairs have more than one license, 113 licenses more than
+there are locations. Most of those pairs (74 of 91) share the exact same
+street address; the rest differ only by suite number, which could mean they
+really are separate shops. Together they touch about 2% of the
+business-ring matches behind the gradient, so the effect is small, but the
+density figures on this site run slightly higher than a count of
+storefronts would. Removing them cleanly would mean re-running the
+geocoding step, which I didn't get to.
+
 Ring boundaries are choices I made as the analyst. Different cutpoints
 would produce a different gradient.
 

@@ -93,6 +93,8 @@ NOT_CHECKED = [
     "1,767 (42.9%) multi-station claims (Methodology) - needs the spatial join",
     "8.7% to 8.4% without SODO/Stadium (Findings caption) - needs the join",
     "walking-trip percentages (Methodology) - cited literature, not data",
+    "duplicate licenses: 91 pairs, 113 licenses, 74 of 91, about 2% "
+    "(Methodology) - needs businesses_geocoded.csv and the spatial join",
     "number words: 'sixteen stations', 'seven locations within a range of "
     "eight stations', 'five were in the top seven' (Findings)",
 ]
