@@ -142,7 +142,7 @@ def figures(root):
         "cv_ratio": f"{half_up(cv(biz) / cv(rides), 1)}",
         "chain_brands": f"{len(multi)}",
         "chain_share": pct(multi["location_count"].sum() / total_locs),
-        "chain_r1": pct(share[0], 0),
+        "chain_r1": pct(share[0]),
         "chain_r3": pct(share[2]),
         "chain_r4": pct(share[3]),
         "chain_rise_3_4": ("+" if share[3] >= share[2] else "")

@@ -13,6 +13,59 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-30 — Code audit
+
+- **Chains now count distinct locations, not license records: 152 -> 116
+  brands, 8.5% -> 6.7%.** A line-by-line correctness review of steps 2-4
+  and the Findings page (the first review of the code itself rather than
+  of its output) found that `location_count` counted records, and a
+  record is one license. One storefront holding two or three licenses
+  counted as two or three "real locations", so 36 single-storefront
+  brands passed the location_count >= 2 test (e.g. one spot with three
+  licenses under the same name). Same class of error the station_count
+  > 1 fix removed in Session 6, one level down. `step4_rings.py` now
+  counts distinct coordinates (rounded to about 1 m) per brand. Chain
+  share by ring: 11.0/10.1/8.3/8.5% -> **9.5/7.5/6.8/6.8%**. Still highest
+  at the platform and still declining, but **the ring 3 -> 4 reversal is
+  gone** (6.82% -> 6.77%), so the Graph 5 caption and paragraph that
+  explain a reversal, and In Summary's "chain-share reversal", no longer
+  describe the data. Those passages are the analysis prose and are left
+  for rewording; `check_published_numbers.py` keeps failing on them until
+  they change. Also moved: overlap noise 1,589 -> 1,604 of 3,900 (40.7% ->
+  41.1%). Unchanged: the 45.5% old-definition figure, Subway at 7
+  locations across 8 stations, every density figure.
+- **Brand normalization strips legal suffixes only at the end of a
+  name.** The old pattern missed a trailing "L.L.C." ("FOO L.L.C." became
+  "FOO L L C", a different key from "FOO LLC") and removed CO anywhere
+  ("BLUE CO BAKERY" became "BLUE BAKERY"). No chain figure changed.
+- **Step 3 refuses a Census cache that doesn't match the batch.** Cached
+  batches were reused by file name while record_id is positional and
+  reassigned by step 2 on every run, so any upstream change would have
+  put stale coordinates on the wrong businesses without a warning. Each
+  cached row's echoed id and address must now match. No current effect:
+  the cache matches all 1,121 rows.
+- **`station_stats.csv`'s walkshed density is now businesses over area,
+  not the mean of three ring densities.** Ring 1 is a fifth of ring 3's
+  area but counted equally, which roughly doubled the figure at stations
+  with a busy ring 1 (Othello 454 -> 230). The site doesn't display this
+  column. The unmatched-ridership warning now checks the ridership column
+  by name rather than by position.
+- **Visible labels:** Graph 3 and Table 3 said "density" for a business
+  count; they now say "Businesses Within 0.3 Miles" and "Business Counts".
+  The Symphony/Pioneer Square caption now says "joint 3rd-highest":
+  Pioneer Square ties International District/Chinatown at 293.
+- **Not addressed, open as a limitation: duplicate licenses still count
+  in the density figures.** Step 2's dedupe key (account number + address)
+  can't merge several licenses at one storefront, because each has its
+  own account number; it currently removes nothing. The chain fix above
+  handles this for chains only. For density, 113 records citywide share a
+  name and a spot with another record (91 groups; 74 with the identical
+  street address, 17 differing only by suite, which may be genuinely
+  separate shops), touching 137 of 6,847 business-ring matches (about 2%).
+  Deduping them would shift the gradient slightly, and doing it in step 2
+  reassigns record ids, which forces a fresh Census geocoding run. To be
+  written into the Methodology page's limitations.
+
 ### 2026-09-30 — Comment style
 
 - **Rewrote every code comment and docstring into one neutral style, and

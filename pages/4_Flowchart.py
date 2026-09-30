@@ -65,7 +65,7 @@ flowchart TD
     RID --> S4
 
     S4 --> DCHAIN{"'Chain' defined as<br/>station_count > 1 -<br/>does hand-verification hold up?"}
-    DCHAIN -- "no - single location<br/>touching 4 stations isn't a chain" --> FIX["Redefine as location_count >= 2<br/>(45.5% -> 8.5% of locations)"]
+    DCHAIN -- "no - single location<br/>touching 4 stations isn't a chain" --> FIX["Redefine as location_count >= 2<br/>(45.5% -> 6.7% of locations)"]
     FIX --> OUT[("outputs/*.csv<br/>committed to git")]
 
     S1 --> S5["step5_map.py<br/>Build heatmap"]

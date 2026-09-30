@@ -470,12 +470,12 @@ all on its own. I verified this by hand: a one-location shop with no
 other branches showed up as "present at 4 stations," indistinguishable
 from an actual chain.
 
-Checking across every normalized brand, **1,589 of 3,900 (40.7%)** touch
+Checking across every normalized brand, **1,604 of 3,900 (41.1%)** touch
 more than one station from exactly one physical location. Defining
 "chain" as `station_count > 1`, which is what the first version of this
 analysis did, would have reported **45.5%** of locations as chains.
 Correctly requiring 2+ real locations instead puts the true figure at
-**8.5% (152 brands)**. Every chain statistic used throughout this
+**6.7% (116 brands)**. Every chain statistic used throughout this
 project requires `location_count >= 2`, never station count alone.
 
 **Brand matching in this project is exact, not fuzzy**, which is a real

@@ -47,7 +47,17 @@ from config import (  # noqa: E402
 
 RIDERSHIP_COL = "avg_monthly_boardings"
 
-LEGAL_SUFFIXES = r"\b(LLC|L\.L\.C\.|INC|INCORPORATED|CORP|CORPORATION|CO|LTD|LP|LLP|PLLC)\b"
+# Legal suffixes at the end of a name only, repeated or comma-separated
+# ("FOO, INC.", "FOO L.L.C."). Anchored to the end so a word like CO in the
+# middle of a name ("PCC CO-OP", "BLUE CO BAKERY") is left alone.
+LEGAL_SUFFIXES = re.compile(
+    r"(?:[\s,]+(?:LLC|L\.?L\.?C\.?|INC\.?|INCORPORATED|CORP\.?|CORPORATION"
+    r"|CO\.?|LTD\.?|LP|LLP|PLLC))+\s*$"
+)
+
+# Coordinates rounded to 5 decimals (about 1 m) identify one physical spot.
+# Several licenses at one storefront share a spot; see chain_stats below.
+SPOT_DECIMALS = 5
 
 
 def to_gdf(df, lat="latitude", lon="longitude"):
@@ -113,7 +123,7 @@ def normalize_brand(name: str) -> str:
     s = name.upper()
     s = s.replace("'", "").replace("’", "")  # ASCII and curly apostrophe
     s = re.sub(r"#\s*\d+", "", s)          # store numbers
-    s = re.sub(LEGAL_SUFFIXES, "", s)
+    s = LEGAL_SUFFIXES.sub("", " " + s.strip()).strip()
     s = re.sub(r"[^A-Z0-9 ]", " ", s)
     s = " ".join(s.split())
     return BRAND_ALIASES.get(s, s)
@@ -231,12 +241,20 @@ def main():
             print(f"{excluded.sum():,} business-ring rows excluded from chain "
                   f"analysis only (contractor brands): "
                   f"{sorted(joined.loc[excluded, 'brand'].unique())}")
+        # location_count counts distinct spots, not records. A record is one
+        # license, and one storefront can hold several (step 2 can't merge
+        # them: each has its own account number). Counting records made 36
+        # single-storefront brands look like chains (152 -> 116 brands).
+        joined["spot"] = (
+            joined["latitude"].round(SPOT_DECIMALS).astype(str) + ","
+            + joined["longitude"].round(SPOT_DECIMALS).astype(str)
+        )
         chain_stats = (
             joined[(joined["brand"] != "") & ~excluded]
             .groupby("brand")
             .agg(
                 station_count=("station", "nunique"),
-                location_count=("record_id", "nunique"),
+                location_count=("spot", "nunique"),
             )
             .reset_index()
             # Real chains sort to the top and single-location noise (see

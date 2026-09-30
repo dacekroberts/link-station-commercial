@@ -195,7 +195,7 @@ st.markdown(
   spread across stations is about 1.8 times as uneven as ridership's,
   proportionally, not just in raw numbers.
 - **Chains lean into platform proximity too.** Chain share is highest
-  right at the platform, 11% in the first ring, and falls to 8.5% by the
+  right at the platform, 9.5% in the first ring, and falls to 6.8% by the
   fourth, the same declining pattern found in overall density.
 """
 )

@@ -508,7 +508,7 @@ if STATION_STATS_CSV.exists():
         clean = stats[["station", col, "businesses_within_0_3mi"]].dropna()
         if len(clean) > 2:
             r = clean[[col, "businesses_within_0_3mi"]].corr().iloc[0, 1]
-            st.markdown("**Graph 3: Commercial Density VS Station Ridership Volume**")
+            st.markdown("**Graph 3: Businesses Within 0.3 Miles VS Station Ridership Volume**")
             st.caption(
                 f"n = {len(clean)} stations. Too few observations to support "
                 "much beyond a description of the pattern."
@@ -631,7 +631,7 @@ if STATION_STATS_CSV.exists():
             f"feature "
             f"{symphony['businesses_within_0_3mi']:.0f} and "
             f"{pioneer['businesses_within_0_3mi']:.0f} businesses within 0.3mi, the "
-            "2nd- and 3rd-highest of all 16, despite mid-pack ridership. Both sit in "
+            "2nd- and joint 3rd-highest of all 16, despite mid-pack ridership. Both sit in "
             "the downtown overlap cluster, so some of that density is buffer "
             "inflation, not purely organic."
         )
@@ -832,7 +832,7 @@ if STATION_STATS_CSV.exists():
         )
         with st.expander(
             "Table 3: Coefficient of Variation for Station Business "
-            "Density and Ridership"
+            "Counts and Ridership"
         ):
             st.dataframe(
                 cv_table.style.format(
@@ -900,9 +900,9 @@ if CHAIN_STATS_CSV.exists():
         could back my hypothesis with the actions of real-world decision
         makers.
 
-        The initial data probe revealed promising results: 152 brands had
+        The initial data probe revealed promising results: 116 brands had
         at least two locations within the sample range of Seattle
-        stations, with all chain brands accounting for 8.5% of total
+        stations, with all chain brands accounting for 6.7% of total
         businesses in the corridor. Topping the line of individual brands
         angling toward transit is Subway, which is currently operating
         seven locations within a range of eight stations. The other 24
@@ -984,8 +984,8 @@ if CHAIN_STATS_CSV.exists():
     st.markdown(
         """
         Graph 5 cleanly supports the hypothesis that chain share rises
-        closer to the station, going from 11% share within concentric ring
-        1 down to 8.5% within ring 4. On the micro-level, we see a similar
+        closer to the station, going from 9.5% share within concentric ring
+        1 down to 6.8% within ring 4. On the micro-level, we see a similar
         unexpected rise in graph 1, though this time the discrepancy is
         from ring 3 to 4 (+0.2%). The caption underneath graph 5 connects
         this exception to the downtown overlap buffers that conflated some
