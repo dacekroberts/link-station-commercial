@@ -85,16 +85,49 @@ def load_donor_lookup() -> pd.DataFrame:
     return donor
 
 
+def check_cache_matches(cached: pd.DataFrame, payload: pd.DataFrame, cache_file) -> None:
+    """Exit if a cached batch was geocoded from different rows than this one.
+
+    record_id is a positional index that step 2 reassigns on every run, so a
+    cache file is only valid for the exact rows that produced it. The Census
+    response echoes each row's id and input address; both must match the
+    batch being sent, or the cached coordinates would land on the wrong
+    businesses.
+    """
+    sent = dict(zip(
+        payload["record_id"],
+        payload["street_clean"] + ", " + payload["city"] + ", "
+        + payload["state"] + ", " + payload["zip"].fillna(""),
+    ))
+    echoed = dict(zip(cached["record_id"], cached["input_address"]))
+    stale = sorted(
+        (set(sent) ^ set(echoed))
+        | {k for k in set(sent) & set(echoed) if sent[k] != echoed[k]}
+    )
+    if stale:
+        sys.exit(
+            f"{cache_file} doesn't match this batch: {len(stale):,} record ids "
+            f"are missing from one side or have a different address (batch "
+            f"{len(sent):,} rows, cache {len(echoed):,}; first: record_id "
+            f"{stale[0]}). Step 2's output or the donor layer changed since "
+            f"it was cached. Delete {CACHE_DIR} and re-run to geocode afresh "
+            "(this calls the Census API)."
+        )
+
+
 def geocode_batch(batch: pd.DataFrame, batch_num: int) -> pd.DataFrame:
     """Send one batch to the Census geocoder, caching the response."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     cache_file = CACHE_DIR / f"batch_{batch_num:03d}.csv"
+    payload = batch[["record_id", "street_clean", "city", "state", "zip"]]
 
     if cache_file.exists():
-        print(f"  batch {batch_num}: cached")
-        return pd.read_csv(cache_file, header=None, names=RESULT_COLUMNS, dtype=str)
+        cached = pd.read_csv(cache_file, header=None, names=RESULT_COLUMNS, dtype=str)
+        check_cache_matches(cached, payload, cache_file)
+        print(f"  batch {batch_num}: cached ({len(cached):,} rows, ids and "
+              "addresses match)")
+        return cached
 
-    payload = batch[["record_id", "street_clean", "city", "state", "zip"]]
     csv_bytes = payload.to_csv(index=False, header=False).encode("utf-8")
 
     response = requests.post(
