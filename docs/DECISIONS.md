@@ -13,6 +13,29 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-09-30 — Comment style
+
+- **Rewrote every code comment and docstring into one neutral style, and
+  banned em dashes from comments.** The comments had grown in four voices:
+  terse reference notes, tutorial advice addressed to a student ("give this
+  one hour"), long verification diaries ("binary-searched to the exact
+  pixel in the live DOM"), and design rationale. Chose neutral over first
+  person: short what and why, readable by an outsider, with every measured
+  value and "re-measure if X changes" warning kept and the story of how it
+  was found cut to one line at most. Piloted on `components.py`, then the
+  other 14 files. Only comments changed: each file's code, CSS rules and
+  visible text were compared before and after with comments stripped, and
+  all matched; the regenerated `heatmap.html` differs only in its embedded
+  CSS/JS comments. About 150 lines shorter overall. The rewrite also
+  removed a few comments that had gone stale: the layer-control comment
+  said 23 layers where the map has 21 (the count is gone rather than
+  corrected, since it would rot again), Table 1's comment said
+  "alphabetical" where the code orders north to south, and the Methodology
+  and step 2 docstrings still described placeholders that were filled
+  weeks ago. The em-dash rule covers `#` comments, docstrings and CSS/JS/HTML
+  comments inside strings, and is enforced by `scripts/check_no_em_dashes.py`;
+  visible text is exempt, and the map's layer names keep theirs.
+
 ### 2026-09-23 — Cleanup session
 
 - **Empty station-rings now count as zero density instead of dropping out

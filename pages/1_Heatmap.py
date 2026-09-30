@@ -1,9 +1,9 @@
-"""Heatmap page - embeds the pre-rendered Folium HTML.
+"""Heatmap page: embeds the pre-rendered Folium HTML.
 
-Embedding the saved file in an iframe is faster than re-rendering the map
-through streamlit-folium, and avoids pulling folium into the deployed app's
-dependencies. Switch to st_folium only if you later want click and pan
-events flowing back into Python.
+An iframe of the saved file is faster than re-rendering the map through
+streamlit-folium and keeps folium out of the deployed app's dependencies.
+Switch to st_folium only if click and pan events need to flow back into
+Python.
 """
 
 import streamlit as st
@@ -16,10 +16,9 @@ from components import (
 )
 from config import HEATMAP_HTML
 
-# The exact icon the embedded map's own Leaflet layer control uses
-# (leaflet@1.9.3/dist/images/layers.png, 26x26) - inlined as a data URI
-# rather than an <img src="https://..."> so the page doesn't fetch it
-# externally, matching render_social_links()'s inline-SVG icons.
+# The embedded map's own Leaflet layer-control icon
+# (leaflet@1.9.3/dist/images/layers.png, 26x26), inlined as a data URI so
+# the page makes no external request, like render_social_links()'s icons.
 LAYER_CONTROL_ICON_DATA_URI = (
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAQAAAADQ4RFAAACf0lEQVR4AY1U"
     "M3gkARTePdvdoTxXKc+qTl3aU5U6b2Kbkz3Gtq3Zw6ziLGNPzrYx7946Tr6/ee/XeCQ4D3ykPtL5tHno4n0d"
@@ -63,20 +62,17 @@ cluster" and take the numbers from the findings page.
 )
 
 if HEATMAP_HTML.exists():
-    # st.iframe, not the deprecated st.components.v1.html (removal was
-    # announced for 2026-06-01). It takes the Path directly and reads the
-    # file itself as UTF-8, which also retires the explicit encoding= that
-    # used to be needed here: on Windows, Path.read_text() without one falls
-    # back to the OS codepage (cp1252) and mangles every multi-byte
-    # character, em dashes in the layer names in particular.
+    # st.iframe, not the deprecated st.components.v1.html (removal announced
+    # for 2026-06-01). It reads the Path itself as UTF-8. Don't swap in
+    # Path.read_text() without encoding=: on Windows it falls back to cp1252
+    # and mangles multi-byte characters, such as the em dashes in the layer
+    # names.
     #
-    # Matches the Folium map's own fixed pixel size (width=1000, height=650
-    # in step5_map.py) exactly - the iframe previously had no explicit width
-    # (defaulting to the full page container, wider than the 1000px map) and
-    # a taller height=700 than the map's own 650, leaving dead white space
-    # to the right and below the map itself. st.iframe has no scrolling
-    # argument; the browser default (auto) is the same safety net the old
-    # scrolling=True provided against a stray pixel of overflow.
+    # width=1000, height=650 match the Folium map's fixed pixel size in
+    # step5_map.py (fixed there for the Leaflet.heat init-race fix). A wider
+    # or taller iframe leaves dead white space right of and below the map;
+    # change both files together. The browser's default scrolling (auto)
+    # covers a stray pixel of overflow.
     st.iframe(HEATMAP_HTML, width=1000, height=650)
 else:
     st.info("No map yet. Run `python src/step5_map.py` to generate it.")

@@ -1,4 +1,4 @@
-"""Step 4 - Ring buffers, spatial join, and the three analyses.
+"""Step 4: ring buffers, spatial join, and the three analyses.
 
 Input:  data/processed/stations.csv
         data/processed/businesses_geocoded.csv
@@ -6,17 +6,18 @@ Input:  data/processed/stations.csv
 Output: outputs/ring_stats.csv
         outputs/station_stats.csv
         outputs/chain_stats.csv
+        outputs/chain_ring_stats.csv
 
-This is the analytical core. Three things happen:
+The analytical core, answering three questions:
 
   1. Ring gradient    - does commercial density fall off with distance?
   2. Ridership        - does station volume relate to commercial density?
   3. Chain footprint  - do multi-location brands cluster near transit?
 
-THE CRS RULE: buffer in CRS_PROJECTED (meters), never in CRS_GEOGRAPHIC
-(degrees). A degree of longitude is about 75 km at this latitude and a
-degree of latitude about 111 km, so buffering in degrees produces ovals
-of the wrong size. Project, buffer, project back.
+CRS rule: buffer in CRS_PROJECTED (EPSG:32610, meters), never in
+CRS_GEOGRAPHIC (EPSG:4326, degrees). A degree of longitude is about 75 km
+at this latitude and a degree of latitude about 111 km, so buffering in
+degrees produces ovals of the wrong size. Project, buffer, project back.
 
 Run:  python src/step4_rings.py
 """
@@ -48,7 +49,7 @@ LEGAL_SUFFIXES = r"\b(LLC|L\.L\.C\.|INC|INCORPORATED|CORP|CORPORATION|CO|LTD|LP|
 
 
 def to_gdf(df, lat="latitude", lon="longitude"):
-    """DataFrame with lat/lon columns -> GeoDataFrame in WGS84."""
+    """Convert a DataFrame with lat/lon columns to a GeoDataFrame in WGS84."""
     return gpd.GeoDataFrame(
         df,
         geometry=gpd.points_from_xy(df[lon], df[lat]),
@@ -82,12 +83,10 @@ def build_rings(stations_gdf):
     return gpd.GeoDataFrame(rows, crs=CRS_PROJECTED)
 
 
-# Known same-chain name variants that exact-match-after-normalization still
-# can't merge on its own - a compound-word spacing difference in how the
-# license was filed, not a typo or a formatting quirk. Found via a
-# prefix-collision spot-check of chain_stats.csv (see docs/DECISIONS.md), the same
-# kind of explicit lookup as GTFS_NAME_ALIASES in step1_stations.py, for the
-# same reason: safer than a general rule that would risk merging unrelated
+# Known same-chain name variants that exact matching after normalization
+# can't merge: a compound-word spacing difference in how the license was
+# filed (see docs/DECISIONS.md). An explicit lookup, like GTFS_NAME_ALIASES
+# in step1_stations.py, because a general rule would risk merging unrelated
 # brands. Keys and values are both already-normalized (post-regex) strings.
 BRAND_ALIASES = {
     "RUDYS BARBER SHOP": "RUDYS BARBERSHOP",
@@ -99,16 +98,13 @@ def normalize_brand(name: str) -> str:
 
     Strips legal suffixes, store numbers, and punctuation so that
     "STARBUCKS #1234" and "Starbucks Coffee LLC" resolve together.
-    Apostrophes are dropped outright, not turned into a space, so
-    "Molly Moon's" and "Molly Moons" - the same chain, filed inconsistently
-    across licenses - collapse to the same key instead of splitting on
-    whether a given record happened to include the apostrophe.
+    Apostrophes are dropped, not turned into a space, so "Molly Moon's" and
+    "Molly Moons" (the same chain, filed inconsistently) share a key.
 
-    Exact matching after normalization catches most chains. Known
-    compound-word variants that still fall through are patched via
-    BRAND_ALIASES above. Remaining gaps are a real, disclosed limitation of
-    this approach - see the methodology page - not something `rapidfuzz`
-    fuzzy matching was ever actually wired in to catch.
+    Exact matching after normalization catches most chains; known
+    compound-word variants are patched via BRAND_ALIASES above. Remaining
+    gaps are a disclosed limitation (see the Methodology page). No fuzzy
+    matching (e.g. `rapidfuzz`) is used.
     """
     if not isinstance(name, str):
         return ""
@@ -136,18 +132,17 @@ def main():
     businesses_proj = businesses.to_crs(CRS_PROJECTED)
 
     # Businesses in overlapping downtown rings match multiple stations and
-    # appear more than once. That is intentional and documented - see the
-    # methodology page.
+    # appear more than once. Intentional; documented on the Methodology page.
     joined = gpd.sjoin(businesses_proj, rings, how="inner", predicate="within")
     print(f"{len(joined):,} business-ring matches")
 
     # --- 1. Ring gradient -----------------------------------------------
     # Start from every station-ring and count into it, not from the join:
-    # groupby().size() on the join has no row for a ring with no businesses
-    # in it, and a missing row silently drops out of every mean downstream.
-    # An empty ring is a real observation (density 0), not missing data.
-    # Northgate and UW ring 1 and Rainier Beach ring 3 are empty; averaging
-    # without them overstated ring 1 by 14% and ring 3 by 7%.
+    # groupby().size() on the join has no row for an empty ring, and a
+    # missing row silently drops out of every mean downstream. An empty ring
+    # is a real observation (business_count 0), not missing data. Northgate
+    # and UW ring 1 and Rainier Beach ring 3 are empty; averaging without
+    # them overstated ring 1 by 14% and ring 3 by 7%.
     counts = (
         joined.groupby(["station", "ring"])
         .size()
@@ -175,7 +170,7 @@ def main():
 
     # Two decimals, not one: a one-decimal print (310.5) invites rounding a
     # second time (to 311) when the true value is 310.48. Round once, from
-    # the unrounded mean - scripts/check_published_numbers.py does.
+    # the unrounded mean, as scripts/check_published_numbers.py does.
     print("\nMean density by ring (the gradient):")
     print(
         ring_stats.groupby("ring", sort=False)["density_per_sq_mi"]
@@ -205,20 +200,20 @@ def main():
         print("See data/raw/README.md for how to export it.")
 
     # --- 3. Chain footprint ---------------------------------------------
-    # A brand appearing at many stations is a firm systematically choosing
-    # transit adjacency. That is revealed preference, and a stronger signal
-    # about location strategy than any raw count.
+    # A brand at many stations is a firm repeatedly choosing transit
+    # adjacency: revealed preference, a stronger signal about location
+    # strategy than any raw count.
     name_col = "business_name" if "business_name" in joined.columns else None
     if name_col:
         joined["brand"] = joined[name_col].apply(normalize_brand)
         # Corporate food-service contractors (Compass One, Bon Appetit
-        # Management, Flik International) excluded here only - real
-        # businesses, still counted fully in ring_stats/station_stats
+        # Management, Flik International) are excluded from the chain
+        # analysis only; they still count fully in ring_stats/station_stats
         # above. Each is one vendor's footprint across a single client's
         # office campus, not independent chain site-selection. See
-        # CHAIN_ANALYSIS_EXCLUDE_BRANDS in config.py for the full
-        # reasoning and why NAICS 722310 alone doesn't cleanly separate
-        # these from legitimate small chains.
+        # CHAIN_ANALYSIS_EXCLUDE_BRANDS in config.py for the reasoning,
+        # including why NAICS 722310 alone doesn't cleanly separate these
+        # from legitimate small chains.
         excluded = joined["brand"].isin(CHAIN_ANALYSIS_EXCLUDE_BRANDS)
         if excluded.any():
             print(f"{excluded.sum():,} business-ring rows excluded from chain "
@@ -232,19 +227,17 @@ def main():
                 location_count=("record_id", "nunique"),
             )
             .reset_index()
-            # Real chains float to the top; single-location noise (see below)
-            # sorts to the bottom without needing a separate filter downstream.
+            # Real chains sort to the top and single-location noise (see
+            # below) to the bottom, so no separate filter is needed downstream.
             .sort_values(["location_count", "station_count"], ascending=False)
         )
 
-        # A brand's station_count can be inflated by the downtown overlap
-        # alone: one physical location inside the Westlake/Symphony/Pioneer
-        # Square/International District overlap zone can touch up to 4
-        # stations without being a chain at all - it made one lease
-        # decision, not four. "Chain" is therefore defined as
-        # location_count >= 2, never station_count > 1. Verified by hand
-        # (Session 6): PU POWDER and Saigon Drip Kitchen, each one real
-        # location, both showed up at 4 stations before this was caught.
+        # Downtown buffer overlap alone can inflate station_count: one
+        # location in the Westlake/Symphony/Pioneer Square/International
+        # District overlap can touch up to 4 stations while being one lease
+        # decision, not a chain. "Chain" is therefore location_count >= 2,
+        # never station_count > 1. Checked by hand: PU POWDER and Saigon
+        # Drip Kitchen, one location each, both reached 4 stations.
         overlap_noise = (
             (chain_stats["location_count"] == 1) & (chain_stats["station_count"] > 1)
         ).sum()
@@ -262,16 +255,14 @@ def main():
         chain_stats.to_csv(CHAIN_STATS_CSV, index=False)
 
         # --- 3b. Chain share by ring -------------------------------------
-        # Does chain presence concentrate near the platform, same question
-        # the gradient does for density generally? Same counting
-        # convention as ring_stats above - every business-ring-per-station
-        # match counts, including downtown-overlap duplicates - so the two
-        # are directly comparable rather than computed on different bases.
-        # Denominator is the full joined set (all businesses, matching
-        # ring_stats' own population), not just brand-matched rows -
-        # blank/unparseable names still count as "not a chain," they just
-        # can't be excluded from the denominator too or the share would be
-        # inflated.
+        # Does chain presence concentrate near the platform, the question the
+        # gradient asks of density? Same counting convention as ring_stats
+        # (every business-ring-per-station match counts, downtown-overlap
+        # duplicates included), so the two are directly comparable. The
+        # denominator is the full joined set, matching ring_stats'
+        # population, not just brand-matched rows: blank or unparseable
+        # names count as "not a chain", and dropping them from the
+        # denominator would inflate the share.
         real_chain_brands = set(true_chains["brand"])
         joined["is_chain"] = joined["brand"].isin(real_chain_brands)
         chain_ring_stats = (

@@ -49,7 +49,10 @@ def docstring_nodes(tree):
 
 
 def scan(path):
-    """Returns (hits, counts). hits: [(line, kind, text)]."""
+    """Scan one file's comments for em dashes.
+
+    Returns (hits, counts); hits is a list of (line, kind, text).
+    """
     src = path.read_text(encoding="utf-8")
     tree = ast.parse(src)
     hits, counts = [], {"comment": 0, "docstring": 0, "embedded": 0}

@@ -14,18 +14,18 @@ fails if the page text doesn't contain it.
 
 Run:  python scripts/check_published_numbers.py
 
-Needs only pandas - runs in the lean app venv, reads only outputs/ and the
+Needs only pandas: runs in the lean app venv, reads only outputs/ and the
 page sources, never the network.
 
 When it fails: the message names the file and the phrase it expected.
 Either the data changed and the page is stale (change the number in the
-page), or someone reworded the sentence (change the phrase in CITATIONS to
+page), or the sentence was reworded (change the phrase in CITATIONS to
 match the new wording, keeping the {placeholder}). Never "fix" it by
-hardcoding the new number into FIGURES - that turns the check into a copy
+hardcoding the new number into FIGURES; that turns the check into a copy
 of the page.
 
 Adding a figure: compute it in figures(), then add one CITATIONS entry per
-place it is typed. Search the pages for the formatted value first - a
+place it is typed. Search the pages for the formatted value first: a
 figure cited in three places and registered in two is the defect this
 exists to catch.
 
@@ -83,7 +83,7 @@ CITATIONS = [
     (FLOWCHART, "({old_chain_share} -> {chain_share} of locations)"),
 ]
 
-# Figures a page cites that cannot be derived from outputs/ - they need the
+# Figures a page cites that cannot be derived from outputs/: they need the
 # raw export, the geo stack, or a rebuilt spatial join. Listed so they are a
 # known gap rather than a forgotten one; check these by hand when the
 # underlying data changes.

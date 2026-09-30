@@ -38,6 +38,18 @@ when asked, and show the draft before inserting it.
 Scope is locked (see `docs/initialscript.md`). Flag scope additions rather than
 building them.
 
+## Code comments
+
+Neutral voice: no "I", "we" or "you"; short statements of what and why,
+readable by an outsider but useful to whoever changes the code next. Keep
+every measured value and its "re-measure if X changes" warning. How
+something was found or verified gets one line at most; the full story
+belongs in `docs/DECISIONS.md`. `components.py` is the reference example.
+
+**No em dashes in any comment or docstring**, including CSS/JS comments
+inside strings. Hard rule, enforced by `python scripts/check_no_em_dashes.py`.
+Visible text on the site is exempt (the map's layer names use them).
+
 ## Commands
 
 Venv is `.venv` on Python 3.12 (system Python is 3.14, too new for the geo

@@ -1,4 +1,4 @@
-"""Step 3 - Geocode addresses: GIS donor join, then Census for the rest.
+"""Step 3: geocode addresses, GIS donor join first, then Census for the rest.
 
 Input:  data/processed/businesses_clean.csv
         data/raw/business_licenses_geocoded.geojson  (GIS geometry donor)
@@ -6,22 +6,22 @@ Output: data/processed/businesses_geocoded.csv
 
 Two sources, in order:
 
-1. GIS donor join. `business_licenses_geocoded.geojson` is the same
+1. GIS donor join. `business_licenses_geocoded.geojson` holds the same
    businesses, pre-geocoded by the City (EPSG:2926, WA State Plane feet).
-   Left-join its coordinates onto the clean set by City Account Number -
-   authoritative City geocoding, no API call, covers ~90% of rows.
-2. Census bulk geocoder, for whatever the donor join didn't match. Free, no
-   API key, CSV in and CSV out, 10,000 rows per request, so this batches.
-   Required input format is positional and headerless:
+   Its coordinates are left-joined onto the clean set by City Account
+   Number: authoritative City geocoding, no API call, ~90% of rows.
+2. Census bulk geocoder, for rows the donor join didn't match. Free, no
+   API key, CSV in and CSV out, 10,000 rows per request, so rows go in
+   batches. Required input format is positional and headerless:
 
        unique_id, street, city, state, zip
 
    Batches are cached to data/raw/geocode_cache/. Re-running skips completed
-   batches, so a timeout partway through costs you one batch, not the run.
+   batches, so a timeout partway through costs one batch, not the run.
 
-The donor layer is NOT the canonical business-license source - see
-CLAUDE.md and docs/DECISIONS.md. It contributes geometry only, for rows the clean
-CSV already decided to keep.
+The donor layer is NOT the canonical business-license source; the CSV is
+(see CLAUDE.md and docs/DECISIONS.md). The layer contributes geometry only,
+for rows the clean CSV already kept.
 
 Run:  python src/step3_geocode.py
 """
@@ -44,7 +44,7 @@ from config import (  # noqa: E402
 )
 
 DONOR_GEOJSON = DATA_RAW / "business_licenses_geocoded.geojson"
-DONOR_CRS = "EPSG:2926"  # WA State Plane North, feet - not declared in the file itself
+DONOR_CRS = "EPSG:2926"  # WA State Plane North, feet; not declared in the file itself
 
 GEOCODER_URL = "https://geocoding.geo.census.gov/geocoder/locations/addressbatch"
 BATCH_SIZE = 5000       # under the 10k ceiling; smaller batches fail less often
@@ -57,12 +57,12 @@ RESULT_COLUMNS = [
 
 
 def load_donor_lookup() -> pd.DataFrame:
-    """account_number -> latitude, longitude from the GIS geometry donor.
+    """Map account_number to latitude/longitude from the GIS geometry donor.
 
-    Reprojects EPSG:2926 (feet) to CRS_GEOGRAPHIC directly - a real
-    coordinate transform, not the degree-buffering mistake the CRS
-    invariant warns about. A handful of account numbers repeat with
-    identical coordinates in the source file; kept first, dropped rest.
+    Reprojects EPSG:2926 (feet) to CRS_GEOGRAPHIC directly. That is a real
+    coordinate transform, not the degree-buffering the CRS rule forbids.
+    A few account numbers repeat with identical coordinates in the source
+    file; the first of each is kept.
     """
     if not DONOR_GEOJSON.exists():
         print(f"No GIS donor file at {DONOR_GEOJSON} - skipping, Census will "
@@ -112,7 +112,10 @@ def geocode_batch(batch: pd.DataFrame, batch_num: int) -> pd.DataFrame:
 
 
 def in_king_county(df: pd.DataFrame) -> pd.DataFrame:
-    """Sanity bounds. Catches swapped lat/lon and wild mismatches."""
+    """Drop points outside the King County bounding box.
+
+    Catches swapped lat/lon and wild mismatches.
+    """
     b = KING_COUNTY_BBOX
     before = len(df)
     df = df[
@@ -158,7 +161,7 @@ def main():
     if results:
         geo = pd.concat(results, ignore_index=True)
 
-        # The geocoder returns "lon,lat" in one field. Note the order.
+        # The geocoder returns "lon,lat" in one field: longitude first.
         census_matched = geo[geo["match_status"] == "Match"].copy()
         coords = census_matched["coordinates"].str.split(",", expand=True)
         census_matched["longitude"] = pd.to_numeric(coords[0], errors="coerce")

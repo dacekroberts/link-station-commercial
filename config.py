@@ -52,18 +52,15 @@ RING_LABELS = ["0-0.1 mi", "0.1-0.2 mi", "0.2-0.3 mi", "0.3-0.6 mi"]
 # 1 Line stations inside Seattle city limits, ordered north to south.
 # Stations north of Northgate (Shoreline, Mountlake Terrace, Lynnwood) and
 # south of Rainier Beach (Tukwila, SeaTac, Angle Lake, Federal Way) are
-# excluded: a cross-station comparison outside Seattle would need each city's
-# own business license data, which is out of scope. (The Seattle export does
-# list some non-Seattle addresses - those are filtered in step 2 - but it is
-# not a source for other cities' business populations.)
+# excluded: comparing them would need each city's own business license
+# data, which is out of scope. (The Seattle export lists some non-Seattle
+# addresses; step 2 filters them out. It is not a source for other cities.)
 #
-# Verified against stops.txt in the GTFS feed (Session 2, 2026-09-13,
-# feed dated 2026-08-28): all 16 names below matched exactly, zero warnings.
-# NE 130th St / Pinehurst was slated to open in 2026 but is NOT in this feed -
-# confirmed absent, not included. Re-verify if the GTFS feed is re-downloaded
-# later; if it has opened by then, add it between Northgate and Roosevelt and
-# note the partial-year caveat. Sound Transit has renamed stations before
-# (University Street became Symphony) - re-verify names too on any re-run.
+# All 16 names match stops.txt exactly in the GTFS feed dated 2026-08-28.
+# NE 130th St / Pinehurst (slated for 2026) is not in that feed. Re-verify
+# on any new download: if it has opened, add it between Northgate and
+# Roosevelt with a partial-year caveat. Sound Transit renames stations
+# (University Street became Symphony), so re-check the names too.
 SEATTLE_1LINE_STATIONS = [
     "Northgate",
     "Roosevelt",
@@ -97,9 +94,8 @@ DOWNTOWN_CLUSTER = [
 # NAICS prefixes kept as storefront commercial. Prefix match on the code
 # as a string, so "44" catches 441, 4411, 44111, and so on.
 #
-# Widening this changes your results materially - it is one of the most
-# consequential analyst choices in the project. Whatever you settle on,
-# record it in the methodology page.
+# One of the most consequential analyst choices in the project: widening
+# it changes results materially. Record any change on the methodology page.
 NAICS_STOREFRONT_PREFIXES = [
     "44",   # Retail trade
     "45",   # Retail trade (continued)
@@ -112,11 +108,10 @@ NAICS_STOREFRONT_PREFIXES = [
 #   "721"  Accommodation
 #   "621"  Ambulatory health care (clinics, dentists)
 
-# Individual 6-digit NAICS codes excluded from the prefix list above, even
-# though their prefix matches. Each entry carries its reasoning so step 2's
-# filter and pages/3_Methodology_&_Limitations.py's "What was filtered out" section render
-# from the same source instead of drifting apart. Add to this dict rather
-# than writing prose only on the methodology page.
+# 6-digit NAICS codes excluded even though their prefix matches. Each entry
+# carries its reasoning, so step 2's filter and the methodology page's
+# "What was filtered out" section render from one source and can't drift.
+# Add exclusions here, not as prose on the methodology page alone.
 NAICS_STOREFRONT_EXCLUDE = {
     "812930": (
         "Parking Lots and Garages",
@@ -154,11 +149,11 @@ NAICS_STOREFRONT_EXCLUDE = {
     ),
 }
 
-# Catch-all NAICS codes reviewed for the same reason as the exclusions above
-# (their prefix match sweeps in a large, undifferentiated bucket) but kept
-# after a hand sample showed a different profile. Recorded here, rendered
-# juxtaposed with NAICS_STOREFRONT_EXCLUDE on the methodology page, so
-# "checked and fine" is as visible a decision as "checked and dropped."
+# Catch-all NAICS codes reviewed like the exclusions above (the prefix
+# match sweeps in a large, undifferentiated bucket) but kept after a hand
+# sample showed a different profile. Rendered beside NAICS_STOREFRONT_EXCLUDE
+# on the methodology page, so "checked and fine" is as visible a decision
+# as "checked and dropped."
 NAICS_STOREFRONT_REVIEWED_KEPT = {
     "459999": (
         "All Other Miscellaneous Retailers",
@@ -176,23 +171,19 @@ NAICS_STOREFRONT_REVIEWED_KEPT = {
     ),
 }
 
-# Chain-analysis-only exclusions (post-Session-7, 2026-09-15). These are
-# real, correctly-geocoded, correctly-counted businesses - nothing wrong
-# with the filtering or computation that produced them. They still count
-# fully toward density, gradient, and ridership analyses (step4_rings.py's
-# ring_stats/station_stats). Excluded only from the brand/chain grouping,
-# because each is a corporate food-service CONTRACTOR - one vendor
-# operating internal cafeterias wherever its client company already has
-# office buildings, not an independent chain making its own repeated,
-# deliberate bet on transit adjacency the way a Subway or a Caffe Ladro
-# does. Identified via NAICS 722310 (Food Service Contractors)
-# co-occurrence - but not by filtering that NAICS code directly: it alone
-# only tags 1 of Compass One's 24 records (the other 23 are 722514,
-# "Cafeterias, Grill Buffets, and Buffets"), and 722514 alone would also
-# wrongly catch ~30 genuine independent small cafes (Boon Boona Coffee,
-# Turtle Coffee, Tea Addicts, and others) that share that code. NAICS
-# 722310 is disclosed on the methodology page as the identifying signal;
-# these three specific brand names are the actual filter.
+# Excluded from the brand/chain grouping only. These are real, correctly
+# geocoded and counted businesses, and they still count fully toward the
+# density, gradient, and ridership analyses (step4_rings.py's
+# ring_stats/station_stats). Each is a corporate food-service CONTRACTOR:
+# one vendor running cafeterias in its client's office buildings, not an
+# independent chain repeatedly choosing transit-adjacent sites.
+#
+# The filter is these three brand names, not a NAICS code. NAICS 722310
+# (Food Service Contractors) identified them and is disclosed on the
+# methodology page, but it tags only 1 of Compass One's 24 records (the
+# other 23 are 722514, "Cafeterias, Grill Buffets, and Buffets"), and 722514
+# would also catch ~30 genuine independent cafes (Boon Boona Coffee, Turtle
+# Coffee, Tea Addicts, and others).
 CHAIN_ANALYSIS_EXCLUDE_BRANDS = {
     "COMPASS ONE": (
         "Compass One LLC",
@@ -225,12 +216,11 @@ KING_COUNTY_BBOX = {
     "lon_max": -121.05,
 }
 
-# --- Geocoding results (Session 4, 2026-09-13) --------------------------
-# Recorded here rather than computed at app runtime: the app only reads
-# outputs/, and data/processed/businesses_geocoded.csv (where these come
-# from) is local-only, regenerable, gitignored. Re-run step3_geocode.py and
-# update these by hand if the source data changes. Full detail in
-# docs/DECISIONS.md.
+# --- Geocoding results (2026-09-13) ------------------------------------
+# Recorded by hand, not computed at runtime: the app reads only outputs/,
+# and the source (data/processed/businesses_geocoded.csv) is local-only and
+# gitignored. Re-run step3_geocode.py and update these by hand if the source
+# data changes. Full detail in docs/DECISIONS.md.
 GEOCODE_DONOR_MATCHED = 10345
 GEOCODE_CENSUS_MATCHED = 1064
 GEOCODE_TOTAL = 11466
@@ -243,13 +233,12 @@ GEOCODE_FAILED_RATE = GEOCODE_TOTAL_FAILED / GEOCODE_TOTAL
 
 # --- Provenance --------------------------------------------------------
 
-# These strings are printed on the methodology page. Keep them accurate;
-# the temporal gap between them is a documented limitation.
+# Printed on the methodology page. Keep them accurate; the temporal gap
+# between them is a documented limitation.
 #
-# Revised in Session 5: rather than one month, all twelve months of 2025 were
-# captured by hand (screenshots -> Google Doc -> transcribed), and
+# Ridership covers all twelve months of 2025, transcribed by hand:
 # avg_monthly_boardings in ridership_by_station.csv is the average of each
-# station's twelve monthly totals - not a single-month snapshot. See
+# station's twelve monthly totals, not a single-month snapshot. See
 # data/raw/README.md and docs/DECISIONS.md.
 RIDERSHIP_SNAPSHOT = "Jan-Dec 2025 (average of monthly totals)"
 RIDERSHIP_SOURCE = "Sound Transit System Performance Tracker"

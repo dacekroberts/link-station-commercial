@@ -1,10 +1,8 @@
 """Methodology and limitations.
 
-Grouped by which claim each limitation constrains, rather than as a flat
-list. The three that matter most are access mode, the temporal gap, and
-station siting - if you trim, trim elsewhere.
-
-Placeholders in [brackets] need your actual numbers before this is done.
+Limitations are grouped by the claim each one constrains, not listed flat.
+The three that matter most are access mode, the temporal gap, and station
+siting; when trimming, trim elsewhere.
 """
 
 import streamlit as st
@@ -124,10 +122,11 @@ exported by hand from the published Power BI dashboard.
 # Sound Transit's terms carry a flow-down obligation: "If you provide the
 # Data to others, you agree to include provisions substantially similar to
 # these Terms in the term of use that apply to your provision of Data to
-# others." This project republishes GTFS-derived geometry (station points and
-# the rail alignment) in outputs/ and the map, so that clause applies. The
-# "those terms come with them" sentence below is what discharges it. See
-# docs/data_sources.md for every source's stated terms, read 2026-09-20.
+# others." The project republishes GTFS-derived geometry (station points and
+# the rail alignment) in outputs/ and the map, so the clause applies; the
+# "those terms come with them" sentence below discharges it. Keep that
+# sentence. Every source's stated terms (read 2026-09-20) are in
+# docs/data_sources.md.
 st.markdown("**Attribution and terms**")
 
 st.markdown(

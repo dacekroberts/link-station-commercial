@@ -39,13 +39,9 @@ st.caption("By Dace Roberts")
 
 st.subheader("Overview")
 
-# A quick, skimmable orientation for a visitor who hasn't yet hit the
-# denser prose below - three short lists rather than paragraphs, since
-# the goal here is a window into the project, not the full argument.
-# st.container(key=...) gives this specific columns row its own
-# "st-key-overview_columns" class so the injected divider CSS can target
-# just these three columns, not the unrelated st.columns() row (the
-# metrics) further down this same page.
+# Skimmable orientation before the denser prose: three short lists, not
+# paragraphs. The container key adds an "st-key-overview_columns" class so
+# the divider CSS targets only these columns, not the metrics row below.
 with st.container(key="overview_columns"):
     st.markdown(
         """
@@ -131,15 +127,12 @@ at a future time.
 
 if STATION_STATS_CSV.exists():
     stats = pd.read_csv(STATION_STATS_CSV)
-    # Uneven ratio, not st.columns(3) - the middle metric's label ("Businesses
-    # within concentric ring area of Link stations") is long enough that an
-    # equal-thirds column still clipped it with an ellipsis even at this
-    # project's standard 1280px test width, confirmed by screenshot.
-    # "Data Retrieved on" is scoped to just the last column, not every
-    # metric on the page - measured via canvas.measureText against the
-    # column's own available width (206.8px): 36px needs 212px for a date
-    # like "2026-09-06" (overflows, confirmed by screenshot), 30px only
-    # needs 177px, comfortably clear.
+    # [1, 2, 1], not st.columns(3): the middle metric's label clips with an
+    # ellipsis in equal thirds at the 1280px test width.
+    # The 30px font applies to the last column ("Data Retrieved on") only.
+    # That column is 206.8px wide; a date like "2026-09-06" needs 212px at
+    # 36px and 177px at 30px. Re-measure if a label, the date format, or the
+    # base font changes.
     st.markdown(
         """
         <style>
@@ -155,22 +148,17 @@ if STATION_STATS_CSV.exists():
         coverage = pd.read_csv(CITYWIDE_COVERAGE_CSV).iloc[0]
         in_rings = int(coverage["businesses_in_rings"])
         citywide = int(coverage["businesses_citywide"])
-        # Whole number as the headline value; fraction and percentage as a
-        # caption underneath rather than packed into the metric value
-        # itself - "4,120 / 11,409 (36.1%)" overflowed this column's width
-        # at the metric widget's fixed font size, visually truncating with
-        # an ellipsis (caught by screenshot, not by reading the DOM text -
-        # the full string was present in the DOM; the overflow was a
-        # rendering-only effect that a text-content check alone missed).
+        # Whole number as the metric value; fraction and percentage go in a
+        # caption. "4,120 / 11,409 (36.1%)" as the value overflowed the
+        # column and truncated with an ellipsis. The full string stays in
+        # the DOM, so check this visually, not with a text-content check.
         mid.metric("Businesses within concentric ring area of Link stations", f"{in_rings:,}")
         mid.caption(f"of {citywide:,} citywide ({in_rings / citywide:.1%})")
     else:
         mid.metric("Businesses within concentric ring area of Link stations", "N/A")
     right.metric("Data Retrieved on", LICENSE_SNAPSHOT)
-    # Self-contained rather than "the two dates" - no metric above actually
-    # shows a ridership figure (only the business-license date does), so a
-    # caption that assumed a nearby ridership number to compare against had
-    # nothing to point at. States both dates directly instead.
+    # States both dates outright: no metric above shows a ridership figure,
+    # so a caption referring to "the two dates" would have nothing to point at.
     st.caption(
         f"Business data was retrieved {LICENSE_SNAPSHOT}. Ridership figures "
         f"reflect {RIDERSHIP_SNAPSHOT}."

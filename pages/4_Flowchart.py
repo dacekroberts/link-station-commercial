@@ -1,9 +1,9 @@
-"""Flowchart page - how the pipeline actually got built.
+"""Flowchart page: how the pipeline was actually built.
 
-Renders via Mermaid loaded from a CDN inside an iframe, not a new pip
-dependency - keeps requirements.txt lean (see CLAUDE.md). Diagram content is
-drawn from docs/DECISIONS.md, the local build-context notes, and the
-src/step*.py scripts, not hardcoded from memory.
+Mermaid loads from a CDN inside an iframe rather than as a pip dependency,
+keeping requirements.txt lean (see CLAUDE.md). Diagram content is drawn
+from docs/DECISIONS.md, the local build-context notes, and the src/step*.py
+scripts.
 """
 
 import base64
@@ -42,11 +42,10 @@ visual more decisions and workflow items went into this project.
 """
 )
 
-# Mermaid loaded from a CDN inside an iframe, not st.graphviz_chart - keeps
-# requirements.txt at streamlit/pandas/altair rather than adding a new pip
-# dependency for one diagram. Fixed pixel height, same workaround as the
-# heatmap embed (percentage-sized iframes have already caused one real
-# rendering bug in this project - see step5_map.py's Leaflet.heat fix).
+# Mermaid from a CDN, not st.graphviz_chart, so requirements.txt stays at
+# streamlit/pandas/altair. Fixed pixel height, as in the heatmap embed:
+# percentage-sized iframes caused a rendering bug before (see step5_map.py's
+# Leaflet.heat fix).
 _MERMAID_SOURCE = """
 flowchart TD
     subgraph INPUTS["Manual data collection"]
@@ -112,9 +111,8 @@ _FLOWCHART_HTML = f"""
   </div>
 </div>
 <script>
-  // "base" theme with warm-charcoal variables (matching .streamlit/config.toml),
-  // not Mermaid's built-in "dark", which is a cool gray-blue that clashes with
-  // the site's warm background.
+  // "base" theme with warm-charcoal variables matching .streamlit/config.toml.
+  // Mermaid's built-in "dark" is a cool gray-blue that clashes with the site.
   mermaid.initialize({{ startOnLoad: true, theme: "base", securityLevel: "loose",
     themeVariables: {{
       background: "#171412",
@@ -131,12 +129,10 @@ _FLOWCHART_HTML = f"""
     }},
     flowchart: {{ useMaxWidth: false, htmlLabels: true }} }});
 
-  // Mermaid renders the SVG async after startOnLoad, so poll for it rather
-  // than hooking a callback - v10's promise-based mermaid.run() API isn't
-  // used here since startOnLoad already triggers its own render pass.
-  // Scaling the SVG's own width/height attributes (not a CSS transform)
-  // shrinks the box it occupies in the page too, so there's no leftover
-  // blank space below the diagram at the smaller size.
+  // startOnLoad renders the SVG asynchronously, so poll for it. v10's
+  // mermaid.run() isn't used: startOnLoad already runs the render.
+  // Scaling the SVG's width/height attributes, not a CSS transform, shrinks
+  // its layout box too, so no blank space is left below the diagram.
   const _scaleInterval = setInterval(() => {{
     const svg = document.querySelector(".mermaid svg");
     if (!svg) return;
@@ -151,25 +147,19 @@ _FLOWCHART_HTML = f"""
 </html>
 """
 
-# st.iframe, not the deprecated st.components.v1.html (removal was
-# announced for 2026-06-01). st.iframe takes a src rather than an HTML
-# string, so this document goes in as a base64 data: URL - it is generated
-# here in Python, not saved anywhere on disk. st.html would take the string
-# directly but renders it INLINE rather than in an iframe: tested, and this
-# document's `html, body { background: ... }` rule and Mermaid's own
-# injected styles then leak out into the Streamlit page itself. The iframe
-# keeps them contained, and Mermaid still loads from its CDN inside it.
+# st.iframe, not the deprecated st.components.v1.html (removal announced
+# for 2026-06-01). st.iframe takes a src, so the HTML built here goes in as
+# a base64 data: URL; nothing is written to disk. Not st.html: it renders
+# inline, and this document's `html, body { background: ... }` rule and
+# Mermaid's injected styles leak into the Streamlit page. The iframe
+# contains them.
 #
-# Scale (0.6) and height (925) chosen together, live-tested in the
-# rendered DOM: at 0.6 the SVG is 886.8px tall, plus 24px of .wrap padding
-# and 2px of border, so the document measures 913px. 925 clears that with
-# a margin and no scrollbar appears. The measurement holds at any viewport
-# width - the SVG is a flex item, so it shrinks rather than overflowing,
-# and the document height doesn't change with the iframe's width.
-# Re-measure after any edit to the diagram: adding a line to a node grows
-# the SVG and silently reintroduces the scrollbar (905 was correct until
-# the PAGES node went to three lines; before that, 940 at the old 0.75
-# scale).
+# Scale (0.6) and height (925) are set together. At 0.6 the SVG is 886.8px
+# tall, plus 24px .wrap padding and 2px border: 913px. 925 leaves a margin
+# with no scrollbar. Holds at any viewport width (the SVG is a flex item and
+# shrinks; the document height doesn't change). Re-measure after any edit
+# to the diagram's text: an extra line in a node grows the SVG and silently
+# brings the scrollbar back.
 _FLOWCHART_DATA_URL = "data:text/html;base64," + base64.b64encode(
     _FLOWCHART_HTML.encode("utf-8")
 ).decode("ascii")

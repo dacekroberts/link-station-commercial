@@ -4,13 +4,12 @@ Input:  data/processed/stations.csv
         data/processed/businesses_geocoded.csv
 Output: outputs/heatmap.html
 
-The saved file is self-contained: openable in any browser, embeddable in
-Streamlit, droppable in a portfolio. It is the project's visual anchor.
+The saved file is self-contained: it opens in any browser and embeds in
+Streamlit. It is the project's visual anchor.
 
-A note on what the heatmap shows. Leaflet's heat layer applies a visual
-blur, not a statistical density estimate - the radius is a rendering choice,
-not a bandwidth. Treat it as illustration. The ring statistics from step 4
-are what carry your quantitative claims.
+The heat layer is a Leaflet visual blur, not a statistical density estimate:
+its radius is a rendering choice, not a bandwidth. The map is illustration;
+the ring statistics from step 4 carry the quantitative claims.
 
 Run:  python src/step5_map.py
 """
@@ -44,73 +43,64 @@ from config import (  # noqa: E402
 SEATTLE_CENTER = [47.6062, -122.3321]
 
 GTFS_ZIP = DATA_RAW / "gtfs.zip"
-# route_id 100479 is the real 1 Line (exact match on route_short_name - see
-# step1_stations.py for why substring matching pulled in the shuttle
-# bus-bridge route instead). N23:S07 is that route's most-used shape
-# (2,815 of 5,404 trips, Session 7 check) - one full-line direction, not a
-# short-turn variant. The two directions are near-mirror images, so either
-# would do; this one was simply more common.
+# route_id 100479 is the 1 Line (exact route_short_name match; see
+# step1_stations.py for why substring matching picks up a shuttle
+# bus-bridge route). N23:S07 is its most-used shape (2,815 of 5,404 trips):
+# one full-line direction, not a short-turn variant. The two directions are
+# near-mirror images, so either would do.
 RAIL_LINE_SHAPE_ID = "N23:S07"
 
-# Heat layer tuning (Session 7). Leaflet.heat pixel-space params, not a
-# statistical bandwidth - chosen by eye across a few candidates for legibility
-# at the default city-wide zoom, where radius=12/blur=18 read as one
-# undifferentiated wash. Tighter values keep individual neighbourhood
-# clusters distinguishable there, at no real cost once zoomed into downtown.
+# Heat layer tuning: Leaflet.heat pixel-space params, not a statistical
+# bandwidth. Chosen by eye for legibility at the default city-wide zoom,
+# where radius=12/blur=18 read as one undifferentiated wash. These tighter
+# values keep neighborhood clusters distinct there and still work zoomed
+# into downtown.
 HEAT_RADIUS = 8
 HEAT_BLUR = 10
 HEAT_MIN_OPACITY = 0.35
 
-# Shown in place of a pin's name where that name is the registrant's own
-# identity rather than a trade name they chose. Says why, so it reads as a
-# deliberate omission rather than missing data; rendered in italics by the
-# tooltip callback for the same reason. See the withholding block in main().
+# Replaces a pin's name where that name is the registrant's own identity
+# rather than a chosen trade name. It states the reason so it reads as a
+# deliberate omission, not missing data; the tooltip renders it in italics
+# for the same reason. See the withholding block in main().
 WITHHELD_NAME = "Name withheld (sole proprietor)"
 
-# Leaflet.heat's own default gradient runs blue -> cyan -> lime -> yellow ->
-# red - most of the visible area at typical densities reads as blue/cyan,
-# which several readers found counterintuitive for a "heat" map (blue reads
-# as cold, not low-but-nonzero). Replaced with a single-hue ramp - pale at
-# low density through deep at peak - so it reads as one color getting
-# stronger, not a color-name change partway up the scale. Originally
-# ColorBrewer Reds; now an orange ramp based on Schematic 1 and the Findings
-# page ring bars, shifted one step more saturated at the low end (the
-# palest peach was nearly invisible on the light OSM tiles, since
-# Leaflet.heat opacity follows density) plus a deeper #8F3A05 peak.
+# Single-hue orange ramp, pale at low density to deep at peak, so the scale
+# reads as one color getting stronger. Leaflet.heat's default blue-to-red
+# ramp shows most typical densities as blue/cyan, which reads as cold rather
+# than low-but-nonzero. Based on Schematic 1 and the Findings page ring
+# bars, one step more saturated at the low end (the palest peach was nearly
+# invisible on light OSM tiles, since Leaflet.heat opacity follows density)
+# plus a deeper #8F3A05 peak.
 HEAT_GRADIENT = {0.3: "#FBB878", 0.5: "#F97316", 0.7: "#DE6412", 0.85: "#C0570F", 1.0: "#8F3A05"}
 
-# Same three groups NAICS_STOREFRONT_PREFIXES already defines in config.py
-# (retail, food service, personal services) - every kept business falls into
-# exactly one, so no top-level "Other" bucket is needed. Blue and aqua come
-# from the Cove categorical palette, chosen for mutual distinguishability
-# rather than picked arbitrarily.
+# The three groups config.py's NAICS_STOREFRONT_PREFIXES defines (retail,
+# food service, personal services). Every kept business falls into exactly
+# one, so no "Other" group is needed. Blue and aqua come from the Cove
+# categorical palette, chosen for mutual distinguishability.
 #
-# Food service was that palette's orange (#eb6834) until the heat layer
-# itself became orange - at 6 degrees of hue from the heat ramp, its pins
-# and clusters sank into the densest areas, which are exactly where food
-# service matters most. Magenta sits 47 degrees off the ramp while staying
-# 123 from the retail blue and 177 from the personal-services aqua, so it
-# separates from the heat without crowding either sibling category. A
-# violet was compared and rejected: better against the heat, but only 43
-# degrees from the retail blue, and the two read alike at cluster size.
-# Chosen over plum by eye, on a side-by-side render of the same view.
+# Food service is magenta, not that palette's orange (#eb6834): 6 degrees of
+# hue from the orange heat ramp, the orange pins sank into the densest
+# areas, where food service matters most. Magenta sits 47 degrees off the
+# ramp, 123 from the retail blue and 177 from the personal-services aqua.
+# Violet separated better from the heat but sat only 43 degrees from the
+# retail blue, and the two read alike at cluster size. Plum also lost to
+# magenta by eye.
 #
-# name / prefixes / color. Labels spell out "NAICS Code:" rather than just
-# putting the digits in parens - "Retail (44/45)" sat right next to a
-# business COUNT in parens too (e.g. "(5,221)") in the layer control,
-# and the two different kinds of number were easy to mistake for each other.
+# name / prefixes / color. Labels spell out "NAICS Code:" rather than
+# putting digits in parens, so the code isn't mistaken for the business
+# count in parens (e.g. "(5,221)") beside it in the layer control.
 NAICS_GROUPS = [
     ("Retail", ("44", "45"), "#2a78d6"),
     ("Food service", ("722",), "#C2185B"),
     ("Personal services", ("812",), "#1baf7a"),
 ]
 
-# Finer, toggleable splits within each broad group (Session 7 add-on) - the
-# top few specific NAICS codes by count, plus an "Other" residual for
-# everything else in that group. Same color as the parent group throughout:
-# these layers refine WHICH businesses of a color show, they don't add new
-# colors, so the legend (3 rows, unchanged) still tells the whole story.
-# Real category names and codes pulled from the actual data, not guessed.
+# Finer, toggleable splits within each broad group: the top few specific
+# NAICS codes by count, plus an "Other" residual for the rest of the group.
+# Same color as the parent group: these layers filter which businesses of a
+# color show without adding colors, so the 3-row legend still covers
+# everything. Names and codes come from the actual data.
 NAICS_SUBCATEGORIES = {
     "Retail": [
         ("Clothing & accessories", "458110"),
@@ -162,8 +152,10 @@ def naics_group(code: str):
 
 
 def load_rail_line_shape():
-    """Real 1 Line route geometry from GTFS shapes.txt - the actual rail
-    alignment (curves and all), not a straight line drawn between stations.
+    """Return the 1 Line's route geometry from GTFS shapes.txt.
+
+    This is the actual rail alignment, curves included, not straight lines
+    between stations.
     """
     if not GTFS_ZIP.exists():
         print(f"No GTFS feed at {GTFS_ZIP} - skipping the rail line layer.")
@@ -181,14 +173,13 @@ def load_rail_line_shape():
 
 
 def nearest_station_and_ring(businesses: pd.DataFrame, stations: pd.DataFrame):
-    """For each business: its nearest station (straight-line) and which ring
-    band that distance falls in relative to THAT station specifically.
+    """Return each business's nearest station and its ring band for that station.
 
-    Deliberately separate from step4_rings.py's ring_stats: that analysis
-    assigns a business to every station whose buffer contains it (including
-    downtown overlap, on purpose - see docs/DECISIONS.md). This is a single
-    nearest-station view, built only for the pin tooltip, not a
-    re-derivation of the ring analysis or a replacement for it.
+    Distance is straight-line, in projected meters. Deliberately separate
+    from step4_rings.py's ring_stats, which assigns a business to every
+    station whose buffer contains it (downtown overlap included, on purpose;
+    see docs/DECISIONS.md). This is a single nearest-station view for the
+    pin tooltip, not a re-derivation or replacement of the ring analysis.
     """
     biz_gdf = gpd.GeoDataFrame(
         businesses,
@@ -228,20 +219,15 @@ def main():
     businesses = pd.read_csv(BUSINESSES_GEOCODED_CSV, dtype={"naics": str})
     businesses = businesses.dropna(subset=["latitude", "longitude"])
 
-    # `businesses` (all 11,409, citywide) stays the full set throughout -
-    # kept around so the "all Seattle businesses" heat toggle below has
-    # something to draw from. `businesses_in_rings` is the subset that
-    # actually falls within some station's outer ring (0.6 mi), and is
-    # what the map opens on by default and what every pin layer uses.
-    # Nearest-station distance is used rather than a fresh
-    # union-of-buffers computation: if a business's CLOSEST station is
-    # already farther than the outer ring edge, every other station is
-    # farther still, so "nearest station within 0.6 mi" and "inside at
-    # least one station's buffer" are the same condition. Defaulting to
-    # the ring-only view matters because step4_rings.py's actual
-    # gradient/chain analysis only ever counts ring-bounded businesses -
-    # a map that opened on the unbounded citywide picture would be the
-    # odd one out and overstate how spread out the analysis's universe is.
+    # `businesses` (all 11,409, citywide) stays the full set, the source for
+    # the "all Seattle businesses" heat toggle. `businesses_in_rings` is the
+    # subset within some station's outer ring (0.6 mi): the default view and
+    # the source for every pin layer. Nearest-station distance replaces a
+    # union-of-buffers computation: if the closest station is beyond the
+    # outer ring edge, every other station is too, so the two conditions are
+    # the same. The map opens ring-only because step4_rings.py's gradient and
+    # chain analysis counts only ring-bounded businesses; opening citywide
+    # would overstate how spread out the analysis's universe is.
     businesses["nearest_station"], businesses["ring_band"] = nearest_station_and_ring(
         businesses, stations
     )
@@ -252,13 +238,11 @@ def main():
           f"businesses fall outside every station's ring "
           f"({len(businesses_in_rings):,} remain within a ring).")
 
-    # Persisted for the intro page's "citywide coverage" metric - this count
-    # was previously console-only (see above). Deliberately the deduplicated
-    # nearest-station figure, not step4_rings.py's business-ring MATCH count
-    # (6,847, which double-counts a business once per overlapping station's
-    # buffer): a business is either within walking distance of the network
-    # or it isn't, so a citywide "how much of Seattle's commercial footprint
-    # is within reach of a station" stat should count it once.
+    # Saved for the intro page's "citywide coverage" metric. Deliberately the
+    # deduplicated nearest-station count, not step4_rings.py's business-ring
+    # match count (6,847, which counts a business once per overlapping
+    # station buffer): a business is either within walking distance of the
+    # network or not, so a citywide coverage stat counts it once.
     pd.DataFrame([{
         "businesses_in_rings": len(businesses_in_rings),
         "businesses_citywide": len(businesses),
@@ -267,7 +251,7 @@ def main():
     m = folium.Map(
         location=SEATTLE_CENTER,
         zoom_start=12,
-        tiles=None,  # added explicitly below, so its layer-control name is ours to set
+        tiles=None,  # tiles added below, so their layer names can be set
         width=1000,
         height=650,
     )
@@ -276,13 +260,12 @@ def main():
         name="Light Mode",
         control=False,
     ).add_to(m)
-    # Dark option: the same OSM tiles (no new provider, no API key - see
-    # docs/DECISIONS.md on why CartoDB was ruled out) recoloured in the browser by
-    # a CSS filter on this layer's own tile container (class defined below).
-    # Both base layers are kept out of the layer control (control=False): a
-    # separate button, added near the end of main(), swaps between them, so
-    # the layer control lists only overlays. Overlays (rings, heat, pins) sit
-    # in other panes and are untouched by the filter.
+    # Dark option: the same OSM tiles (no new provider or API key; see
+    # docs/DECISIONS.md on why CartoDB was ruled out), recolored in the
+    # browser by a CSS filter on this layer's tile container (class defined
+    # below). Both base layers are control=False: a separate button near the
+    # end of main() swaps them, so the layer control lists only overlays.
+    # Overlays (rings, heat, pins) sit in other panes, untouched by the filter.
     dark_tiles = folium.TileLayer(
         tiles="OpenStreetMap",
         name="Dark Mode",
@@ -292,10 +275,9 @@ def main():
     ).add_to(m)
 
     # Two heat layers, same tuning, different universe. Within-rings is the
-    # default (matches what the rest of the project actually analyzes - see
-    # docs/DECISIONS.md); all-Seattle is an explicit opt-in for citywide context,
-    # off by default so the map opens on the same scope as the Findings
-    # page rather than the broader, less-meaningful citywide picture.
+    # default, matching what the rest of the project analyzes (see
+    # docs/DECISIONS.md). All-Seattle is an opt-in for citywide context, off
+    # by default so the map opens on the same scope as the Findings page.
     HeatMap(
         businesses_in_rings[["latitude", "longitude"]].values.tolist(),
         radius=HEAT_RADIUS,
@@ -329,10 +311,10 @@ def main():
             ).add_to(layer)
         layer.add_to(m)
 
-    # Ridership (Session 5: 2025 average of monthly totals - see
-    # docs/DECISIONS.md for why that metric, not "average weekday boardings").
-    # Left join, not inner: a station missing from the CSV should still get
-    # a marker, just with no ridership figure, rather than vanish silently.
+    # Ridership is the 2025 average of monthly totals (see docs/DECISIONS.md
+    # for why that metric, not "average weekday boardings"). Left join, not
+    # inner: a station missing from the CSV keeps its marker, without a
+    # ridership figure, rather than vanishing silently.
     if RIDERSHIP_CSV.exists():
         ridership = pd.read_csv(RIDERSHIP_CSV)
         stations = stations.merge(ridership, on="station", how="left")
@@ -344,19 +326,16 @@ def main():
         stations["avg_monthly_boardings"] = None
         print(f"No ridership file at {RIDERSHIP_CSV} - station tooltips will omit it.")
 
-    # control=False - always on, not a togglable layer control entry. Same
-    # treatment as the rail line below: both are baseline map context, not
-    # an optional data layer the reader would want to hide.
+    # control=False: always on, with no layer-control entry. Same as the rail
+    # line below; both are baseline map context, not optional data layers.
     station_layer = folium.FeatureGroup(name="Stations", control=False)
     for _, station in stations.iterrows():
         boardings = station["avg_monthly_boardings"]
-        # Label first, value second - matches the business tooltip's
-        # "NAICS code: 722513" convention, not "722513 NAICS code". Spells
-        # out "average of monthly totals" rather than just "avg. monthly
-        # boardings" - this project deliberately is NOT average WEEKDAY or
-        # average DAILY boardings (see docs/DECISIONS.md, Session 5), and a
-        # label ambiguous between those and this metric is exactly the kind
-        # of mislabeling this project has been careful to avoid elsewhere.
+        # Label first, value second, matching the business tooltip's
+        # "NAICS code: 722513". Spells out "average of monthly totals"
+        # because the metric is deliberately not average weekday or daily
+        # boardings (see docs/DECISIONS.md), and a shorter label would be
+        # ambiguous between them.
         ridership_line = (
             f"Avg. monthly boardings (2025 avg. of monthly totals): {boardings:,.0f}"
             if pd.notna(boardings) else "No ridership data"
@@ -372,21 +351,18 @@ def main():
         ).add_to(station_layer)
     station_layer.add_to(m)
 
-    # --- The rail line itself - important visual context, on by default ---
+    # --- The rail line itself: visual context, on by default ---
     rail_coords = load_rail_line_shape()
     if rail_coords:
         rail_layer = folium.FeatureGroup(name="Link 1 Line route", show=True, control=False)
         folium.PolyLine(
             rail_coords, color="#0a7a3c", weight=5, opacity=0.85,
         ).add_to(rail_layer)
-        # A large, high-contrast label - not a hover tooltip, always visible.
-        # Anchored at Westlake's latitude (the heart of the downtown
-        # corridor) but offset well west of it, out over Elliott Bay/
-        # Myrtle Edwards Park - clear of the dense heat/pin corridor itself
-        # and, checked visually, clear of the layer control too. (Earlier
-        # attempts - a computed station centroid, then Beacon Hill, then
-        # Othello - moved south instead of west and kept landing under the
-        # panel or off in the least interesting part of the map.)
+        # A large, always-visible label, not a hover tooltip. Anchored at
+        # Westlake's latitude (the downtown corridor) but offset west over
+        # Elliott Bay/Myrtle Edwards Park, clear of the dense heat/pin
+        # corridor and of the layer control. Anchors farther south landed
+        # under the control panel.
         label_station = stations.loc[stations["station"] == "Westlake"].iloc[0]
         label_lat = label_station["latitude"]
         label_lon = label_station["longitude"] - 0.045
@@ -405,26 +381,22 @@ def main():
         rail_layer.add_to(m)
 
     # --- Individual business pins, one clustered layer per NAICS group ----
-    # Even after the ring filter above, plain (unclustered) markers would
-    # overlap and be unreadable at any zoom a viewer would actually use, and
-    # a much heavier file. FastMarkerCluster ships a compact coordinate array
-    # and clusters client-side, rather than one full Marker object per
-    # point. The three broad NAICS-group layers are on by default; the finer
-    # subcategory splits stay off - still a detail layer, not what a
-    # first-time viewer should load into.
+    # Even after the ring filter, plain (unclustered) markers would overlap
+    # unreadably at any practical zoom and make a much heavier file.
+    # FastMarkerCluster ships a compact coordinate array and clusters
+    # client-side instead of one full Marker object per point. The three
+    # broad NAICS-group layers are on by default; the finer subcategory
+    # splits stay off as a detail view.
     #
-    # Pins stay ring-only even though the heat layer now offers an
-    # all-Seattle toggle - doubling all 15 pin layers to cover the citywide
-    # set too would double an already-large layer-control menu for a detail
-    # view few viewers will open, for businesses outside this project's
-    # actual analysis scope. The heat toggle above covers the "what does
-    # citywide context look like" need on its own.
+    # Pins stay ring-only even though the heat layer has an all-Seattle
+    # toggle: doubling all 15 pin layers would double an already long layer
+    # control, for businesses outside the analysis scope. The heat toggle
+    # covers citywide context on its own.
     #
-    # nearest_station / ring_band (used below for the hover tooltip) were
-    # already computed above, on the full pre-filter set, to do the ring
-    # filtering itself - see nearest_station_and_ring()'s docstring for why
-    # this is a separate, simpler computation from step4's overlap-aware
-    # ring_stats.
+    # nearest_station / ring_band (used for the hover tooltip) were computed
+    # above on the full pre-filter set, for the ring filter. See
+    # nearest_station_and_ring() for why this is separate from step4's
+    # overlap-aware ring_stats.
     businesses_in_rings["_group"], businesses_in_rings["_color"] = zip(
         *businesses_in_rings["naics"].map(naics_group)
     )
@@ -434,27 +406,26 @@ def main():
               "check NAICS_GROUPS against NAICS_STOREFRONT_PREFIXES in config.py")
 
     # --- Withhold names that are a person's own identity -------------------
-    # A trade name someone chose for their shop is commercial information and
-    # mapping it is the point of this project. A sole proprietor's own name is
-    # not, and this registry publishes one wherever no trade name was filed.
+    # A trade name chosen for a shop is commercial information, and mapping it
+    # is the point of this project. A sole proprietor's own name is not, and
+    # this registry publishes one wherever no trade name was filed.
     #
-    # The test: the published name IS the legal entity name (someone who chose
-    # a trade name has two different strings) AND the entity is a natural
-    # person rather than a company. The second half is load-bearing - without
-    # it, single-member LLCs dominate, because an LLC's legal name is its
-    # brand ("Barking Gorgeous LLC"). It deliberately does not catch someone
-    # who filed an LLC under their own name, which is a commercial identity
-    # they chose to file.
+    # The test: the published name IS the legal entity name (a chosen trade
+    # name gives two different strings) AND the entity is a natural person
+    # rather than a company. The second half is load-bearing: without it,
+    # single-member LLCs dominate, because an LLC's legal name is its brand
+    # ("Barking Gorgeous LLC"). An LLC filed under the owner's own name is
+    # deliberately not caught; that is a commercial identity chosen at filing.
     #
-    # Substituted HERE, where the pin arrays are built, not in the tooltip's
-    # own JavaScript: the pin data is baked into heatmap.html as a literal
-    # array, so hiding a name only at render time would leave it readable in
-    # the page source. It must never enter the file.
+    # Substituted HERE, where the pin arrays are built, not in the tooltip
+    # JavaScript: the pin data is baked into heatmap.html as a literal array,
+    # so hiding a name only at render time would leave it readable in the
+    # page source. It must never enter the file.
     #
-    # This costs a label on roughly three dozen pins whose trade name happens
-    # to equal their legal name ("Hami Salon"), which is the accepted price of
-    # a rule that recomputes itself from the registry on every run rather than
-    # a hand-maintained list that would rot silently against a newer export.
+    # Cost: roughly three dozen pins whose trade name equals their legal name
+    # ("Hami Salon") lose their label. Accepted, because the rule recomputes
+    # from the registry on every run, unlike a hand-maintained list that
+    # would go stale silently against a newer export.
     # See scripts/check_personal_exposure.py and the Methodology page.
     def _entity_key(name):
         if not isinstance(name, str):
@@ -479,16 +450,13 @@ def main():
               "identity (see scripts/check_personal_exposure.py)")
 
     def add_pin_layer(rows, sublabel, group_name, color, bold=False, show=False):
-        """One toggleable, clustered, colored pin layer - the one pattern
-        reused for every business layer below, broad or fine-grained.
+        """Add one toggleable, clustered, colored pin layer to the map.
 
-        bold=True marks a macro (whole-NAICS-group) layer in the layer
-        control, distinguishing it from the finer subcategory splits below
-        it - Leaflet renders a layer control's name as HTML, so a literal
-        <b> tag in the string is enough, no extra styling needed. The three
-        bold macro layers are also the only pin layers on by default
-        (show=True) - the finer subcategory splits stay off, still a detail
-        view few viewers will open."""
+        Used for every business layer, broad or fine-grained. bold=True marks
+        a whole-NAICS-group layer in the layer control, setting it apart from
+        the finer splits; Leaflet renders layer names as HTML, so a literal
+        <b> tag is enough. The three bold group layers are the only pin
+        layers on by default (show=True)."""
         data = [
             [row.latitude, row.longitude, row.business_name, row.naics,
              row.nearest_station, row.ring_band]
@@ -498,11 +466,10 @@ def main():
             return
         callback = f"""
             function (row) {{
-                // business_name comes straight from the City's license
-                // registry as free text - a name containing '&' or '<'
-                // (e.g. "Smith & Sons") would otherwise break this
-                // tooltip's HTML or inject markup. The other fields
-                // below are computed/controlled values, not at risk.
+                // business_name is free text from the City's license
+                // registry; a name containing '&' or '<' ("Smith & Sons")
+                // would otherwise break the tooltip HTML or inject markup.
+                // The other fields are computed values, not at risk.
                 function esc(s) {{
                     return String(s).replace(/&/g, '&amp;')
                         .replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -525,17 +492,13 @@ def main():
                 return marker;
             }}
         """
-        # Leaflet.markercluster's default iconCreateFunction hands every
-        # cluster the same fixed 40x40px icon regardless of how many points
-        # it holds - a 2-point cluster gets exactly as large a hit area as a
-        # 500-point one. At the boundary where a cluster is about to split
-        # into individual markers, that oversized hit area sits on top of
-        # (and blocks hovering) whichever lone dot happens to render right
-        # next to it - caught via screenshot on the Heatmap page. Scaling
-        # icon size (and therefore hit area) down for small clusters fixes
-        # this at the source rather than just tuning cluster radius/zoom
-        # thresholds, which would only make the collision less likely, not
-        # eliminate it.
+        # Leaflet.markercluster's default iconCreateFunction gives every
+        # cluster the same 40x40px icon, so a 2-point cluster has as large a
+        # hit area as a 500-point one. Near the zoom where a cluster splits,
+        # that oversized hit area covers and blocks hovering on an adjacent
+        # lone pin. Scaling icon size (and hit area) with count fixes this at
+        # the source; tuning cluster radius or zoom thresholds would only
+        # make the collision less likely.
         icon_create_function = f"""
             function (cluster) {{
                 var count = cluster.getChildCount();
@@ -553,12 +516,10 @@ def main():
                 }});
             }}
         """
-        # FastMarkerCluster's own `show` param is not reliable for hiding it
-        # at load - wrap it in a FeatureGroup instead, the same mechanism the
-        # ring layers above use, which does respect show=False.
-        # Business COUNT goes in its own parens, separate from any NAICS
-        # code mentioned in the label - two numbers sitting next to each
-        # other in parens was the exact confusion fixed earlier.
+        # FastMarkerCluster's own `show` param doesn't reliably hide it at
+        # load; a FeatureGroup wrapper (as the ring layers use) respects
+        # show=False. The business count gets its own parens, separate from
+        # any NAICS code in the label, so the two numbers aren't confused.
         layer_name = f"Businesses: {group_name} — {sublabel} ({len(data):,})"
         if bold:
             layer_name = f"<b>{layer_name}</b>"
@@ -575,10 +536,9 @@ def main():
         group_rows = businesses_in_rings[businesses_in_rings["_group"] == name]
 
         # The broad group as a whole, toggleable on its own. sublabel is
-        # just the code, not naics_label(name, prefixes) - add_pin_layer
-        # already prefixes group_name, so passing the full "{name} — NAICS
-        # Code: ..." label here doubled the name
-        # ("Retail — Retail — NAICS Code: 44/45"), caught by the user.
+        # just the code, not naics_label(name, prefixes): add_pin_layer
+        # already prefixes group_name, so the full label would repeat the
+        # group name in the layer name.
         add_pin_layer(
             group_rows, f"NAICS Code: {'/'.join(prefixes)}", name, color, bold=True, show=True
         )
@@ -586,10 +546,9 @@ def main():
     for name, prefixes, color in NAICS_GROUPS:
         group_rows = businesses_in_rings[businesses_in_rings["_group"] == name]
 
-        # Finer splits within it (Session 7 add-on, cheap reuse of the same
-        # pattern): a few specific NAICS codes by count, plus "Other" for
-        # the rest of the group. Same color throughout - see
-        # NAICS_SUBCATEGORIES comment above for why.
+        # Finer splits within the group: a few specific NAICS codes by
+        # count, plus "Other" for the rest. Same color throughout; see the
+        # NAICS_SUBCATEGORIES comment for why.
         named_codes = {code for _, code in NAICS_SUBCATEGORIES[name]}
         for sublabel, code in NAICS_SUBCATEGORIES[name]:
             add_pin_layer(group_rows[group_rows["naics"] == code], sublabel, name, color)
@@ -603,22 +562,16 @@ def main():
         ))
     ))
 
-    # Collapsed by default: with 23 toggleable layers now (4 rings + 15
-    # business layers + heat/stations/rail), an always-open panel covered a
-    # large share of the map. Collapsed, it's a small icon until clicked - a
-    # true nested/collapsible-group control (e.g. one "Businesses" dropdown
-    # holding all 15) would need a custom Leaflet control or a third-party
-    # plugin, real new complexity for a polish feature; this uses only
-    # Leaflet's own built-in collapsed state plus a height cap, so the panel
-    # never covers the whole map even fully expanded.
+    # Collapsed by default: with every heat, ring and business layer listed,
+    # an always-open panel covered much of the map. A nested "Businesses" group would need a custom Leaflet control or
+    # a third-party plugin; this uses Leaflet's built-in collapsed state plus
+    # a height cap, so even fully expanded the panel never covers the map.
     #
-    # position="topleft", not Leaflet's topright default: the map has a
-    # fixed 1000px width (needed for the Leaflet.heat init-race fix above),
-    # and Streamlit's content area is often narrower than that once the
-    # sidebar is open - a topright control gets pushed past the visible/
-    # scrollable edge and effectively disappears. topleft sits right under
-    # the zoom control, which Leaflet stacks automatically, and is visible
-    # at any width since it's anchored to the map's origin corner.
+    # position="topleft", not Leaflet's topright default: the map's fixed
+    # 1000px width (a Leaflet.heat init-race workaround) is often wider than
+    # Streamlit's content area with the sidebar open, which pushes a topright
+    # control past the visible edge. topleft stacks under the zoom control
+    # and stays visible at any width, anchored to the map's origin corner.
     folium.LayerControl(collapsed=True, position="topleft").add_to(m)
     m.get_root().html.add_child(folium.Element("""
         <style>
@@ -746,18 +699,16 @@ def main():
         </style>
     """))
     # Light/dark button, top-left under the layer control (Leaflet stacks
-    # topleft controls in the order they are added, and this is added after
-    # LayerControl). Top-left rather than top-right for the same reason as the
-    # layer control: the map is a fixed 1000px wide, so a top-right button can
-    # sit past the visible edge. It swaps the two base layers directly and
-    # puts a `dark-base` class on <body> so the CSS above can restyle the
-    # overlays and controls (body, not the map container, so the legend -
-    # which lives outside the container - is covered too). The map opens on
-    # the visitor's own prefers-color-scheme and follows later OS changes
-    # until they touch the switch themselves; nothing is stored, so a reload
-    # goes back to following the system. A MacroElement rather than a bare
-    # script Element: it renders after the map variable exists (a bare one
-    # lands above it and throws).
+    # topleft controls in the order added, and this follows LayerControl).
+    # Top-left for the same reason as the layer control: at the fixed 1000px
+    # width a top-right button can sit past the visible edge. It swaps the
+    # two base layers and puts a `dark-base` class on <body> so the CSS above
+    # can restyle overlays and controls (body, not the map container, so the
+    # legend outside the container is covered too). The map opens on the
+    # visitor's prefers-color-scheme and follows OS changes until the switch
+    # is used; nothing is stored, so a reload goes back to following the
+    # system. A MacroElement rather than a bare script Element: it renders
+    # after the map variable exists (a bare one lands above it and throws).
     mode_toggle = folium.MacroElement()
     mode_toggle.light_tiles = light_tiles
     mode_toggle.dark_tiles = dark_tiles
@@ -803,13 +754,11 @@ def main():
                             btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
                         }
 
-                        // Start on the visitor's own OS/browser setting rather
-                        // than always light. prefers-color-scheme resolves
-                        // inside this iframe the same as it would top-level.
-                        // Once the visitor works the switch themselves, their
-                        // choice wins and the system is no longer followed
-                        // (until reload) - an OS auto-switch at sunset should
-                        // not silently undo a deliberate click.
+                        // Start on the OS/browser setting rather than always
+                        // light; prefers-color-scheme resolves inside this
+                        // iframe as it would top-level. Once the switch is
+                        // used, that choice wins until reload, so an OS
+                        // auto-switch at sunset can't undo a deliberate click.
                         var mq = window.matchMedia
                             ? window.matchMedia('(prefers-color-scheme: dark)')
                             : null;

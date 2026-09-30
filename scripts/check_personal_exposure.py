@@ -1,12 +1,12 @@
 """Pre-publish check: is the map about to publish people's names at their homes?
 
 The heatmap plots every in-ring business as a pin carrying its `business_name`
-at a geocoded street address. A trade name someone chose for their shop is
-commercial information and mapping it is the point. A sole proprietor's own
-name at their house is not, even though the registry holding it is public: a
+at a geocoded street address. A trade name chosen for a shop is commercial
+information, and mapping it is the point. A sole proprietor's own name at
+their house is not, even though the registry holding it is public: a
 registry entry sits behind a search box, a map pin is a plotted coordinate.
 
-Sections 1-3 print numbers, deliberately not a pass/fail. The judgment is a
+Sections 1-3 print numbers, deliberately not a pass/fail: the judgment is a
 person's. A check that prints a verdict nobody reads is worse than one that
 prints numbers somebody has to think about.
 
@@ -21,7 +21,7 @@ developer gate, not something the deployed app runs. Re-run it after any
 change to row filtering (step 2) or classification, since both change which
 rows reach the map.
 
-The zoning layer is an optional input and is NOT a pipeline dependency - the
+The zoning layer is an optional input and NOT a pipeline dependency: the
 project does not ship it, and nothing in `outputs/` derives from it. Without
 it the check still runs, minus the strongest signal. To fetch it:
 
@@ -103,14 +103,14 @@ def own_identity(row) -> bool:
       person is their name.
     - The entity is a sole proprietorship, i.e. a natural person. Without
       this, single-member LLCs dominate the result, because an LLC's legal
-      name IS its brand - "Barking Gorgeous LLC" and "Blue Sky Bridal" both
+      name IS its brand: "Barking Gorgeous LLC" and "Blue Sky Bridal" both
       match the first condition and neither is anybody's personal name.
 
-    This is the signal that separates the two cases the name regex cannot:
-    a name someone chose to trade under, versus a name the registry is
-    exposing on their behalf. It deliberately does NOT flag a person who
-    registered an LLC under their own name ("Anne McGowan LLC") - that is a
-    commercial identity they chose to file.
+    This separates the two cases the name regex cannot: a name someone
+    chose to trade under, versus a name the registry is exposing on their
+    behalf. It deliberately does NOT flag a person who registered an LLC
+    under their own name ("Anne McGowan LLC"): that is a commercial
+    identity they chose to file.
     """
     published = normalize(row.get("business_name"))
     legal = normalize(row.get("Business Legal Name"))
@@ -122,9 +122,9 @@ def person_like(name) -> bool:
     """Two or three capitalised words, no corporate token, no digits or '&'.
 
     Noisy on purpose-built trade names: "Haute Tip", "Gear By Julian" and
-    "What's Your Mood" all pass. See the floor this produces, printed below -
-    it is around 43% of every pin, in every zone, so this signal is close to
-    worthless on its own and is only meaningful intersected with zoning.
+    "What's Your Mood" all pass. The floor this produces (printed in section
+    2) is around 43% of every pin, in every zone, so this signal is close to
+    worthless alone and only meaningful intersected with zoning.
     """
     if not isinstance(name, str):
         return False
@@ -140,8 +140,8 @@ def published_pins():
     """The businesses the map actually draws: those inside some station ring.
 
     Same nearest-station distance test step5_map.py uses to pick its pin set,
-    not step4's overlap-aware spatial join - this asks "what is on the map",
-    which is the population the privacy question is about.
+    not step4's overlap-aware spatial join: the privacy question is about
+    what is on the map.
     """
     import geopandas as gpd
 
@@ -218,10 +218,10 @@ def check_zoning(pub):
         rate = sub["person"].mean()
         print(f"   {cls:40}{len(sub):>7}{sub['person'].sum():>13}{rate * 100:>8.1f}%")
 
-    # The number that matters is not the count in residential zones - it is
+    # The number that matters is not the count in residential zones but
     # whether the person-like RATE is meaningfully higher there than in
-    # obviously commercial zones. If it is not, the count is just the floor
-    # above, redistributed, and says nothing about people's homes.
+    # obviously commercial zones. If not, the count is just the floor above,
+    # redistributed, and says nothing about people's homes.
     resid = joined[joined["CLASS_DESC"].isin([SINGLE_FAMILY, MULTI_FAMILY])]
     comm = joined[joined["CLASS_DESC"].isin(["Downtown", "Commercial/Mixed Use"])]
     flagged = resid[resid["person"]]
@@ -263,8 +263,8 @@ def map_pins(html_path):
     """Every pin entry baked into the map: [lat, lon, name, naics, ...].
 
     step5 writes each pin layer as a literal `var data = [[...]];` array in
-    the page source. That source is what a visitor downloads, so it is the
-    thing to test - not step 5's intent.
+    the page source. That source is what a visitor downloads, so it is what
+    gets tested, not step 5's intent.
     """
     pins = []
     for block in re.findall(r"var data = (\[\[.*?\]\]);", html_path.read_text(encoding="utf-8")):
@@ -337,9 +337,9 @@ def main():
     flagged = check_zoning(pub)
     withholding_failures = check_withholding(pub)
 
-    # Guard the empty case explicitly: with no zoning layer present and a
-    # clean fallback, both frames are empty and pd.concat([]) raises. That is
-    # the default path on a fresh clone, so it must not look like a crash.
+    # Guard the empty case: with no zoning layer and a clean fallback, both
+    # frames are empty and pd.concat([]) raises. That is the default path on
+    # a fresh clone, so it must not look like a crash.
     parts = [f for f in (fallback_hits, flagged) if f is not None and len(f)]
     if parts:
         out = pd.concat(parts)

@@ -1,8 +1,8 @@
-"""Findings page - the three analyses and the written interpretation of each.
+"""Findings page: the three analyses and the written interpretation of each.
 
-The charts are scaffolding. The prose sections are the part a reviewer
-actually reads; the numbers only set up what they argue. Hand-typed figures
-in the prose are checked by scripts/check_published_numbers.py.
+The prose sections carry the argument; the charts and numbers set it up.
+Hand-typed figures in the prose are checked by
+scripts/check_published_numbers.py.
 """
 
 import altair as alt
@@ -24,29 +24,21 @@ from config import (
     SEATTLE_1LINE_STATIONS,
 )
 
-# The "against the pattern" red: Graph 2's lines and legend, Table 1's
-# station names, and the station write-up headers all share it, so tuning it
-# (e.g. to keep it distinct from the warm theme's orange, see
-# .streamlit/config.toml) is a one-line change.
+# The "against the pattern" red, shared by Graph 2's lines and legend,
+# Table 1's station names, and the station write-up headers, so retuning it
+# (e.g. to stay distinct from the theme's orange in .streamlit/config.toml)
+# is a one-line change.
 AGAINST_RED = "#e45756"
 
-# Static legend/schematic for Graph 1 - explains what "Concentric Ring 1-4"
-# means before the reader hits the bar chart. Pure decoration, no data
-# dependency, so it's a plain constant rather than something built from
-# RING_LABELS - its four ring colors must stay in sync with `ring_colors`
-# below, which colors Graph 1 and Graph 5's bars. Sized as a narrow vertical
-# layout (300x450 viewBox) to
-# sit legibly in the slim right-hand column next to Graph 1, rather than the
-# wide horizontal layout that would suit a full-width placement.
-# One unbroken block, no blank lines: Streamlit's markdown renderer follows
-# CommonMark's rule that a raw-HTML block (an <svg> isn't on the "continue
-# until closing tag" whitelist that <script>/<pre>/<style> get) ends at the
-# first blank line - anything after was silently dropped when this had blank
-# lines between element groups for readability.
-# fill="currentColor" (not a hardcoded hex) on the label text so it inherits
-# the page's actual text color and stays legible in both the light and dark
-# Streamlit themes - the ring/marker fills stay hardcoded since those sit on
-# their own solid color and don't depend on the page theme.
+# Static schematic explaining "Concentric Ring 1-4", shown beside Graphs 1
+# and 5. No data dependency, so it's a plain constant; its four ring colors
+# must stay in sync with `ring_colors` below. The narrow 300x450 viewBox
+# fits the slim right-hand column.
+# Keep it one unbroken string with no blank lines: CommonMark ends a raw
+# <svg> HTML block at the first blank line and silently drops the rest.
+# Label text uses fill="currentColor" so it follows the light or dark
+# theme's text color; ring and marker fills are hardcoded because they sit
+# on their own solid colors.
 RING_SCHEMATIC_SVG = (
     '<svg width="100%" viewBox="0 0 300 450" xmlns="http://www.w3.org/2000/svg" '
     'role="img" aria-label="Schematic of the four concentric rings used in this analysis">'
@@ -107,11 +99,10 @@ if RING_STATS_CSV.exists():
     numbered_ring_labels = [f"Ring {i + 1}: {label}" for i, label in enumerate(RING_LABELS)]
     ring_number_map = dict(zip(RING_LABELS, numbered_ring_labels))
 
-    # Same 4 hex values as Schematic 1's rings (a warm orange ramp, bold
-    # burnt orange at ring 1 to soft peach at ring 4) so the bar colors below
-    # read as the same rings. Stays inside orange and peach on purpose:
-    # no red (Graph 2's against-pattern lines, Table 1's highlight) and no
-    # true yellow (Graph 4's Ridership dots).
+    # Same four colors as Schematic 1's rings (burnt orange at ring 1 to
+    # peach at ring 4). Stays within orange and peach on purpose: red is
+    # taken by the against-pattern highlight, yellow by Graph 4's Ridership
+    # dots.
     ring_colors = ["#C2500A", "#F0801F", "#FBB878", "#FDD0A2"]
 
     chart_col, schematic_col = st.columns([3, 1])
@@ -120,11 +111,9 @@ if RING_STATS_CSV.exists():
         st.markdown("**Graph 1: Average businesses/sq mi per Concentric Ring**")
         gradient_df = gradient.rename("density_per_sq_mi").reset_index()
         gradient_df["ring_label"] = gradient_df["ring"].map(ring_number_map)
-        # Built directly in Altair, not st.bar_chart - st.bar_chart's y_label
-        # and the underlying column name each generate their own tooltip
-        # field, showing the same number twice under two different labels.
-        # Explicit tooltips here match the per-station line chart's exactly:
-        # Ring + Businesses/sq mi, same titles, same .0f rounding.
+        # Altair, not st.bar_chart: st.bar_chart's tooltip shows the same
+        # number twice (once per y_label, once per column name). These
+        # tooltips match Graph 2's titles and .0f rounding.
         bar_chart = (
             alt.Chart(gradient_df)
             .mark_bar()
@@ -154,8 +143,7 @@ if RING_STATS_CSV.exists():
         st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
 
     # Ring-to-ring percent change, computed from the same `gradient` series
-    # the chart above renders - not hardcoded, so it stays accurate if the
-    # underlying data changes.
+    # as Graph 1 rather than hardcoded, so it tracks the data.
     r1, r2, r3, r4 = (gradient[label] for label in RING_LABELS)
     st.caption(
         f"Ring-to-ring change: Ring 1→2 {(r2 - r1) / r1:+.1%}, "
@@ -177,15 +165,11 @@ if RING_STATS_CSV.exists():
         """
     )
 
-    # Per-station view: which stations follow the expected declining
-    # pattern, and which run against it. Classification rule, computed
-    # from the data rather than picked by eye: a station counts as
-    # "standard" if its density never climbs back above its own ring-1
-    # level after the first ring - one minor up-tick along the way still
-    # counts as this pattern (real noise), but a station that re-exceeds
-    # its own ring-1 density, or starts at zero there, counts as against
-    # the pattern. The two groups happen to split the sixteen stations
-    # exactly in half.
+    # Per-station classification, computed from the data rather than picked
+    # by eye. "Standard pattern": density never climbs back above the
+    # station's own ring-1 level (an up-tick between later rings that stays
+    # below ring 1 still counts as standard). "Against the pattern": any later ring exceeds
+    # ring 1, or ring 1 is zero. The split happens to be 8/8.
     station_pivot = (
         rings.pivot(index="station", columns="ring", values="density_per_sq_mi")
         .reindex(columns=RING_LABELS)
@@ -257,15 +241,10 @@ if RING_STATS_CSV.exists():
         )
         .properties(height=504)
     )
-    # Container-width, not a fixed pixel width. This chart used to be pinned
-    # at 900px (a laptop-window choice: wider than the ~810px container-fill
-    # size, but under the 970px ceiling that would drag the whole page into
-    # horizontal scroll). On a phone that fixed width overflowed a ~343px
-    # container with nothing to scroll it, cutting off Rings 2-4 entirely
-    # (measured at a 375px viewport). Filling the container is the fix; the
-    # legend moved above the plot (horizontal) so it no longer overlays the
-    # lines at narrow widths, which also made its old opaque dark fill, a
-    # hardcoded copy of the theme background, unnecessary.
+    # Container width, not a fixed pixel width: a fixed 900px overflowed the
+    # ~343px container at a 375px phone viewport and cut off Rings 2-4. The
+    # legend sits above the plot so it doesn't cover the lines at narrow
+    # widths, which is why it needs no opaque background fill.
     st.altair_chart(per_station_chart, width="stretch")
 
     st.markdown(
@@ -289,33 +268,26 @@ if RING_STATS_CSV.exists():
     )
 
     with st.expander("Table 1: Commercial Density by Concentric Ring"):
-        # Same 8/8 split and color as the line chart above: standard-
-        # pattern stations first, against-the-pattern stations after,
-        # alphabetical within each group; against-the-pattern station
-        # names colored to match their line (AGAINST_RED).
+        # Same 8/8 split and color as Graph 2: standard-pattern stations
+        # first, then against-the-pattern stations with names in AGAINST_RED.
         detail = (
             rings.pivot(index="station", columns="ring", values="density_per_sq_mi")
             .reindex(columns=RING_LABELS)
             .round(0)
         )
-        # North-to-south within each group, not alphabetical - Link 1 Line
-        # runs roughly north-south, so this reads as a trip down the line
-        # rather than an arbitrary A-Z list. SEATTLE_1LINE_STATIONS (config.py)
-        # is already in that order, verified against real station coordinates
-        # in step1_stations.py - not data/processed/stations.csv directly,
-        # which is a gitignored pipeline intermediate that doesn't exist on
-        # Streamlit Cloud (this was a real bug: FileNotFoundError in
-        # production, since the app is only supposed to read outputs/).
+        # North-to-south within each group, so the table reads as a trip down
+        # the 1 Line. SEATTLE_1LINE_STATIONS (config.py) is already in that
+        # order (checked against station coordinates in step1_stations.py).
+        # Don't read data/processed/stations.csv here: it's a gitignored
+        # pipeline intermediate, absent on Streamlit Cloud, and the app only
+        # reads outputs/.
         station_order = list(SEATTLE_1LINE_STATIONS)
         ordered_index = (
             [s for s in station_order if station_group.get(s) == "Standard pattern"]
             + [s for s in station_order if station_group.get(s) == "Against the pattern"]
         )
-        # station moved out of the index into a plain column - Streamlit's
-        # dataframe grid doesn't forward Styler.map_index() color to the
-        # index column (tried it, confirmed via direct DOM inspection: text
-        # stayed default white), but does respect column-cell styling via
-        # Styler.map() on a regular column.
+        # Station is a plain column, not the index: Streamlit's grid ignores
+        # Styler.map_index() colors but honors Styler.map() on a column.
         detail = (
             detail.reindex(ordered_index)
             .reset_index()
@@ -327,11 +299,10 @@ if RING_STATS_CSV.exists():
                 return f"color: {AGAINST_RED}; font-weight: 600;"
             return ""
 
-        # No null cells: step 4 writes an empty ring as a row with 0
-        # businesses rather than omitting it, so Northgate/UW ring 1 and
-        # Rainier Beach ring 3 show "0 businesses/sq mi". (They used to be
-        # missing rows and rendered as "None" - Streamlit's grid ignores
-        # na_rep.)
+        # No null cells: step 4 writes an empty ring as a 0-business row, so
+        # Northgate/UW ring 1 and Rainier Beach ring 3 show "0 businesses/sq
+        # mi". Missing rows would render as "None" (Streamlit's grid ignores
+        # na_rep).
         st.dataframe(
             detail.style
             .map(_highlight_against, subset=["Station Name"])
@@ -340,15 +311,11 @@ if RING_STATS_CSV.exists():
             hide_index=True,
         )
 
-    # Per-station write-up, one collapsible <details> per station/pair.
-    # Not st.expander() - its label is plain text only (no markdown/HTML),
-    # so it can't take the red-for-against-pattern color, underline, or
-    # larger font this section asks for. <details>/<summary> gives native
-    # collapse/expand behavior with full control over header styling
-    # instead. Red is AGAINST_RED, the same color used for against-pattern
-    # station names in Table 1 and the Graph 2 lines and legend (a plain
-    # string with a placeholder, not an f-string, since the CSS braces would
-    # all need doubling).
+    # Per-station write-up, one collapsible <details> per station or pair.
+    # Not st.expander(): its label is plain text, so it can't take the red
+    # color, underline, or larger font. The red is AGAINST_RED, filled in
+    # by placeholder rather than an f-string so the CSS braces don't need
+    # doubling.
     st.markdown(
         """
         <style>
@@ -557,9 +524,9 @@ if STATION_STATS_CSV.exists():
                     "exact numbers."
                 )
 
-            # Single color, no legend - only 2 of 16 stations (UW,
-            # Northgate) are access-mode outliers, not enough to warrant a
-            # color split. Station names still available via tooltip.
+            # Single color, no legend: only 2 of 16 stations (UW, Northgate)
+            # are access-mode outliers, too few for a color split. Station
+            # names are in the tooltip.
             base = alt.Chart(clean)
             points = base.mark_circle(size=110, color="#4c78a8").encode(
                 x=alt.X(f"{col}:Q", title="Average monthly boardings"),
@@ -572,9 +539,8 @@ if STATION_STATS_CSV.exists():
                     ),
                 ],
             )
-            # Visually anchors the r=0.68 correlation reported above - a
-            # least-squares fit through all 16 points, not a claim of
-            # causation.
+            # Least-squares fit through all 16 points to show the r=0.68
+            # correlation; not a claim of causation.
             trend = base.transform_regression(
                 col, "businesses_within_0_3mi"
             ).mark_line(strokeDash=[4, 4], strokeWidth=3, opacity=1).encode(
@@ -588,13 +554,10 @@ if STATION_STATS_CSV.exists():
             )
             st.subheader("Correlation")
             st.markdown(f"**r = {r:.3f}**")
-            # How much does r depend on a single high-leverage point? Not
-            # redundant with the CV/dot-plot material further down (that's
-            # about each variable's own spread; this is about the
-            # correlation's robustness) - Westlake is the single highest
-            # station in both ridership and density at once, so it's the
-            # natural leverage check. Computed here, not hardcoded, so it
-            # stays accurate if the underlying data changes.
+            # Leverage check: how much r depends on Westlake, the highest
+            # station in both ridership and density. This tests the
+            # correlation's robustness; the CV and dot plot below cover each
+            # variable's own spread. Computed rather than hardcoded.
             no_westlake = clean[clean["station"] != "Westlake"]
             r_no_westlake = no_westlake[[col, "businesses_within_0_3mi"]].corr().iloc[0, 1]
             r_spearman = clean[col].rank().corr(clean["businesses_within_0_3mi"].rank())
@@ -657,10 +620,8 @@ if STATION_STATS_CSV.exists():
         ridership_rank = clean[col].rank(ascending=False)
 
         # Symphony and Pioneer Square are the inverse of the UW/Northgate
-        # mismatch discussed in the write-up below: solidly mid-pack on
-        # ridership but 2nd/3rd-highest density of all 16 stations.
-        # Computed from the same ridership-rank basis as the rest of this
-        # section, not hardcoded.
+        # mismatch in the write-up below: mid-pack ridership, 2nd/3rd-highest
+        # density of all 16. Ranks are computed, not hardcoded.
         symphony = clean[clean["station"] == "Symphony"].iloc[0]
         pioneer = clean[clean["station"] == "Pioneer Square"].iloc[0]
         symphony_rank = int(ridership_rank[clean["station"] == "Symphony"].iloc[0])
@@ -722,18 +683,13 @@ if STATION_STATS_CSV.exists():
             """
         )
 
-        # Graph 4: the same "density concentrates more than ridership"
-        # point from the caption above Graph 3, but across the whole
-        # sample rather than just the min/max extremes. Dot plot, not a
-        # strip plot - simulated both first (see docs/DECISIONS.md): a strip
-        # plot's jitter is random and carries no information of its own,
-        # while a dot plot's stack height is a deterministic count a
-        # reader can actually trust. "Businesses" is used as the category
-        # label here, not "Density" - this section's
-        # businesses_within_0_3mi is a raw count, not the gradient
-        # section's businesses-per-square-mile density figure, and reusing
-        # "density" for a different metric would blur two distinct numbers
-        # this project has otherwise been careful to keep separate.
+        # Graph 4: whether businesses concentrate more than ridership, across
+        # all 16 stations rather than just the extremes. Dot plot, not a
+        # strip plot (see docs/DECISIONS.md): strip-plot jitter is random,
+        # while a dot plot's stack height is a real count. The category is
+        # "Businesses", not "Density": businesses_within_0_3mi is a raw
+        # count, not the gradient section's businesses-per-sq-mi density,
+        # and the two numbers are kept separate throughout.
         cv_long = pd.concat([
             clean[["station", "businesses_within_0_3mi"]]
             .rename(columns={"businesses_within_0_3mi": "value"})
@@ -748,13 +704,10 @@ if STATION_STATS_CSV.exists():
         cv_long["bin"] = (cv_long["z"] / 0.28).round() * 0.28
         cv_long = cv_long.sort_values(["metric", "bin", "z"])
         cv_long["stack_order"] = cv_long.groupby(["metric", "bin"]).cumcount()
-        # Pixel offset computed directly, not left to Vega-Lite's own
-        # linear scale - the two rows stack to different depths (whichever
-        # single bin has the most stations sharing it, per row), and each
-        # row needs its own tallest stack's top dot landing exactly on
-        # that row's own label rather than sharing one scale across both.
-        # scale=None on the encoding below passes these through as literal
-        # pixel offsets instead of re-scaling them.
+        # Pixel offsets computed here rather than by a Vega-Lite scale: the
+        # two rows stack to different depths, and each row's tallest stack
+        # must top out exactly on its own label. scale=None on the encoding
+        # below passes these through as literal pixels.
         DOT_SPACING_PX = 14
         row_max_stack = cv_long.groupby("metric")["stack_order"].transform("max")
         cv_long["offset_px"] = (row_max_stack - cv_long["stack_order"]) * DOT_SPACING_PX
@@ -783,11 +736,10 @@ if STATION_STATS_CSV.exists():
                 x=alt.X(
                     "bin:Q",
                     title="Standard deviations from mean",
-                    # Explicit, 0.5-spaced values (Vega will just skip any
-                    # outside the actual data range) - the default 0.2 step
-                    # packed in enough ticks that Vega's own overlap-avoidance
-                    # silently dropped every other label, and "0" (renamed
-                    # "Mean" below) happened to land on a hidden one.
+                    # Explicit 0.5-spaced ticks (Vega skips any outside the
+                    # data range). The default 0.2 step made Vega's overlap
+                    # avoidance drop every other label, including "0"
+                    # (shown as "Mean").
                     axis=alt.Axis(
                         values=[x / 2 for x in range(-8, 9)],
                         labelExpr="datum.value === 0 ? 'Mean' : datum.label",
@@ -809,12 +761,10 @@ if STATION_STATS_CSV.exists():
                     alt.Tooltip("z:Q", title="SD from mean", format="+.2f"),
                 ],
             )
-            # Left padding reserved by hand. Vega autosizes the axis gutter
-            # to 72px, but the "Businesses" label is 61px wide and sits at a
-            # 16px offset from the axis, needing 77 - so its first character
-            # was clipped off the left edge of the SVG ("Ridership", 51px,
-            # cleared it and hid the bug). Measured in the rendered DOM, not
-            # eyeballed; re-check if the category names change.
+            # Left padding set by hand. Vega's axis gutter is 72px, but the
+            # "Businesses" label (61px wide, 16px from the axis) needs 77px,
+            # so without this its first letter clips. Measured in the
+            # rendered DOM; re-check if the category names change.
             .properties(
                 height=320,
                 padding={"left": 12, "top": 5, "right": 5, "bottom": 5},
@@ -822,13 +772,9 @@ if STATION_STATS_CSV.exists():
         )
         st.altair_chart(dot_chart, width="stretch")
 
-        # Quick-glance insight for the chart itself: where's the biggest
-        # single jump in each metric's sorted z-scores, and who sits past
-        # it. Computed from cv_long, not hardcoded - finds the widest gap
-        # between consecutive sorted stations per metric and names whoever
-        # falls on the far side of it, so this stays accurate if the
-        # underlying data changes rather than naming specific stations by
-        # hand.
+        # For each metric, the widest gap between consecutive sorted
+        # z-scores and the stations past it. Computed from cv_long rather
+        # than naming stations by hand, so it tracks the data.
         def _biggest_gap(metric):
             g = cv_long[cv_long["metric"] == metric].sort_values("z").reset_index(drop=True)
             gaps = g["z"].diff()
@@ -895,9 +841,8 @@ if STATION_STATS_CSV.exists():
                 width="stretch",
                 hide_index=True,
             )
-        # Quick-glance insight for the table: the CV ratio itself, spelled
-        # out as a plain multiple rather than requiring the reader to
-        # divide the two CV values themselves.
+        # The CV ratio as a plain multiple, so the reader doesn't have to
+        # divide the two values.
         cv_ratio = cv_table.set_index("Metric").loc["Businesses", "CV"] / (
             cv_table.set_index("Metric").loc["Ridership", "CV"]
         )
@@ -922,10 +867,10 @@ st.header("Chain Analysis")
 
 if CHAIN_STATS_CSV.exists():
     chains = pd.read_csv(CHAIN_STATS_CSV)
-    # "Chain" means 2+ real physical locations - NOT station_count > 1. A
-    # single location inside the downtown buffer overlap (Westlake/Symphony/
-    # Pioneer Square/International District) can touch up to 4 stations on
-    # its own; that's the overlap, not a chain. Verified by hand in Session 6.
+    # "Chain" means 2+ physical locations, NOT station_count > 1. A single
+    # location in the downtown buffer overlap (Westlake/Symphony/Pioneer
+    # Square/International District) can touch up to 4 stations on its own;
+    # that's the overlap, not a chain.
     multi = chains[chains["location_count"] > 1]
 
     left, right = st.columns(2)
@@ -972,8 +917,7 @@ if CHAIN_STATS_CSV.exists():
 
     if CHAIN_RING_STATS_CSV.exists():
         chain_ring = pd.read_csv(CHAIN_RING_STATS_CSV)
-        # Same ring_number_map/numbered_ring_labels built for Graph 1/2
-        # above - reused here for the same "Ring N: <range>" labeling.
+        # Reuses Graph 1's ring_number_map for "Ring N: <range>" labels.
         chain_ring = chain_ring.assign(
             ring_label=lambda d: d["ring"].map(ring_number_map),
             chain_share_pct=lambda d: d["chain_share"] * 100,
@@ -1017,21 +961,16 @@ if CHAIN_STATS_CSV.exists():
         with schematic_col:
             st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
 
-        # Ties this chart's own small ring-3-to-4 reversal (8.3% -> 8.5%) to
-        # the density gradient's already-documented ring-2-to-3 reversal
-        # above (Table 1's "Ring 3 uptick, broken down") - both are outer-
-        # ring upticks in what would otherwise be a clean decline, and both
-        # trace back to stations from that same against-the-pattern group.
-        # Verified against the pipeline's own joined business-ring data (not
-        # the aggregate chain_ring_stats.csv alone, which can't isolate
-        # individual stations): of that group, SODO and Stadium specifically
-        # drive this one - Stadium's ring 4 (0.3-0.6mi) carries 31 chain
-        # matches out of 373 businesses, largely borrowed from International
-        # District/Chinatown per the existing "largely borrowed" finding in
-        # docs/DECISIONS.md; SODO's ring 4 carries 18 of 149, consistent with its
-        # own "real commerce only appearing toward Pioneer Square at the
-        # buffer's edge" finding. Removing just those two stations turns the
-        # aggregate ring-3-to-4 move back into a clean decline (8.7% -> 8.4%).
+        # Ties this chart's ring-3-to-4 reversal (8.3% -> 8.5%) to the
+        # density gradient's ring-2-to-3 reversal: both are outer-ring
+        # upticks traced to against-the-pattern stations. Checked against
+        # the pipeline's joined business-ring data (chain_ring_stats.csv
+        # alone can't isolate stations): SODO and Stadium drive it.
+        # Stadium's ring 4 has 31 chain matches of 373 businesses, largely
+        # borrowed from International District/Chinatown; SODO's has 18 of
+        # 149, consistent with its commerce appearing only toward Pioneer
+        # Square at the buffer's edge (both findings in docs/DECISIONS.md).
+        # Without those two stations the decline is clean (8.7% -> 8.4%).
         st.caption(
             "Chain share's small reversal at the last ring (8.3% to 8.5%) "
             "traces to SODO and Stadium, the same against-the-pattern "

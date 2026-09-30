@@ -1,23 +1,17 @@
-"""Step 1 - Station coordinates from the Sound Transit GTFS feed.
+"""Step 1: station coordinates from the Sound Transit GTFS feed.
 
-Input:  data/raw/gtfs.zip  (download from Sound Transit's Open Transit Data page)
+Input:  data/raw/gtfs.zip (Sound Transit's Open Transit Data page)
 Output: data/processed/stations.csv
 
-GTFS spreads what you need across four tables. Link stations are not
-labeled as such anywhere - you find them by walking the relationships:
+GTFS doesn't label Link stations. They're found by joining four tables:
 
-    routes.txt     find the 1 Line's route_id
-      -> trips.txt      find trip_ids on that route
-      -> stop_times.txt find stop_ids served by those trips
-      -> stops.txt      get the name and lat/lon for those stops
+    routes.txt          the 1 Line's route_id
+      -> trips.txt      the trips on that route
+      -> stop_times.txt the stops those trips serve
+      -> stops.txt      each stop's name and coordinates
 
-The feed also carries buses, Sounder, and the streetcar, so skipping the
-join and grepping stops.txt for likely names will pull in bus stops.
-
-BUDGET NOTE: give this one hour. If routes.txt does not look the way you
-expect, or the join returns nothing sensible, stop and hand-build the CSV
-instead - there are only sixteen stations and the schema is four columns.
-A hand-built file is completely defensible; note it in the methodology.
+Matching names in stops.txt directly would also catch bus stops, since the
+feed covers every mode.
 
 Run:  python src/step1_stations.py
 """
@@ -32,14 +26,14 @@ from config import DATA_RAW, STATIONS_CSV, SEATTLE_1LINE_STATIONS  # noqa: E402
 
 GTFS_ZIP = DATA_RAW / "gtfs.zip"
 
-# Adjust after inspecting routes.txt. Sound Transit's naming has changed
-# over the years, so do not trust this constant without looking.
+# Matched exactly against route_short_name. Sound Transit's route naming
+# has changed over the years; re-check routes.txt when the feed is updated.
 ROUTE_NAME_PATTERN = "1 Line"
 
-# GTFS abbreviates two station names in stop_name. Map them to the canonical
-# names used everywhere else (config.py, the ridership CSV you'll type in
-# Session 5) so the join key is consistent from here on - do not carry GTFS's
-# abbreviations forward.
+# GTFS abbreviates two station names in stop_name. Mapped here to the
+# canonical names used everywhere else (config.py, the ridership CSV):
+# station name is the join key between ridership and stations, so GTFS's
+# abbreviations must not be carried forward.
 GTFS_NAME_ALIASES = {
     "Univ of Washington": "University of Washington",
     "Int'l Dist/Chinatown": "International District/Chinatown",
@@ -63,17 +57,16 @@ def main():
 
     routes = load_gtfs_table(GTFS_ZIP, "routes.txt")
 
-    # LOOK AT THIS BEFORE GOING FURTHER. The column that holds "1 Line"
-    # may be route_short_name or route_long_name depending on the feed.
+    # Printed for inspection: the column holding "1 Line" can be
+    # route_short_name or route_long_name depending on the feed.
     print("Routes in this feed:")
     print(routes[["route_id", "route_short_name", "route_long_name"]].to_string())
     print()
 
-    # Match route_short_name EXACTLY, not a substring search across both name
-    # columns. This feed also has a "1 Line Shuttle Bus" replacement service
-    # (route_id "1-SHUTTLE") whose route_long_name contains "1 Line" too - a
-    # substring match on route_long_name pulls in its street-level bus stops
-    # alongside the real train stations. We want only the train.
+    # Exact match on route_short_name, not a substring search across both
+    # name columns. The feed also has a "1 Line Shuttle Bus" replacement
+    # service (route_id "1-SHUTTLE") whose route_long_name contains "1 Line";
+    # a substring match would pull in its street-level bus stops.
     link_routes = routes[routes["route_short_name"].fillna("") == ROUTE_NAME_PATTERN]
     if link_routes.empty:
         sys.exit(
@@ -101,8 +94,8 @@ def main():
     print()
 
     # Filter to Seattle. GTFS has no city field, so this matches against the
-    # curated list in config.py. Fuzzy because feed names carry suffixes like
-    # "Northgate Station" or directional markers.
+    # curated list in config.py, loosely, because feed names carry suffixes
+    # like "Northgate Station" or directional markers.
     def matches_seattle(stop_name):
         return any(
             s.lower() in stop_name.lower() or stop_name.lower() in s.lower()
@@ -111,13 +104,12 @@ def main():
 
     seattle = link_stops[link_stops["stop_name"].apply(matches_seattle)].copy()
 
-    # Platforms often appear as separate stops sharing a name. Collapse to
-    # one row per station by averaging. Measured offset from platform to
-    # averaged point: 14-72 m across the 16 stations (mean 48 m) - a small
-    # fraction of the 0.3 mile ring radius (483 m) but a meaningful fraction
-    # of the innermost 0.1 mile ring width (161 m). See
-    # pages/3_Methodology_&_Limitations.py "Spatial interpretation" for the
-    # write-up.
+    # Platforms often appear as separate stops sharing a name; averaging
+    # collapses them to one row per station. Platform-to-average offset is
+    # 14-72 m across the 16 stations (mean 48 m): small against the 0.3 mile
+    # ring radius (483 m), meaningful against the innermost 0.1 mile ring
+    # width (161 m). See "Spatial interpretation" in
+    # pages/3_Methodology_&_Limitations.py.
     stations = (
         seattle.groupby("stop_name", as_index=False)
         .agg(latitude=("stop_lat", "mean"), longitude=("stop_lon", "mean"))
