@@ -45,6 +45,8 @@ from config import (  # noqa: E402
     CHAIN_ANALYSIS_EXCLUDE_BRANDS,
 )
 
+RIDERSHIP_COL = "avg_monthly_boardings"
+
 LEGAL_SUFFIXES = r"\b(LLC|L\.L\.C\.|INC|INCORPORATED|CORP|CORPORATION|CO|LTD|LP|LLP|PLLC)\b"
 
 
@@ -178,20 +180,30 @@ def main():
     )
 
     # --- 2. Station totals, joined to ridership -------------------------
+    # Walkshed density is total businesses over total area within 0.3 mi,
+    # not the mean of the three ring densities: ring 1 is a fifth of ring
+    # 3's area, and an unweighted mean roughly doubled it at stations with a
+    # busy ring 1 (Othello 454 vs a true 230).
     walkshed = ring_stats[ring_stats["ring_index"] <= 2]
     station_stats = (
         walkshed.groupby("station")
         .agg(
             businesses_within_0_3mi=("business_count", "sum"),
-            density_per_sq_mi=("density_per_sq_mi", "mean"),
+            area_sq_mi=("area_sq_mi", "sum"),
         )
         .reset_index()
     )
+    station_stats["density_per_sq_mi"] = (
+        station_stats["businesses_within_0_3mi"] / station_stats["area_sq_mi"]
+    )
+    station_stats = station_stats.drop(columns="area_sq_mi")
 
     if RIDERSHIP_CSV.exists():
         ridership = pd.read_csv(RIDERSHIP_CSV)
         station_stats = station_stats.merge(ridership, on="station", how="left")
-        unmatched = station_stats["station"][station_stats.iloc[:, -1].isna()]
+        # Named column, not position: a station whose name fails to match
+        # gets a blank here, and this warning is the only thing that says so.
+        unmatched = station_stats["station"][station_stats[RIDERSHIP_COL].isna()]
         if len(unmatched):
             print(f"\nNo ridership match for: {list(unmatched)}")
             print("Station names must agree between the two files.")
