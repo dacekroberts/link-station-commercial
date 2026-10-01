@@ -13,6 +13,108 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-01 — Hypotheses, chain prose, About page
+
+- **Added an About page and moved the personal material off the
+  Overview.** `pages/5_About.py` holds my background, education,
+  motivation, the skills the project demonstrates, and what I'm looking
+  for. "Why Seattle?" now opens with the city's factors and "Starting
+  Assumptions" with the trends, so neither section mixes the argument
+  with my biography. A sixth page is a presentation addition, not an
+  analysis one, so the locked scope in `docs/initialscript.md` is
+  unaffected. Ripple effects: the Flowchart's app node lists six pages
+  (re-measured: the SVG is still 886.8px because "About" fits on the
+  node's third line, so the 925px iframe still clears the 913px
+  document), and the README file tree lists the page. Dated records
+  that say "five pages" (PLAN, the two review docs, initialscript's
+  status note) stay as recorded (9977875).
+- **AI Use now says Claude Code also edited my writing.** Some sentences
+  were drafted at my request rather than written by me: most of the
+  Graph 5 paragraph, the chain Result, and the Overview's "What I Asked"
+  caption and closing-paragraph opener. The ideas behind them and the
+  choice of every draft were mine, so the claim that every
+  interpretation and judgment call is mine stays. The added clause ("and
+  edit my writing for accuracy and clarity") closes the gap between the
+  page and the commit history, which records who drafted what. The
+  standard I'm holding it to: I can explain each of those sentences in
+  my own words (57921d1).
+- **Applied the cleanup session's review of the Findings page, but kept
+  "density" for the ridership walkshed.** Accuracy fixes: 6.7% is a
+  share of chain *locations*, not of all businesses; "higher earnings
+  potential" became "more businesses nearby", since there's no earnings
+  data; "still significant" became "still a sizable gap", since no
+  significance test was run; In Summary compares chains to "other
+  businesses", since the non-chain group also holds blank names and
+  contractor brands; "three separate measures" became "three views of
+  the same data", since the analyses share inputs; the gradient Result
+  says the trend "holds in aggregate, though half the stations deviate
+  from it individually" (Graph 2's 8/8 split); and Capitol Hill's ring 2
+  to 3 jump is +38% (499 -> 689), so it's described as going the same
+  direction as Graph 1's +0.9%, not as being like it. Rejected: renaming
+  "density" to "count" in eight ridership passages. Every station's
+  0.3-mile walkshed is the same 0.282 sq mi, so count and density give
+  identical r (0.684), Spearman (0.555), ranks, z-scores and CV ratio
+  (1.8). The review's suggested chain Result also said chain share
+  "falls toward the platform"; it rises, and the shipped sentence says
+  so (fdc1863).
+- **Each Findings section now states its hypothesis up front and
+  answers it at the end, using the questions I set before pulling any
+  data.** The page said "my hypothesis" five times but stated it only
+  twice, and the ridership section never did. Writing hypotheses now,
+  after seeing the results, and presenting them as starting points would
+  be hypothesizing after the results are known (HARKing). So the blocks
+  use the pre-data wording: the gradient question as I phrased it in
+  the Graph 1 paragraph, and the ridership and chain questions verbatim
+  from `docs/initialscript.md`. Each Result opens with a one-word
+  verdict. The Overview's new "What I Asked" section lists the same
+  three questions word for word, under the larger question the project
+  can't settle (does transit bring businesses, or follow them?). The
+  headingless "Businesses cluster near transit" paragraph moved there as
+  that question's honest limit (c7a9a91, ee335e3).
+- **The chain block states the original question, then says the
+  question shifted mid-analysis.** The scope doc asked whether
+  multi-location brands appear at more stations than independents. The
+  section actually answers whether chain share rises toward the
+  platform, a framing I only arrived at on 2026-09-14. Presenting that as
+  a starting hypothesis would be HARKing, so the block keeps both. The
+  original is answered from published data: chains appear near 2.95
+  stations on average against 1.66 for single-location businesses
+  (median 3 vs 1; 87.9% vs 42.4% at two or more stations). That gap is
+  partly built in: more locations mean more chances to sit near
+  different stations, and a single-location business only reaches a
+  second station through downtown buffer overlap (c7a9a91).
+- **Explained the ring 3/4 chain-share tie as downtown buffer overlap,
+  hedged rather than asserted.** After the recount, ring 3 is 6.82% and
+  ring 4 is 6.77%. That's tied at the precision the site displays
+  (Table 5 and the tooltips both show 6.8%), and a 0.05-point gap is
+  well inside the roughly ±0.7 points of sampling noise in ring 3 alone.
+  Checked against step 4's join with the chain definition held fixed.
+  For: Westlake (8.4% -> 8.8%) and Symphony (8.2% -> 8.2%) show no
+  fall-off between rings 3 and 4 and together hold 112 of ring 4's 285
+  chain locations (39%), and neighboring downtown platforms sit 0.27,
+  0.41 and 0.35 miles apart (measured in EPSG:32610), inside each
+  other's outer rings. Against: removing SODO and Stadium only opens a
+  0.38-point decline, removing the four downtown stations produces a
+  +1.0-point reversal, and Chinatown-ID's ring 3 (3 chains among 121
+  businesses) pulls ring 3 down for reasons unrelated to overlap. So the
+  Graph 5 paragraph says "possibly because of" overlap, not "traces to".
+  Rejected: "ring 4's larger area allows more storefronts", because area
+  cancels in a share (ring 4 has 3.0x ring 3's businesses and 3.0x its
+  chains). The Graph 5 caption is now computed from
+  `chain_ring_stats.csv`: per square mile, chains drop 73.6% from ring 1
+  to ring 4, against 61.8% for other businesses. The spacing and the
+  8-9% figures need the spatial join, so they're on
+  `check_published_numbers.py`'s NOT_CHECKED list (5354b8c).
+- **In Summary: chains lean into platform proximity "even harder than"
+  other businesses, not "nearly as hard".** The old sentence read
+  backwards, and it predated the recount: the old shares (11% -> 8.5%)
+  declined too. The -73.6% vs -61.8% density drop is the evidence
+  (721b9a4).
+- **The chain metric reads "Brands with 2+ locations", not "Brands at
+  more than one station".** It counts `location_count > 1` (116 brands);
+  counted by stations it would be 1,706. The old label predated the
+  audit (5354b8c).
+
 ### 2026-09-30 — Code audit
 
 - **Chains now count distinct locations, not license records: 152 -> 116
