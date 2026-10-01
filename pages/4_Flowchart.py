@@ -76,7 +76,7 @@ flowchart TD
 
     OUT --> APP["Streamlit app<br/>reads outputs/ only"]
     MAP --> APP
-    APP --> PAGES["5 pages:<br/>Intro &middot; Heatmap &middot; Findings &middot;<br/>Methodology &middot; Flowchart"]
+    APP --> PAGES["6 pages:<br/>Intro &middot; Heatmap &middot; Findings &middot;<br/>Methodology &middot; Flowchart &middot; About"]
 """
 
 _FLOWCHART_HTML = f"""

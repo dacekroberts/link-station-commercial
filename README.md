@@ -36,6 +36,7 @@ pages/1_Heatmap.py                     embeds the saved map
 pages/2_Findings_&_EDA.py              gradient, ridership, chains
 pages/3_Methodology_&_Limitations.py   sources and limitations
 pages/4_Flowchart.py                   how the pipeline got built (Mermaid)
+pages/5_About.py                       background, education, skills
 
 docs/DECISIONS.md            every judgment call, dated, append-only
 docs/PLAN.md                 the session-by-session build checklist

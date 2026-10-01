@@ -230,10 +230,8 @@ st.subheader("Why Seattle?")
 
 st.markdown(
     """
-I have chosen to center on the Seattle area for this case study not only
-because it is where I was born, raised, and have become accustomed to.
-More so, the city has several factors that make it an intriguing option
-to explore this particular topic within. Firstly, the unparalleled growth
+Seattle has several factors that make it an intriguing option to
+explore this particular topic within. Firstly, the unparalleled growth
 of the city, centered around its burgeoning tech sector, has created a
 slew of both exciting opportunities and concerns about existing
 infrastructure's capacity for growth accommodation. Those concerns lean
@@ -274,8 +272,7 @@ st.subheader("Starting Assumptions")
 
 st.markdown(
     """
-Through my relevant education and research, I've come to believe
-contemporary relocation trends increasingly suggest a rural exodus among
+Contemporary relocation trends increasingly suggest a rural exodus among
 young people in developed nations. These trends point toward an inevitable
 outcome of increased urban density, and all the logistical changes that
 follow that outcome. American cities, long defined by the private vehicle
@@ -289,10 +286,9 @@ need for a private vehicle is a great way to encourage continued
 population growth without maximally straining existing transit
 infrastructure.
 
-After studying these concepts in my collegiate Urban Economics and
-Philosophy of Economics courses, I felt compelled to drive an investigation
-into the commercial opportunities one could find out of newly established
-transit hubs in a built-out urban environment. On top of the
+Those trends raise the question this project takes up: what commercial
+opportunities can be found near newly established transit hubs in a
+built-out urban environment? On top of the
 near-irreplaceable natural foot traffic stemming from these transit hubs,
 nearby mixed-use or high-density housing developments typically follow
 public transit developments. It is no secret that land and rent prices
