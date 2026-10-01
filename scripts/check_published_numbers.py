@@ -59,18 +59,17 @@ CITATIONS = [
     (OVERVIEW, "about {cv_ratio} times as uneven"),
     (OVERVIEW, "{chain_r1} in the first ring, and falls to {chain_r4} by the fourth"),
 
-    (FINDINGS, "net decrease of -{fall} ({r1} businesses/sq mi → {r4})"),
+    (FINDINGS, "net decrease of {fall} ({r1} businesses/sq mi → {r4})"),
     (FINDINGS, "({rise_2_3}) between rings 2 and 3"),
     (FINDINGS, "correlation (r={r})"),
     (FINDINGS, "r value of {r}"),
     (FINDINGS, "clustering {cv_ratio}x as unevenly"),
     (FINDINGS, "{chain_brands} brands had at least two locations"),
-    (FINDINGS, "accounting for {chain_share} of total businesses"),
+    (FINDINGS, "accounting for {chain_share} of locations"),
     (FINDINGS, "going from {chain_r1} share within concentric ring 1 down to {chain_r4} within ring 4"),
     (FINDINGS, "with both rings tied at {chain_r3}"),
     (FINDINGS, "chains appear near {chain_mean_stations} stations"),
     (FINDINGS, "against {single_mean_stations} for single-location businesses"),
-    (FINDINGS, "from {chain_r1} in ring 1 to {chain_r3} by ring 3"),
     (FINDINGS, "net {fall} decline from ring 1"),
     (FINDINGS, "Commercial density falls {fall} from the first ring to the last"),
     (FINDINGS, "commercial density at r = {r}"),
@@ -106,7 +105,9 @@ NOT_CHECKED = [
     "duplicate licenses: 91 pairs, 113 licenses, 74 of 91, about 2% "
     "(Methodology) - needs businesses_geocoded.csv and the spatial join",
     "number words: 'sixteen stations', 'seven locations within a range of "
-    "eight stations', 'five were in the top seven' (Findings)",
+    "eight stations', 'five were in the top seven', 'six out of sixteen "
+    "stations... four were a part of the against-pattern group', 'Eight "
+    "stations... the other eight' (Findings)",
 ]
 
 
