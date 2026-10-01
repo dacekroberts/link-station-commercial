@@ -21,6 +21,7 @@ from config import (
     CHAIN_STATS_CSV,
     CHAIN_RING_STATS_CSV,
     RING_LABELS,
+    RING_EDGES_MILES,
     SEATTLE_1LINE_STATIONS,
 )
 
@@ -874,7 +875,7 @@ if CHAIN_STATS_CSV.exists():
     multi = chains[chains["location_count"] > 1]
 
     left, right = st.columns(2)
-    left.metric("Brands at more than one station", len(multi))
+    left.metric("Brands with 2+ locations", len(multi))
     right.metric(
         "Share of locations that are chains",
         f"{multi['location_count'].sum() / chains['location_count'].sum():.1%}"
@@ -961,35 +962,40 @@ if CHAIN_STATS_CSV.exists():
         with schematic_col:
             st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
 
-        # Ties this chart's ring-3-to-4 reversal (8.3% -> 8.5%) to the
-        # density gradient's ring-2-to-3 reversal: both are outer-ring
-        # upticks traced to against-the-pattern stations. Checked against
-        # the pipeline's joined business-ring data (chain_ring_stats.csv
-        # alone can't isolate stations): SODO and Stadium drive it.
-        # Stadium's ring 4 has 31 chain matches of 373 businesses, largely
-        # borrowed from International District/Chinatown; SODO's has 18 of
-        # 149, consistent with its commerce appearing only toward Pioneer
-        # Square at the buffer's edge (both findings in docs/DECISIONS.md).
-        # Without those two stations the decline is clean (8.7% -> 8.4%).
+        # Why the share falls: per square mile of ring area, chain locations
+        # thin out faster with distance than other businesses do. Pooled
+        # counts from chain_ring_stats.csv, so the figures follow the data;
+        # pi cancels in the ring 1 / ring 4 area ratio. Until the 2026-09-30
+        # recount this caption explained a ring 3 to 4 reversal, which no
+        # longer exists (6.82% -> 6.77%; see docs/DECISIONS.md).
+        by_ring = chain_ring.set_index("ring")
+        first, last = RING_LABELS[0], RING_LABELS[-1]
+        e = RING_EDGES_MILES
+        area_ratio = (e[1] ** 2 - e[0] ** 2) / (e[-1] ** 2 - e[-2] ** 2)
+        other = by_ring["total_matches"] - by_ring["chain_matches"]
+        chains_by_ring = by_ring["chain_matches"]
+        chain_drop = 1 - chains_by_ring[last] / chains_by_ring[first] * area_ratio
+        other_drop = 1 - other[last] / other[first] * area_ratio
         st.caption(
-            "Chain share's small reversal at the last ring (8.3% to 8.5%) "
-            "traces to SODO and Stadium, the same against-the-pattern "
-            "stations from Table 1's ring-3 breakdown, whose fourth ring "
-            "reaches into Chinatown-International District and Pioneer "
-            "Square. Removing them restores a clean decline (8.7% to "
-            "8.4%): the same outer-ring, neighbor-sampling effect as the "
-            "density gradient's ring-3 reversal, one ring further out."
+            f"Per square mile of ring area, chain locations drop "
+            f"{chain_drop:.1%} from ring 1 to ring 4, while all other "
+            f"businesses drop {other_drop:.1%}. Chains thin out faster than "
+            "the businesses around them, which is what pulls their share down."
         )
 
     st.markdown(
         """
         Graph 5 cleanly supports the hypothesis that chain share rises
         closer to the station, going from 9.5% share within concentric ring
-        1 down to 6.8% within ring 4. On the micro-level, we see a similar
-        unexpected rise in graph 1, though this time the discrepancy is
-        from ring 3 to 4 (+0.2%). The caption underneath graph 5 connects
-        this exception to the downtown overlap buffers that conflated some
-        values in the gradient section.
+        1 down to 6.8% within ring 4. The gap in chain share from ring 3 to
+        4 is notably small, with both rings tied at 6.8%, possibly because
+        of the downtown buffer overlap described in the gradient section.
+        The downtown stations from Westlake to International
+        District/Chinatown sit 0.27 to 0.41 miles apart, so
+        each one's fourth ring, which runs out to 0.6 miles, reaches past
+        its neighbor's platform and takes in that station's close-in
+        storefronts. At Westlake and Symphony, chain share holds at 8 to 9%
+        in both rings.
         """
     )
 
@@ -1020,18 +1026,18 @@ st.markdown(
     """
     Commercial density, ridership, and chain share all point the same way.
     Commercial density falls 62.9% from the first ring to the last,
-    ridership correlates with that commercial density at r = 0.684, and
+    ridership correlates with commercial density at r = 0.684, and
     even chains lean into platform proximity nearly as hard as independent
     businesses do. Three separate measures agreeing is a stronger claim
     than any one alone. Locational choice near public transit is a real,
-    corridor-wide advantage for a Seattle business, not a marginal one.
+    corridor-wide opportunity for a Seattle business, not a marginal one.
 
     The same two complications explain most of the exceptions across all
     three analyses. Downtown buffer overlap double-counts businesses near
     Westlake, Symphony, and Pioneer Square across overlapping station
     rings, inflating outer-ring figures in the commercial density
-    gradient, the chain-share reversal, and several ridership outliers
-    alike. Per-station geography, industrial land at SODO and Stadium,
+    gradient and several ridership outliers, and plateauing the
+    chain-share drop-off. Per-station geography, industrial land at SODO and Stadium,
     parks and campus land elsewhere, adds further noise station by
     station. Neither complication undermines the overall pattern, but
     both cap how precisely any single station's figures should be read.

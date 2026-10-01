@@ -62,9 +62,8 @@ CITATIONS = [
     (FINDINGS, "correlation (r={r})"),
     (FINDINGS, "{chain_brands} brands had at least two locations"),
     (FINDINGS, "accounting for {chain_share} of total businesses"),
-    (FINDINGS, "reversal at the last ring ({chain_r3} to {chain_r4})"),
     (FINDINGS, "going from {chain_r1} share within concentric ring 1 down to {chain_r4} within ring 4"),
-    (FINDINGS, "from ring 3 to 4 ({chain_rise_3_4})"),
+    (FINDINGS, "with both rings tied at {chain_r3}"),
     (FINDINGS, "Commercial density falls {fall} from the first ring to the last"),
     (FINDINGS, "commercial density at r = {r}"),
 
@@ -91,7 +90,10 @@ NOT_CHECKED = [
     "84,390 raw rows (Flowchart, Methodology) - data/raw, not outputs/",
     "41 withheld pins / 0.17% (Methodology) - step 5's name test",
     "1,767 (42.9%) multi-station claims (Methodology) - needs the spatial join",
-    "8.7% to 8.4% without SODO/Stadium (Findings caption) - needs the join",
+    "0.27 to 0.41 miles between downtown stations (Findings, Graph 5 "
+    "paragraph) - stations.csv, measured in EPSG:32610",
+    "8 to 9% chain share in rings 3 and 4 at Westlake and Symphony "
+    "(Findings, Graph 5 paragraph) - needs the spatial join",
     "walking-trip percentages (Methodology) - cited literature, not data",
     "duplicate licenses: 91 pairs, 113 licenses, 74 of 91, about 2% "
     "(Methodology) - needs businesses_geocoded.csv and the spatial join",
@@ -147,8 +149,6 @@ def figures(root):
         "chain_r1": pct(share[0]),
         "chain_r3": pct(share[2]),
         "chain_r4": pct(share[3]),
-        "chain_rise_3_4": ("+" if share[3] >= share[2] else "")
-        + pct(share[3] - share[2]),
         "overlap_brands": f"{len(overlap):,}",
         "all_brands": f"{len(chains):,}",
         "overlap_pct": pct(len(overlap) / len(chains)),
