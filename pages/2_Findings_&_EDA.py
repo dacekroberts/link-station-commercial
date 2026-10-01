@@ -1027,8 +1027,8 @@ st.markdown(
     Commercial density, ridership, and chain share all point the same way.
     Commercial density falls 62.9% from the first ring to the last,
     ridership correlates with commercial density at r = 0.684, and
-    even chains lean into platform proximity nearly as hard as independent
-    businesses do. Three separate measures agreeing is a stronger claim
+    chains lean into platform proximity even harder than independent
+    businesses. Three separate measures agreeing is a stronger claim
     than any one alone. Locational choice near public transit is a real,
     corridor-wide opportunity for a Seattle business, not a marginal one.
 
