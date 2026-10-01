@@ -252,8 +252,9 @@ building real working knowledge of it rather than just enough to copy
 and paste.
 
 From there, Claude Code helped me write and debug pipeline scripts,
-build the Streamlit pages you're looking at, and catch bugs I would
-have otherwise missed. The analysis itself, every interpretation and
+build the Streamlit pages you're looking at, catch bugs I would have
+otherwise missed, and edit my writing for accuracy and clarity. The
+analysis itself, every interpretation and
 judgment call, is mine.
 """
 )
