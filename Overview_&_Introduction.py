@@ -87,19 +87,6 @@ with st.container(key="overview_columns"):
             "the transit corridor"
         )
 
-st.markdown(
-    """
-Businesses cluster near transit. In Seattle, much of that clustering
-likely predates the rail itself, as the 1 Line largely ran through
-developed neighborhoods like downtown and Capitol Hill that already had
-commercial cores, rather than seeding new ones. Newer stations tell a
-different story: University of Washington, added in 2016, sits at the
-center of campus and hospital land rather than an established retail core
-the line reached. This project measures the resulting density pattern,
-not which came first at each station.
-"""
-)
-
 st.divider()
 
 st.subheader("Introduction")
@@ -174,6 +161,44 @@ else:
         "python src/step5_map.py\n"
         "```"
     )
+
+st.divider()
+st.subheader("What I Asked")
+# Pairs with "What I Found" directly below. The three numbered questions
+# are the Findings page's section hypotheses, worded identically there;
+# a change to one needs the same change in the other.
+st.caption(
+    "These are the questions I started with: one larger question, and "
+    "three narrower ones this project could actually test. The headline "
+    "answers follow directly below."
+)
+st.markdown(
+    "Do transit platforms bring businesses into their neighborhoods, or do "
+    "cities place transit along preexisting commercial corridors?"
+)
+st.markdown(
+    """
+1. **Concentric ring gradient.** Does commercial density drop off with
+   decreased proximity to transit hubs?
+2. **Ridership.** Does station boarding volume track commercial density?
+3. **Chains.** Do multi-location brands appear at more stations than
+   independents? In the middle of my chain share investigation, the
+   driving question shifted to more closely mirror the gradient's: Does
+   chain share rise as you approach transit platforms?
+"""
+)
+st.markdown(
+    """
+The 1 Line's route offers some context for the larger question above.
+Much of the clustering near its stations likely predates the rail
+itself, as the line largely ran through developed neighborhoods like downtown and Capitol Hill that already had
+commercial cores, rather than seeding new ones. Newer stations tell a
+different story: University of Washington, added in 2016, sits at the
+center of campus and hospital land rather than an established retail core
+the line reached. This project measures the resulting density pattern,
+not which came first at each station.
+"""
+)
 
 st.divider()
 st.subheader("What I Found")
