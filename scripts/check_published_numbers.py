@@ -50,7 +50,9 @@ METHODOLOGY = "pages/3_Methodology_&_Limitations.py"
 FLOWCHART = "pages/4_Flowchart.py"
 
 # (file, phrase). Phrases are matched after collapsing whitespace, so a
-# sentence that wraps across source lines still matches.
+# sentence that wraps across source lines still matches. In implicitly
+# concatenated string literals a phrase must sit inside one literal: the
+# quotes between literals break the match.
 CITATIONS = [
     (OVERVIEW, "drop {fall} between the innermost and outermost rings, {r1} to {r4}"),
     (OVERVIEW, "lands at r = {r}"),
@@ -60,10 +62,16 @@ CITATIONS = [
     (FINDINGS, "net decrease of -{fall} ({r1} businesses/sq mi → {r4})"),
     (FINDINGS, "({rise_2_3}) between rings 2 and 3"),
     (FINDINGS, "correlation (r={r})"),
+    (FINDINGS, "r value of {r}"),
+    (FINDINGS, "clustering {cv_ratio}x as unevenly"),
     (FINDINGS, "{chain_brands} brands had at least two locations"),
     (FINDINGS, "accounting for {chain_share} of total businesses"),
     (FINDINGS, "going from {chain_r1} share within concentric ring 1 down to {chain_r4} within ring 4"),
     (FINDINGS, "with both rings tied at {chain_r3}"),
+    (FINDINGS, "chains appear near {chain_mean_stations} stations"),
+    (FINDINGS, "against {single_mean_stations} for single-location businesses"),
+    (FINDINGS, "from {chain_r1} in ring 1 to {chain_r3} by ring 3"),
+    (FINDINGS, "net {fall} decline from ring 1"),
     (FINDINGS, "Commercial density falls {fall} from the first ring to the last"),
     (FINDINGS, "commercial density at r = {r}"),
 
@@ -131,6 +139,7 @@ def figures(root):
 
     # Same as the chain metrics on the Findings page.
     multi = chains[chains["location_count"] > 1]
+    single = chains[chains["location_count"] == 1]
     overlap = chains[(chains["location_count"] == 1) & (chains["station_count"] > 1)]
     old_def = chains[chains["station_count"] > 1]
     total_locs = chains["location_count"].sum()
@@ -145,6 +154,8 @@ def figures(root):
         "r": f"{half_up(biz.corr(rides), 3)}",
         "cv_ratio": f"{half_up(cv(biz) / cv(rides), 1)}",
         "chain_brands": f"{len(multi)}",
+        "chain_mean_stations": f"{half_up(multi['station_count'].mean(), 2)}",
+        "single_mean_stations": f"{half_up(single['station_count'].mean(), 2)}",
         "chain_share": pct(multi["location_count"].sum() / total_locs),
         "chain_r1": pct(share[0]),
         "chain_r3": pct(share[2]),

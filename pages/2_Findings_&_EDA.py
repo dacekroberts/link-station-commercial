@@ -69,6 +69,15 @@ RING_SCHEMATIC_SVG = (
     "</svg>"
 )
 
+def section_callout(label, text):
+    """One bordered Hypothesis or Result block. Each analysis section
+    states its question under its header and answers it at the section's
+    end. The three questions match the Overview's "What I Asked" list word
+    for word; a change to one needs the same change in the other."""
+    with st.container(border=True):
+        st.markdown(f"**{label}:** {text}")
+
+
 st.set_page_config(page_title="Findings", page_icon="📊", layout="wide")
 
 set_base_font()
@@ -82,6 +91,11 @@ st.caption("EDA: Exploratory Data Analysis")
 # --- 1. Distance gradient ---------------------------------------------
 
 st.header("Concentric Ring Gradient Analysis")
+section_callout(
+    "Hypothesis",
+    "Does commercial density drop off with decreased proximity to transit "
+    "hubs?",
+)
 st.caption(
     "<u>All visuals on this page are interactive. Hover over data points "
     "for detailed information.</u>",
@@ -488,6 +502,14 @@ if RING_STATS_CSV.exists():
         station.
         """
     )
+    section_callout(
+        "Result",
+        "This section's hypothesis that commercial density would fall off "
+        "with increased distance from transit platforms is supported by the "
+        "net 62.9% decline from ring 1 (closest to the station) to ring 4 "
+        "(furthest). Despite the slight rise from ring 2 to 3, the overall "
+        "trend holds true.",
+    )
 
 else:
     st.info("Run `python src/step4_rings.py` to generate ring statistics.")
@@ -496,6 +518,10 @@ else:
 
 st.divider()
 st.header("Ridership Analysis")
+section_callout(
+    "Hypothesis",
+    "Does station boarding volume track commercial density?",
+)
 
 if STATION_STATS_CSV.exists():
     stats = pd.read_csv(STATION_STATS_CSV)
@@ -852,6 +878,16 @@ if STATION_STATS_CSV.exists():
             "proportionally cluster far more unevenly across these "
             "sixteen stations than ridership does."
         )
+        section_callout(
+            "Result",
+            "Based on the moderately positive r value of 0.684, the ridership "
+            "hypothesis that station boarding volume tracks with commercial "
+            "density is loosely supported. As discussed above, however, "
+            "factors like Westlake station skewing the correlation, the "
+            "rank-based Spearman correlation scoring lower, and businesses "
+            "clustering 1.8x as unevenly as ridership limit how far the claim "
+            "holds.",
+        )
     else:
         st.info(
             "No ridership column found. Export station boardings from Sound "
@@ -865,6 +901,14 @@ else:
 
 st.divider()
 st.header("Chain Analysis")
+section_callout(
+    "Hypothesis",
+    "Do multi-location brands appear at more stations than independents?"
+    "\n\nDuring this portion of the investigation, I had the idea to "
+    "rerun my gradient study using the chain locations as a filter. This "
+    "posed a new form of question: Does chain share rise approaching the "
+    "platform as commercial density does?",
+)
 
 if CHAIN_STATS_CSV.exists():
     chains = pd.read_csv(CHAIN_STATS_CSV)
@@ -1016,6 +1060,15 @@ if CHAIN_STATS_CSV.exists():
                 width="stretch",
                 hide_index=True,
             )
+    section_callout(
+        "Result",
+        "The original question holds: chains appear near 2.95 stations on "
+        "average, against 1.66 for single-location businesses, though that "
+        "gap is partly built in, since more locations give a brand more "
+        "chances to sit near different stations. The refined question holds "
+        "too, with chain share falling from 9.5% in ring 1 to 6.8% by ring 3 "
+        "and then leveling off at ring 4.",
+    )
 else:
     st.info("Run `python src/step4_rings.py` to generate chain statistics.")
 
