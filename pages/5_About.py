@@ -47,10 +47,23 @@ month.
 """
 )
 
+st.subheader("What I'm Looking For")
+st.markdown(
+    """
+I'm looking for roles in data analytics, particularly ones built on
+exploratory data analysis and the insights it draws out of data. This
+project reflects the other half of that work too: presenting data and
+findings in a way a general audience can digest. After my experiences at
+two AI-centric startups, AI has become integral to my workflow, as this
+project's own development shows. The GitHub and LinkedIn links at the top
+of every page are the best way to reach me.
+"""
+)
+
 st.subheader("Why This Project")
 st.markdown(
     """
-After studying urban density and transit in those courses, I felt
+After studying urban density and transit in my PPE coursework, I felt
 compelled to drive an investigation into the commercial opportunities one
 could find near newly established transit hubs in a built-out urban
 environment. Seattle, with its rapid growth and a Link light rail network
@@ -71,8 +84,9 @@ st.markdown(
   locations rather than license records.
 - **Statistics:** density gradients, Pearson and Spearman correlation,
   coefficients of variation, z-scores, and leverage checks on outliers.
-- **Visualization:** an interactive Folium/Leaflet heatmap with layer
-  controls, marker clustering and a dark mode; Altair charts; a Mermaid
+- **Visualization:** an interactive Folium/Leaflet heatmap on
+  OpenStreetMap tiles, with layer controls, marker clustering and a dark
+  mode; Altair charts; a Mermaid
   flowchart.
 - **Web app and deployment:** a multipage Streamlit site on Streamlit
   Community Cloud, with a lean deploy kept separate from the pipeline's
@@ -85,18 +99,5 @@ st.markdown(
   withholding names where a sole proprietor's business name is their own.
 - **AI-assisted development:** built with Claude Code, with the analysis
   and its judgment calls kept as my own.
-"""
-)
-
-st.subheader("What I'm Looking For")
-st.markdown(
-    """
-I'm looking for roles in data analytics, particularly ones built on
-exploratory data analysis and the insights it draws out of data. This
-project reflects the other half of that work too: presenting data and
-findings in a way a general audience can digest. After my experiences at
-two AI-centric startups, AI has become integral to my workflow, as this
-project's own development shows. The GitHub and LinkedIn links at the top
-of every page are the best way to reach me.
 """
 )
