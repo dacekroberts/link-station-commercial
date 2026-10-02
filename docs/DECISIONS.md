@@ -51,6 +51,9 @@ each; detail lives in the sections below.
   terms conflict (`docs/data_sources.md`, source 5) is open. They'll be
   linked from the README wherever they end up published, or attached to
   a GitHub Release.
+- **The README banner is the single presentation image tracked in the
+  repo,** at `docs/images/readme-banner.png` (2560 x 640, shown at 1280;
+  no ridership figures on it).
 
 ### 2026-10-02 — Presentation ring colors
 
