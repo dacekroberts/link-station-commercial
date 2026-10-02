@@ -81,12 +81,12 @@ with st.container(key="overview_columns"):
     with takeaways_col:
         st.markdown("**Key Takeaways**")
         st.markdown(
-            "- Business density and brand share of businesses peaks "
-            "closest to transit platforms\n"
+            "- Business density and chain share both peak closest to "
+            "transit platforms\n"
             "- Ridership volume per station shares a moderate correlation "
-            "with business density\n"
-            "- More than a third of Seattle-area businesses lie within "
-            "the transit corridor"
+            "with the number of businesses nearby\n"
+            "- More than a third of Seattle's storefront businesses lie "
+            "within the transit corridor"
         )
 
 st.divider()

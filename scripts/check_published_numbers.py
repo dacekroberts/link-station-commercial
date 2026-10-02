@@ -108,6 +108,8 @@ NOT_CHECKED = [
     "eight stations', 'five were in the top seven', 'six out of sixteen "
     "stations... four were a part of the against-pattern group', 'Eight "
     "stations... the other eight' (Findings)",
+    "'More than a third of Seattle's storefront businesses' (Overview Key "
+    "Takeaways) - in_rings / citywide, 36.1% on 2026-10-02",
 ]
 
 

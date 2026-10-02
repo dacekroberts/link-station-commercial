@@ -13,6 +13,29 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-02 — Key Takeaways wording; presentation files
+
+- **Reworded the Overview's three Key Takeaways for accuracy.** "Business
+  density and brand share of businesses peaks" became "Business density
+  and chain share both peak" (plural verb, and the term the Findings page
+  uses). "...a moderate correlation with business density" became "...with
+  the number of businesses nearby": r = 0.684 is computed against the
+  business count within 0.3 mi, not businesses per square mile. "More than
+  a third of Seattle-area businesses" became "...of Seattle's storefront
+  businesses": the 36.1% is 4,120 of 11,409 storefront-type businesses
+  inside city limits, not the metro area or all businesses. The LinkedIn
+  post and carousel quote these lines word for word, so their copies are
+  updated to match in the presentation artifacts.
+- **The presentation's binary files stay out of the repo.** The ring GIF
+  and the exported PDFs (deck, carousel, project sheet) aren't committed:
+  git keeps every version of a binary for good in a public repo,
+  `outputs/` is reserved for what the pipeline writes, and the deck,
+  carousel and sheet carry the ridership figures, so committing them
+  would republish those figures in one more place while the Sound Transit
+  terms conflict (`docs/data_sources.md`, source 5) is open. They'll be
+  linked from the README wherever they end up published, or attached to
+  a GitHub Release.
+
 ### 2026-10-02 — Presentation ring colors
 
 - **The presentation's ring drawings are one step darker than the site's,
