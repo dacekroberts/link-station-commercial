@@ -13,6 +13,27 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-02 — Presentation ring colors
+
+- **The presentation's ring drawings are one step darker than the site's,
+  with a larger station point at the center.** The pale peach discs with
+  a small white center could read as anatomical rather than as a
+  diagram. The ring colors now run `#8F3A05` / `#C2500A` / `#DE6412` /
+  `#F0801F` from ring 1 to 4, replacing the site's `#C2500A` /
+  `#F0801F` / `#FBB878` / `#FDD0A2`. The design system keeps the site's
+  four as reference tokens, `site-ring-1` to `site-ring-4`. The new
+  colors apply everywhere in the presentation material (deck, canvas,
+  GIF and design system), including every ring drawing, ring key,
+  ring-colored bar and ring strip, so ring 1 is the same color
+  throughout. Each drawing's center is now a station point in the map's
+  station-marker blue (`#1a5490`) with a white outline, at about a third
+  of ring 1's radius or more. Ring numbers are white on rings 1 and 2 and
+  dark `#171412` on rings 3 and 4. The darker ring 4 shows on paper
+  without an outline, so the one-page sheet's outline is dropped. **The
+  site is unchanged:** Graph 1, Graph 5 and Schematic 1 keep the original
+  colors, so the video's screen captures and the slides now use slightly
+  different ring colors.
+
 ### 2026-10-02 — Train banner
 
 - **Added an animated train banner above every page title, as an
@@ -49,6 +70,56 @@ each; detail lives in the sections below.
   Checked with deploy-verify against the lean deploy venv on all six
   pages at 1280px and 375px wide: same positions everywhere, train
   centered, no console errors (a3251cb).
+
+### 2026-10-01 — Presentation visuals
+
+- **Built the presentation in claude.ai artifacts, not in the repo, on a
+  design system matched to the site.** I picked direction A, "Night
+  Line": the site's own dark warm-charcoal identity. The alternatives
+  were B ("Field Report", light editorial) and C ("Platform Signage",
+  bolder dark). The video is mostly screen capture of the dark site, so
+  slides in the same look avoid a jarring switch between slide and
+  footage. Its tokens come straight from `.streamlit/config.toml`,
+  `components.py`, the Findings and Flowchart pages, and `step5_map.py`.
+  The only additions are four slide type sizes (display 72, title 48,
+  hero figure 96, body 24 px) and a 64 px slide margin. Two site colors
+  fall short on contrast and were kept exact, with a note rather than
+  adjusted: text-disabled `#6B6259` (3.07:1 on the background) and
+  food-service pin `#C2185B` (3.1:1 on the background, under 3:1 on the
+  panel). The deck has 8 slides, not the planned 4 to 6, so each
+  hypothesis gets its own slide. No repo files changed. The work lives
+  on the `visuals` branch (cut at 571dbcc) and in private artifacts: the
+  design system, the deck, and a canvas holding the data funnel (84,390
+  -> 11,466 -> 11,409 -> 4,120), an animated ring loop and GIF, a 7-card
+  LinkedIn carousel, a one-page project sheet, vertical-cut frames, plus
+  a private doc of interview talking points.
+- **The ridership figures go into the presentation despite the open
+  Sound Transit terms conflict.** r = 0.684 and the 1.8x comparison
+  appear in the deck, the narration, the carousel and the one-page
+  sheet, credited "Ridership: Sound Transit System Performance Tracker,
+  2025." The credit is attribution, not the prior written permission
+  Sound Transit's website terms ask for. So the conflict recorded in
+  `docs/data_sources.md` (source 5) is unchanged by this, and putting the
+  figures in more places widens it. The options listed there, starting
+  with asking Sound Transit, still stand.
+- **Every line of presentation text is quoted from the site's own
+  prose.** Any new connecting line gets flagged and approved in chat
+  before use. The LinkedIn post uses the Overview's three Key Takeaways
+  word for word, plus its hedge "Findings do not imply causality, only
+  possible correlations". The thumbnail pairs "−62.9%" with the Overview
+  line "Density falls off fast, but not cleanly." The narration script
+  (about 630 words, about 4:15) and a 60-second vertical excerpt are
+  approved. The voiceover leaves out the Findings summary line
+  "Locational choice near public transit is a corridor-wide opportunity
+  for a Seattle business": spoken aloud, it could sound like a causal
+  claim.
+- **The one-page sheet is the one exception to dark-only.** It's
+  printed, so it uses a light version of Night Line.
+- **Open (my action items):** record the voiceover, and replace the map
+  captures with full-resolution ones. The current captures are
+  low-resolution placeholders from the committed `outputs/heatmap.html`
+  served locally: dark mode, cluster zoom only, OpenStreetMap credit
+  visible. The GIF isn't saved to the repo.
 
 ### 2026-10-01 — Hypotheses, chain prose, About page
 
