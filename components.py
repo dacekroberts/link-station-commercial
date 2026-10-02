@@ -112,6 +112,117 @@ def render_sidebar_nav_label():
     )
 
 
+# One three-section articulated light rail vehicle, cabs at both ends, in a
+# 250 x 40 box. Shape follows Link's cars; colors are the site theme's
+# (.streamlit/config.toml), with no Sound Transit stripe, logo or livery.
+_LRV_SHAPES = """
+<path d="M14 8H98V33H3Q1 33 1 30V20Q1 12 8 9Q11 8 14 8Z" fill="#F0801F"/>
+<path d="M102 8H148V33H102Z" fill="#F0801F"/>
+<path d="M152 8H236Q239 8 242 9Q249 12 249 20V30Q249 33 247 33H152Z" fill="#F0801F"/>
+<rect x="98" y="10" width="4" height="21" fill="#6B6259"/>
+<rect x="148" y="10" width="4" height="21" fill="#6B6259"/>
+<path d="M3 26H98V33H3Q1 33 1 31V26Z" fill="#C2500A"/>
+<rect x="102" y="26" width="46" height="7" fill="#C2500A"/>
+<path d="M152 26H249V31Q249 33 247 33H152Z" fill="#C2500A"/>
+<path d="M12 8H98V10H6Q8 8.5 12 8Z" fill="#FBB878"/>
+<rect x="102" y="8" width="46" height="2" fill="#FBB878"/>
+<path d="M152 8H238Q242 8.5 244 10H152Z" fill="#FBB878"/>
+<g fill="#171412">
+  <path d="M2.5 21Q3 14 9 11.5L16 11.5V21Z"/>
+  <rect x="22" y="13" width="12" height="8" rx="1.5"/><rect x="51" y="13" width="12" height="8" rx="1.5"/><rect x="80" y="13" width="14" height="8" rx="1.5"/>
+  <rect x="38" y="12.5" width="9" height="18.5" rx="1"/><rect x="67" y="12.5" width="9" height="18.5" rx="1"/>
+  <rect x="106" y="13" width="17" height="8" rx="1.5"/><rect x="127" y="13" width="17" height="8" rx="1.5"/>
+  <rect x="156" y="13" width="14" height="8" rx="1.5"/><rect x="187" y="13" width="12" height="8" rx="1.5"/><rect x="216" y="13" width="12" height="8" rx="1.5"/>
+  <rect x="174" y="12.5" width="9" height="18.5" rx="1"/><rect x="203" y="12.5" width="9" height="18.5" rx="1"/>
+  <path d="M247.5 21Q247 14 241 11.5L234 11.5V21Z"/>
+</g>
+<g stroke="#3A322B" stroke-width="1"><path d="M42.5 13V31M71.5 13V31M178.5 13V31M207.5 13V31"/></g>
+<rect x="2.5" y="27.5" width="3" height="2" rx="0.5" fill="#FDD0A2"/>
+<rect x="244.5" y="27.5" width="3" height="2" rx="0.5" fill="#FDD0A2"/>
+<g fill="#6B6259"><circle cx="16" cy="35.5" r="3"/><circle cx="28" cy="35.5" r="3"/><circle cx="125" cy="35.5" r="3"/><circle cx="222" cy="35.5" r="3"/><circle cx="234" cy="35.5" r="3"/></g>
+<g stroke="#A39A90" stroke-width="1.2" fill="none" stroke-linejoin="round"><path d="M118 8L125 2.5L132 8M121 2.5H129"/></g>
+"""
+
+
+def render_train_banner(page_key):
+    """Two-car light rail train that pulls in and parks above the page title.
+
+    Decorative only, so the wrapper is aria-hidden. Pure SVG and CSS, no
+    JavaScript. The vehicle is inlined twice rather than referenced through
+    <symbol>/<use>, so it never depends on an SVG id staying unique in the
+    page or on Streamlit's markdown keeping <use>.
+
+    Every widget interaction reruns the page script and redraws this
+    element, which would restart the arrival. A session_state flag per
+    page_key plays the arrival on the first render of each page in a
+    visitor's session; later reruns render the train already parked.
+    Visitors with prefers-reduced-motion always see it parked.
+    """
+    flag = f"_train_banner_seen_{page_key}"
+    state = "parked" if st.session_state.get(flag) else "arriving"
+    st.session_state[flag] = True
+
+    stations = "<i></i>" * 16  # one tick per station on the 1 Line
+    # One line: st.markdown dedents its body by the common indent, and
+    # unindented SVG lines would cancel that and turn the rest into a
+    # markdown code block.
+    shapes = "".join(line.strip() for line in _LRV_SHAPES.splitlines())
+    vehicle = f'<g>{shapes}</g><g transform="translate(256 0)">{shapes}</g>'
+
+    # Sizes: 44px banner, 39px train (28px under 600px wide). The banner
+    # sits in empty space above the page content, so nothing below it moves.
+    # Streamlit's top padding is 96px at desktop and phone width; the three
+    # style-only elements before the banner render 0px tall but each takes
+    # a 16px gap, so the first visible element starts at 144px. A -54px top
+    # margin on the banner's element container puts the banner at 90-134px,
+    # clear of the 60px header, and the 10px bottom margin keeps the social
+    # icons at 144px and the title at 170px, where they were before the
+    # banner. Measured on Streamlit 1.64; re-measure if Streamlit's padding,
+    # the element gap, or the calls before this one change. Browsers
+    # without :has() push the page down by the banner height instead.
+    st.markdown(
+        f"""
+        <style>
+        [data-testid="stElementContainer"]:has(.train-banner) {{ margin: -54px 0 10px; }}
+        .train-banner {{ position: relative; height: 44px; overflow: hidden; }}
+        .train-banner-wire {{ position: absolute; left: 0; right: 0; top: 2px;
+            height: 1px; background: #3A322B; }}
+        .train-banner-track {{ position: absolute; left: 0; right: 0; bottom: 3px;
+            height: 2px; background: #3A322B; }}
+        .train-banner-ties {{ position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+            background: repeating-linear-gradient(90deg, #3A322B 0 2px, transparent 2px 14px); }}
+        .train-banner-stations {{ position: absolute; left: 2%; right: 2%; bottom: 3px;
+            display: flex; justify-content: space-between; }}
+        .train-banner-stations i {{ width: 3px; height: 8px; background: #6B6259;
+            border-radius: 1px; transform: translateY(5px); }}
+        /* Full-width row that centers the train. On a banner narrower than
+        the train (phones under about 390px), max-width shrinks it to fit,
+        and xMidYMax keeps the wheels on the track. */
+        .train-banner-train {{ position: absolute; left: 0; right: 0; bottom: 5px;
+            display: flex; justify-content: center; }}
+        .train-banner-train svg {{ height: 39px; width: auto; max-width: 100%; display: block; }}
+        /* Starts half a viewport plus one train length to the left, out of
+        view at any width; the easing brakes into the stop. */
+        .train-banner-arriving .train-banner-train {{
+            animation: train-banner-arrive 3.4s cubic-bezier(.18, .7, .25, 1) both; }}
+        @keyframes train-banner-arrive {{
+            from {{ transform: translateX(calc(-50vw - 520px)); }}
+            to {{ transform: translateX(0); }} }}
+        @media (max-width: 600px) {{
+            .train-banner-train svg {{ height: 28px; }} }}
+        @media (prefers-reduced-motion: reduce) {{
+            .train-banner-arriving .train-banner-train {{ animation: none; }} }}
+        </style>
+        <div class="train-banner train-banner-{state}" aria-hidden="true">
+          <div class="train-banner-wire"></div><div class="train-banner-ties"></div><div class="train-banner-track"></div>
+          <div class="train-banner-stations">{stations}</div>
+          <div class="train-banner-train"><svg viewBox="0 0 506 40" preserveAspectRatio="xMidYMax meet">{vehicle}</svg></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_social_links():
     """GitHub and LinkedIn icon links, top right above the page title.
 

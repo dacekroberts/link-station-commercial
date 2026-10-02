@@ -11,6 +11,7 @@ import streamlit as st
 from components import (
     render_sidebar_nav_label,
     render_social_links,
+    render_train_banner,
     set_base_font,
     set_sidebar_width,
 )
@@ -39,6 +40,7 @@ st.set_page_config(page_title="Heatmap", page_icon="🗺️", layout="wide")
 set_base_font()
 set_sidebar_width()
 render_sidebar_nav_label()
+render_train_banner("heatmap")
 render_social_links()
 
 st.title("Commercial density around station areas")
