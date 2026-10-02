@@ -13,6 +13,43 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-02 — Train banner
+
+- **Added an animated train banner above every page title, as an
+  approved scope addition.** It's two orange, Link-style articulated
+  cars that glide in from the left, brake, and park at the middle of a
+  track with sixteen station ticks (one per station) under an overhead
+  wire. I approved it on 2026-10-02 after a preview of two versions and
+  chose "arrive and park" over a slow repeating loop, because a train
+  crossing every 24 seconds would pull the eye away from long reading
+  pages like Findings and Methodology. It's presentation chrome, not
+  analysis, so the locked scope in `docs/initialscript.md` is
+  unaffected. The shape echoes Link's cars only: site theme colors, no
+  Sound Transit wave stripe, logo or livery. It's one function,
+  `render_train_banner()` in `components.py`, called on all six pages
+  before `render_social_links()`. It's inline SVG plus CSS keyframes,
+  with no JavaScript and nothing added to `requirements.txt`. The banner
+  is `aria-hidden` since it carries no information, and with
+  `prefers-reduced-motion` set it renders already parked. Three build
+  calls:
+  - **Reruns.** Streamlit redraws the whole page on every rerun or
+    return visit, which would replay the arrival each time. A
+    `st.session_state` flag per page plays it once per visitor session
+    and renders it parked afterwards. Verified by navigating away and
+    back in the sidebar and by a same-page rerun.
+  - **Layout.** Inserted as a normal element, the banner pushed the
+    title down 44px. The 84px band between Streamlit's 60px header and
+    the first content at 144px was empty, so the banner moves up into
+    it (90 to 134px). The GitHub and LinkedIn icons stay at 144px and
+    the title at 170px, so nothing below the banner moves.
+  - **Narrow phones.** At 375px the 354px train overflowed the 343px
+    banner and clipped both cab noses. The train now shrinks to fit the
+    banner width and keeps its wheels on the track.
+
+  Checked with deploy-verify against the lean deploy venv on all six
+  pages at 1280px and 375px wide: same positions everywhere, train
+  centered, no console errors (a3251cb).
+
 ### 2026-10-01 — Hypotheses, chain prose, About page
 
 - **Added an About page and moved the personal material off the
