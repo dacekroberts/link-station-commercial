@@ -13,6 +13,22 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-02 — License
+
+- **Added a license, split by what each part of the repo is.** Without one
+  the repo defaulted to all rights reserved: readable on GitHub, but not
+  reusable. The code is MIT (`LICENSE`, the standard text, so GitHub
+  detects it). My writing (site prose, `docs/`) stays all rights reserved,
+  so the analysis can be read and linked but not republished as someone
+  else's. The data is excluded from both: much of what's committed isn't
+  mine to license. The ridership figures are under Sound Transit's
+  website terms (the open conflict in `docs/data_sources.md`, source 5),
+  the GTFS-derived station points and rail line carry Sound Transit's
+  flow-down terms, which a blanket MIT grant would contradict, and the
+  City's data carries the portal's non-commercial condition. The README's
+  new License section states the split and points to `data_sources.md`.
+  Not legal advice; the ridership question is unchanged by this.
+
 ### 2026-10-02 — Key Takeaways wording; presentation files
 
 - **Reworded the Overview's three Key Takeaways for accuracy.** "Business

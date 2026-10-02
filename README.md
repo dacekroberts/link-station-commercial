@@ -92,3 +92,19 @@ license data, and chasing seven more municipal datasets is out of scope here.
 are filtered out in step 2.)
 
 Read `pages/3_Methodology_&_Limitations.py` before drawing conclusions from any of this.
+
+## License
+
+The repository mixes three kinds of material, licensed differently:
+
+- **Code:** the Python source (`src/`, `pages/`, `scripts/`,
+  `components.py`, `config.py`, `Overview_&_Introduction.py`) is released
+  under the [MIT License](LICENSE).
+- **Writing:** the site's prose and the documents in `docs/` are
+  © 2026 Dace Roberts, all rights reserved. Quote and link freely, but don't
+  republish them as your own.
+- **Data:** nothing in `outputs/`, and nothing derived from the project's
+  sources, is covered by either. Each source's own terms apply; see
+  `docs/data_sources.md`. The station ridership figures come from Sound
+  Transit's website and remain under Sound Transit's terms: this project
+  grants no rights to them.
