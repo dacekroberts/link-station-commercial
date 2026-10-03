@@ -57,9 +57,9 @@ RING_LABELS = ["0-0.1 mi", "0.1-0.2 mi", "0.2-0.3 mi", "0.3-0.6 mi"]
 # addresses; step 2 filters them out. It is not a source for other cities.)
 #
 # All 16 names match stops.txt exactly in the GTFS feed dated 2026-08-28.
-# NE 130th St / Pinehurst (slated for 2026) is not in that feed. Re-verify
-# on any new download: if it has opened, add it between Northgate and
-# Roosevelt with a partial-year caveat. Sound Transit renames stations
+# Pinehurst (NE 130th St) opened 2026-09-30, after that feed, so it is not
+# in it. On a newer download, add it north of Northgate with a
+# partial-year caveat. Sound Transit renames stations
 # (University Street became Symphony), so re-check the names too.
 SEATTLE_1LINE_STATIONS = [
     "Northgate",

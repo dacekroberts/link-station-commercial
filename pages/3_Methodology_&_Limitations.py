@@ -436,6 +436,16 @@ Line ridership counts without any real change in underlying travel demand.
 Station-level ridership from 2025 could therefore misstate current, 2026
 conditions, especially downtown and at the south end. I've labeled
 figures with their snapshot date wherever they appear on this site.
+
+One station is missing outright. Pinehurst Station, at NE 130th Street
+just north of Northgate, opened on September 30, 2026, after both the
+station data (August 28) and the business license snapshot
+({LICENSE_SNAPSHOT}) were pulled. It sits inside Seattle city limits and
+is served by both lines, so by the rules I set for this project it
+belongs here. It just didn't exist yet when the data was collected, and
+it has no ridership history to compare against. Seattle now has
+seventeen stations on the 1 Line; this site covers the sixteen that were
+open at the time.
 """
 )
 
@@ -594,9 +604,11 @@ st.markdown(
 - **Control corridors.** Ballard and Fremont are both commercially dense
   with no light rail at all, and would give the gradient something real
   to be compared against.
-- **The 2 Line.** It's entirely outside Seattle city limits, so covering
-  it would require pulling business license data from Bellevue and
-  Redmond too.
+- **The 2 Line.** It shares the 1 Line's track from Lynnwood City Center
+  down to International District/Chinatown, then branches east at Judkins
+  Park, the only Seattle station it serves on its own, before crossing
+  the lake. Covering the rest of it would require pulling business
+  license data from Bellevue and Redmond too.
 - **A before-and-after design.** Northgate, Roosevelt, and U District all
   opened in October 2021. License issue dates would let me compare
   business formation on either side of that opening, which would be the

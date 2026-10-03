@@ -90,7 +90,7 @@ skipped on re-run.
 ## Scope
 
 Seattle city limits only, Northgate through Rainier Beach. The 1 Line runs
-well past both ends and the 2 Line is entirely on the Eastside, but a
+well past both ends, and the 2 Line leaves Seattle after Judkins Park, but a
 cross-station comparison outside Seattle would need each city's own business
 license data, and chasing seven more municipal datasets is out of scope here.
 (Seattle's export does list some businesses located outside the city — those
