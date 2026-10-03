@@ -97,7 +97,8 @@ st.markdown(
     """
 This project centers on a concentric-ring analysis of commercial density
 around the City of Seattle's Link light rail 1 line service area,
-covering all 16 stations within official Seattle city limits.
+covering the 16 stations within official Seattle city limits that were
+open when the data was pulled in early September 2026.
 Business-license data, sourced directly from the City of Seattle's own
 published open data, forms the commercial backbone of the analysis,
 categorized by NAICS code. Additionally, ridership data per station is
