@@ -123,16 +123,19 @@ NAICS_SUBCATEGORIES = {
 def naics_label(name: str, prefixes: tuple) -> str:
     return f"{name} — NAICS Code: {'/'.join(prefixes)}"
 
+# A <details> element so the legend collapses to its title. Open by default;
+# the touch script below closes it on frames narrower than the map (phones),
+# where it covered about a fifth of the visible map.
 LEGEND_HTML = """
-<div class="map-legend" style="
+<details class="map-legend" open style="
     position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-    background: white; padding: 10px 14px; border: 1px solid #999;
+    background: white; padding: 4px 14px; border: 1px solid #999;
     border-radius: 4px; font-family: sans-serif; font-size: 13px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 ">
-  <div style="font-weight: bold; margin-bottom: 6px;">Business Category</div>
-  {rows}
-</div>
+  <summary style="font-weight: bold; cursor: pointer; padding: 6px 0;">Business Category</summary>
+  <div style="padding-bottom: 6px;">{rows}</div>
+</details>
 """
 LEGEND_ROW = """
   <div style="display:flex; align-items:center; margin:3px 0;">
@@ -808,8 +811,14 @@ def main():
     # On a phone, Streamlit narrows the map's frame to the screen (343px on a
     # 375px phone) while the map inside stays 1000px wide, so only its left
     # edge shows: the map opened on Elliott Bay with every station off to the
-    # right. Panning by half the hidden width puts the original centre in
-    # the middle of the visible window. The 1000px width itself stays.
+    # right. Every Leaflet view centres on the container's middle (500px),
+    # so cluster-tap zooms and the zoom buttons landed off screen too
+    # (measured 2026-10-03: a cluster tap left most of its dots, often all,
+    # outside the visible window). The map now reports the visible width as
+    # its size, which moves every centre, fit and zoom to the visible window.
+    # The 1000px width itself stays; tiles and paths past the visible edge
+    # are not drawn, and could not be seen. No effect when the frame is at
+    # least as wide as the map (desktop at full width).
     #
     # Touch screens get a tap resolver in place of tooltips, adapted from the
     # sister project's measured fix (2026-10-03). Measured here before it, in
@@ -850,6 +859,12 @@ def main():
                 border: 2px solid #fff;
                 box-shadow: 0 0 0 2px #111, 0 0 6px 2px rgba(0, 0, 0, 0.45);
             }
+            /* The legend's own open/closed marker, drawn explicitly: the
+               browser's default marker did not render on the summary. */
+            .map-legend summary { list-style: none; }
+            .map-legend summary::-webkit-details-marker { display: none; }
+            .map-legend summary::before { content: "\\25B8"; display: inline-block; width: 1.1em; }
+            .map-legend[open] summary::before { content: "\\25BE"; }
             /* The panel replaces tooltips on touch screens. */
             @media (pointer: coarse) { .leaflet-tooltip-pane { display: none; } }
         </style>
@@ -865,15 +880,38 @@ def main():
                 var RING_PX = 26;   // the selection ring's outer diameter
                 var LIFT_MS = 800;  // a click this soon after a touchend belongs to that tap
 
-                m.whenReady(function () {
-                    var vw = document.documentElement.clientWidth;
-                    var hidden = m.getSize().x - vw;
-                    if (vw > 0 && hidden > 0) m.panBy([hidden / 2, 0], {animate: false});
-                });
+                // Assumes the visible window starts at the container's left
+                // edge, which holds: the map fills the frame and the frame
+                // has no scroll position of its own to change.
+                var fullSize = m.getSize, c0 = m.getCenter(), z0 = m.getZoom();
+                m.getSize = function () {
+                    var s = fullSize.call(this), vw = document.documentElement.clientWidth;
+                    if (vw > 0 && vw < s.x) s.x = vw;
+                    return s;
+                };
+                m.setView(c0, z0, {animate: false});
+
+                var narrow = m.getSize().x < fullSize.call(m).x;
+                var legend = document.querySelector('.map-legend');
+                if (legend && narrow) legend.open = false;
+
+                // The map credit (Leaflet, OpenStreetMap). Its default corner,
+                // bottom-right, is past the visible edge on a narrow frame, so
+                // it moves to bottom-left there. Its links open a new tab:
+                // Streamlit's frame is sandboxed without top navigation, so a
+                // plain link loaded the page inside the frame, and
+                // OpenStreetMap refuses that (X-Frame-Options: SAMEORIGIN).
+                // Delegated, because the credit re-renders when base layers swap.
+                if (narrow && m.attributionControl) m.attributionControl.setPosition('bottomleft');
+                m.getContainer().addEventListener('click', function (e) {
+                    var a = e.target && e.target.closest && e.target.closest('.leaflet-control-attribution a');
+                    if (!a) return;
+                    e.preventDefault();
+                    window.open(a.href, '_blank', 'noopener');
+                }, true);
 
                 var el = m.getContainer();
                 var mq = window.matchMedia ? window.matchMedia('(pointer: coarse)') : null;
-                var legend = document.querySelector('.map-legend');
 
                 var panel = document.createElement('div');
                 panel.className = 'tap-panel';
@@ -936,6 +974,7 @@ def main():
                 }
                 window.addEventListener('resize', place);
                 m.on('moveend', place);
+                if (legend) legend.addEventListener('toggle', place);
                 close.addEventListener('click', clear);
                 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') clear(); });
 
