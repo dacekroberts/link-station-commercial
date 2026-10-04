@@ -311,47 +311,12 @@ def main():
             ).add_to(layer)
         layer.add_to(m)
 
-    # Ridership is the 2025 average of monthly totals (see docs/DECISIONS.md
-    # for why that metric, not "average weekday boardings"). Left join, not
-    # inner: a station missing from the CSV keeps its marker, without a
-    # ridership figure, rather than vanishing silently.
-    if RIDERSHIP_CSV.exists():
-        ridership = pd.read_csv(RIDERSHIP_CSV)
-        stations = stations.merge(ridership, on="station", how="left")
-        no_ridership = stations["avg_monthly_boardings"].isna().sum()
-        if no_ridership:
-            print(f"WARNING: {no_ridership} station(s) have no ridership match - "
-                  "station names must agree between stations.csv and ridership_by_station.csv")
-    else:
-        stations["avg_monthly_boardings"] = None
-        print(f"No ridership file at {RIDERSHIP_CSV} - station tooltips will omit it.")
-
-    # control=False: always on, with no layer-control entry. Same as the rail
-    # line below; both are baseline map context, not optional data layers.
-    station_layer = folium.FeatureGroup(name="Stations", control=False)
-    for _, station in stations.iterrows():
-        boardings = station["avg_monthly_boardings"]
-        # Label first, value second, matching the business tooltip's
-        # "NAICS code: 722513". Spells out "average of monthly totals"
-        # because the metric is deliberately not average weekday or daily
-        # boardings (see docs/DECISIONS.md), and a shorter label would be
-        # ambiguous between them.
-        ridership_line = (
-            f"Avg. monthly boardings (2025 avg. of monthly totals): {boardings:,.0f}"
-            if pd.notna(boardings) else "No ridership data"
-        )
-        tooltip_html = f"<b>{station['station']}</b><br>{ridership_line}"
-        folium.CircleMarker(
-            location=[station["latitude"], station["longitude"]],
-            radius=5,
-            color="#1a5490",
-            fill=True,
-            fill_opacity=0.9,
-            tooltip=folium.Tooltip(tooltip_html, sticky=True),
-        ).add_to(station_layer)
-    station_layer.add_to(m)
-
     # --- The rail line itself: visual context, on by default ---
+    # Added before the stations so the stations draw on top. SVG paths stack
+    # in the order they are added; with the line on top, its 5px path
+    # covered the centre of every station it passes through, and a tap or
+    # hover there reached the line (which has no tooltip) instead of the
+    # station. Measured 2026-10-03: 6 of 16 station centres were covered.
     rail_coords = load_rail_line_shape()
     if rail_coords:
         rail_layer = folium.FeatureGroup(name="Link 1 Line route", show=True, control=False)
@@ -379,6 +344,46 @@ def main():
             """),
         ).add_to(rail_layer)
         rail_layer.add_to(m)
+
+    # Ridership is the 2025 average of monthly totals (see docs/DECISIONS.md
+    # for why that metric, not "average weekday boardings"). Left join, not
+    # inner: a station missing from the CSV keeps its marker, without a
+    # ridership figure, rather than vanishing silently.
+    if RIDERSHIP_CSV.exists():
+        ridership = pd.read_csv(RIDERSHIP_CSV)
+        stations = stations.merge(ridership, on="station", how="left")
+        no_ridership = stations["avg_monthly_boardings"].isna().sum()
+        if no_ridership:
+            print(f"WARNING: {no_ridership} station(s) have no ridership match - "
+                  "station names must agree between stations.csv and ridership_by_station.csv")
+    else:
+        stations["avg_monthly_boardings"] = None
+        print(f"No ridership file at {RIDERSHIP_CSV} - station tooltips will omit it.")
+
+    # control=False: always on, with no layer-control entry. Same as the rail
+    # line above; both are baseline map context, not optional data layers.
+    station_layer = folium.FeatureGroup(name="Stations", control=False)
+    for _, station in stations.iterrows():
+        boardings = station["avg_monthly_boardings"]
+        # Label first, value second, matching the business tooltip's
+        # "NAICS code: 722513". Spells out "average of monthly totals"
+        # because the metric is deliberately not average weekday or daily
+        # boardings (see docs/DECISIONS.md), and a shorter label would be
+        # ambiguous between them.
+        ridership_line = (
+            f"Avg. monthly boardings (2025 avg. of monthly totals): {boardings:,.0f}"
+            if pd.notna(boardings) else "No ridership data"
+        )
+        tooltip_html = f"<b>{station['station']}</b><br>{ridership_line}"
+        folium.CircleMarker(
+            location=[station["latitude"], station["longitude"]],
+            radius=5,
+            color="#1a5490",
+            fill=True,
+            fill_opacity=0.9,
+            tooltip=folium.Tooltip(tooltip_html, sticky=True),
+        ).add_to(station_layer)
+    station_layer.add_to(m)
 
     # --- Individual business pins, one clustered layer per NAICS group ----
     # Even after the ring filter, plain (unclustered) markers would overlap
@@ -798,6 +803,239 @@ def main():
         {% endmacro %}
     """)
     m.add_child(mode_toggle)
+
+    # --- Phones: open on the centre, and taps that reach their target --------
+    # On a phone, Streamlit narrows the map's frame to the screen (343px on a
+    # 375px phone) while the map inside stays 1000px wide, so only its left
+    # edge shows: the map opened on Elliott Bay with every station off to the
+    # right. Panning by half the hidden width puts the original centre in
+    # the middle of the visible window. The 1000px width itself stays.
+    #
+    # Touch screens get a tap resolver in place of tooltips, adapted from the
+    # sister project's measured fix (2026-10-03). Measured here before it, in
+    # a 343x650 frame: an 11px dot opened only on a dead-centre tap in
+    # WebKit-style (no snapping) taps; a dot inside a spiderfied group never
+    # opened on the second tap, because the dot's click bubbled to the map and
+    # markercluster collapses the group on any map click; 22 of 45 tooltips ran
+    # past the frame edge. The resolver catches each tap before Leaflet, picks
+    # the nearest dot, station or cluster within REACH of where the finger
+    # lifted, stops the click for a dot or station (so the group stays open)
+    # and shows that layer's own tooltip content in a fixed panel. Inert unless
+    # (pointer: coarse) matches, so desktop keeps its hover tooltips. Panel
+    # content is the tooltip text built above, withheld names included, so it
+    # exposes nothing new. See docs/DECISIONS.md.
+    m.get_root().html.add_child(folium.Element("""
+        <style>
+            .tap-panel {
+                display: none; position: fixed; z-index: 10000; box-sizing: border-box;
+                left: 10px; bottom: 24px; max-width: 420px; overflow-y: auto;
+                padding: 8px 40px 8px 12px; border-radius: 4px; overflow-wrap: anywhere;
+                font: 13px/1.4 sans-serif;
+                background: #fff; color: #222; border: 1px solid #999;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            }
+            .tap-panel.shown { display: block; }
+            .tap-close {
+                position: absolute; top: 0; right: 0; width: 40px; height: 40px;
+                padding: 0; border: 0; background: none; color: inherit; cursor: pointer;
+                font: 22px/40px sans-serif;
+            }
+            .dark-base .tap-panel {
+                background: #221D19; color: #F3EDE6; border-color: #3A322B;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+            }
+            /* White inner ring, near-black outer ring: reads on light and dark tiles. */
+            .tap-ring {
+                box-sizing: border-box; border-radius: 50%; pointer-events: none;
+                border: 2px solid #fff;
+                box-shadow: 0 0 0 2px #111, 0 0 6px 2px rgba(0, 0, 0, 0.45);
+            }
+            /* The panel replaces tooltips on touch screens. */
+            @media (pointer: coarse) { .leaflet-tooltip-pane { display: none; } }
+        </style>
+    """))
+    touch = folium.MacroElement()
+    touch._template = Template("""
+        {% macro script(this, kwargs) %}
+            (function () {
+                var m = {{ this._parent.get_name() }};
+                var REACH = 22;     // px from a centre: a 44px target (WCAG 2.5.5, Apple HIG)
+                var TIE_PX = 2;     // edges this close tie, and a dot or station beats a cluster
+                var ROOM_PX = 200;  // map height the panel needs above the legend
+                var RING_PX = 26;   // the selection ring's outer diameter
+                var LIFT_MS = 800;  // a click this soon after a touchend belongs to that tap
+
+                m.whenReady(function () {
+                    var vw = document.documentElement.clientWidth;
+                    var hidden = m.getSize().x - vw;
+                    if (vw > 0 && hidden > 0) m.panBy([hidden / 2, 0], {animate: false});
+                });
+
+                var el = m.getContainer();
+                var mq = window.matchMedia ? window.matchMedia('(pointer: coarse)') : null;
+                var legend = document.querySelector('.map-legend');
+
+                var panel = document.createElement('div');
+                panel.className = 'tap-panel';
+                var body = document.createElement('div');
+                body.setAttribute('role', 'status');
+                body.setAttribute('aria-live', 'polite');
+                var close = document.createElement('button');
+                close.type = 'button';
+                close.className = 'tap-close';
+                close.setAttribute('aria-label', 'Close');
+                close.innerHTML = '&times;';
+                panel.appendChild(body);
+                panel.appendChild(close);
+                document.body.appendChild(panel);
+
+                var ring = null, picked = null, passing = false;
+                function follow() { if (ring && picked) { ring.setLatLng(picked.getLatLng()); place(); } }
+                function clear() {
+                    panel.classList.remove('shown');
+                    panel.removeAttribute('data-for');
+                    body.innerHTML = '';
+                    if (ring) { m.removeLayer(ring); ring = null; }
+                    if (picked) { picked.off('move', follow); picked = null; }
+                }
+
+                // Bottom-left of the visible part of the map, above the legend
+                // when there is room, beside it otherwise; at the top, under
+                // the controls, when it would cover the dot it describes.
+                function place() {
+                    if (!panel.classList.contains('shown')) return;
+                    var c = el.getBoundingClientRect();
+                    var vw = document.documentElement.clientWidth || window.innerWidth;
+                    var vh = document.documentElement.clientHeight || window.innerHeight;
+                    var top = Math.max(c.top, 0), bot = Math.min(c.bottom, vh);
+                    var left = Math.max(c.left, 0) + 10, right = vw - Math.min(c.right, vw) + 10;
+                    var bottom = vh - bot + 24;
+                    var lg = legend ? legend.getBoundingClientRect() : null;
+                    if (lg && lg.width && lg.left < vw - right && lg.top < bot - 24) {
+                        if (lg.top - top >= ROOM_PX) bottom = Math.max(bottom, vh - lg.top + 8);
+                        else right = Math.max(right, vw - lg.left + 8);
+                    }
+                    panel.style.left = left + 'px';
+                    panel.style.right = right + 'px';
+                    panel.style.top = 'auto';
+                    panel.style.bottom = bottom + 'px';
+                    panel.style.maxHeight = Math.max(80, Math.round(0.45 * (bot - top))) + 'px';
+                    if (ring && ring._icon && overlaps(ring._icon.getBoundingClientRect(), panel.getBoundingClientRect())) {
+                        var under = top, tl = el.querySelector('.leaflet-top.leaflet-left');
+                        if (tl) under = Math.max(under, tl.getBoundingClientRect().bottom);
+                        panel.style.bottom = 'auto';
+                        panel.style.top = (under + 8) + 'px';
+                        if (overlaps(ring._icon.getBoundingClientRect(), panel.getBoundingClientRect())) {
+                            panel.style.top = 'auto';
+                            panel.style.bottom = bottom + 'px';
+                        }
+                    }
+                }
+                function overlaps(a, b) {
+                    return a.right + 8 > b.left && a.left - 8 < b.right && a.bottom + 8 > b.top && a.top - 8 < b.bottom;
+                }
+                window.addEventListener('resize', place);
+                m.on('moveend', place);
+                close.addEventListener('click', clear);
+                document.addEventListener('keydown', function (e) { if (e.key === 'Escape') clear(); });
+
+                function select(layer) {
+                    var text = layer.getTooltip().getContent();
+                    if (typeof text === 'function') text = text(layer);
+                    if (picked !== layer) clear();
+                    // The tooltip's own content, escaped when the pin was built.
+                    if (typeof text === 'string') body.innerHTML = text;
+                    else if (text && text.cloneNode) { body.innerHTML = ''; body.appendChild(text.cloneNode(true)); }
+                    panel.setAttribute('data-for', String(L.stamp(layer)));
+                    panel.classList.add('shown');
+                    if (!ring) {
+                        ring = L.marker(layer.getLatLng(), {
+                            interactive: false, keyboard: false,
+                            icon: L.divIcon({className: 'tap-ring', iconSize: [RING_PX, RING_PX]})
+                        }).addTo(m);
+                    }
+                    if (picked !== layer) { picked = layer; layer.on('move', follow); }
+                    place();
+                    if (layer.isTooltipOpen()) layer.closeTooltip();
+                }
+
+                // Where the finger lifted. Chromium's touch adjustment moves a
+                // tap's click onto a nearby target and reports the moved point;
+                // the touch events keep the real one.
+                var lift = null;
+                el.addEventListener('touchend', function (e) {
+                    var t = e.changedTouches && e.changedTouches[0];
+                    lift = t ? {x: t.clientX, y: t.clientY, at: Date.now()} : null;
+                }, {capture: true, passive: true});
+                function tapPoint(e) {
+                    if (lift && Date.now() - lift.at < LIFT_MS &&
+                        Math.abs(lift.x - e.clientX) + Math.abs(lift.y - e.clientY) <= 2 * REACH) {
+                        return m.mouseEventToContainerPoint({clientX: lift.x, clientY: lift.y});
+                    }
+                    return m.mouseEventToContainerPoint(e);
+                }
+
+                // The nearest dot, station or cluster within reach. The rail
+                // line and ring outlines are not targets: neither has a tooltip.
+                function nearest(p) {
+                    var best = null, fanned = null;
+                    function consider(kind, layer, d, reach, edge, rank) {
+                        if (d > reach) return;
+                        // Equal distance and kind: the later layer, drawn on top,
+                        // wins (categories cluster separately, so badges can stack).
+                        if (!best || edge < best.edge - TIE_PX ||
+                            (edge <= best.edge + TIE_PX && rank < best.rank) ||
+                            (rank === best.rank && Math.abs(edge - best.edge) < 0.5)) {
+                            best = {kind: kind, layer: layer, edge: edge, rank: rank};
+                        }
+                        // A dot of a spiderfied group the reader just opened wins outright.
+                        if (layer._spiderLeg && (!fanned || edge < fanned.edge)) {
+                            fanned = {kind: kind, layer: layer, edge: edge, rank: rank};
+                        }
+                    }
+                    m.eachLayer(function (l) {
+                        var q, r, d;
+                        if (l instanceof L.CircleMarker) {
+                            // L.Circle (the rings, radius in meters) and markers
+                            // without a tooltip are not targets.
+                            if (l instanceof L.Circle || !l.getTooltip || !l.getTooltip() || !l._point) return;
+                            q = m.latLngToContainerPoint(l.getLatLng());
+                            r = l._radius + (l.options.stroke ? l.options.weight / 2 : 0);
+                            d = q.distanceTo(p);
+                            consider('point', l, d, Math.max(REACH, r), d - r, 0);
+                        } else if (L.MarkerCluster && l instanceof L.MarkerCluster && l._icon) {
+                            if (l._group && l._group._spiderfied === l) return;
+                            q = m.latLngToContainerPoint(l.getLatLng());
+                            r = l._icon.offsetWidth / 2;
+                            d = q.distanceTo(p);
+                            consider('cluster', l, d, Math.max(REACH, r), d - r, 1);
+                        }
+                    });
+                    return fanned || best;
+                }
+
+                el.addEventListener('click', function (e) {
+                    if (passing || !(mq && mq.matches)) return;
+                    var t = e.target;
+                    if (t && t.closest && t.closest('.leaflet-control')) return;
+                    var best = nearest(tapPoint(e));
+                    if (!best) { clear(); return; }
+                    e.stopPropagation();
+                    if (best.kind === 'point') { select(best.layer); return; }
+                    // A cluster: re-send the click to its badge, so markercluster
+                    // zooms or spiderfies exactly as for a direct tap.
+                    clear();
+                    passing = true;
+                    try {
+                        best.layer._icon.dispatchEvent(new MouseEvent('click', {
+                            bubbles: true, cancelable: true, view: window,
+                            clientX: e.clientX, clientY: e.clientY}));
+                    } finally { passing = false; }
+                }, true);
+            })();
+        {% endmacro %}
+    """)
+    m.add_child(touch)
 
     HEATMAP_HTML.parent.mkdir(parents=True, exist_ok=True)
     m.save(str(HEATMAP_HTML))
