@@ -15,6 +15,18 @@ each; detail lives in the sections below.
 
 ### 2026-10-03 — Mobile map taps
 
+- **Centered every map view on the visible window, made the legend
+  collapsible, and fixed the map credit.** On a phone, a cluster tap's
+  zoom left most of its dots off-screen (often all of them), and the zoom
+  buttons drifted. Leaflet centers on the middle of the 1000px map, which
+  the 343px frame can't show. The map now reports its visible width as its
+  size, so every center, fit and zoom uses the visible window: all 24
+  cluster taps keep their dots in view. This replaces the opening-view
+  pan. The legend is now collapsible, closed on narrow frames, where it
+  covered about a fifth of the map. The credit was off-screen on phones, so
+  it moves bottom-left there. Its links now open a new tab, because the
+  sandboxed Streamlit frame loaded them in place and OpenStreetMap refuses
+  to be framed. `src/step5_map.py`, `outputs/heatmap.html`.
 - **Made the map's dots, stations and clusters tappable on phones, and
   opened the phone view on downtown.** Measured first, with taps simulated
   in a headless browser at 343×650, the frame size Streamlit gives the map
