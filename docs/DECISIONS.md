@@ -13,6 +13,41 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-03 — Mobile map taps
+
+- **Made the map's dots, stations and clusters tappable on phones, and
+  opened the phone view on downtown.** Measured first, with taps simulated
+  in a headless browser at 343×650, the frame size Streamlit gives the map
+  on a 375px phone. An 11px dot opened only on a dead-center tap in
+  iPhone-style taps (0/19 at 8px off), and a dot inside an expanded
+  cluster never opened on the second tap (0/8). The tap also reached the
+  map, and markercluster closes an expanded group on any map click. 22 of
+  45 tooltips ran past the frame edge. On touch screens only, a tap now
+  picks the nearest dot, station or cluster within 22px and shows its
+  tooltip text in a fixed box above the legend. After: 19/19 dots at up to
+  20px off, 8/8 expanded-cluster taps from 0 to 15px off, 0 clipped.
+  Adapted from the sister project's measured fix. Desktop hover is
+  unchanged. The map also pans on load when its frame is narrower than its
+  1000px width, which keeps the 1000px workaround; phones had opened on
+  Elliott Bay. `src/step5_map.py`, `outputs/heatmap.html`.
+- **Drew the rail line under the stations.** It was added after them, so
+  its path covered the center of 6 of the 16 stations: Columbia City,
+  ID/Chinatown, Mount Baker, Othello, Pioneer Square and SODO. A tap or
+  hover there reached the line, which has no tooltip. Station centers now
+  open 15/16 on desktop (Westlake sits under a cluster badge) and 16/16 on
+  phones.
+
+### 2026-10-02 — Pinehurst and the 2 Line
+
+- **Dated the station count instead of adding Pinehurst.** Pinehurst
+  opened 2026-09-30, after the station feed (08-28) and the license
+  snapshot (09-06). Adding it means a re-run with no ridership history
+  behind it, so Methodology now explains the gap and the Overview reads
+  "the 16 stations ... open when the data was pulled". I also corrected
+  the 2 Line: it shares the 1 Line's track to International
+  District/Chinatown and leaves Seattle after Judkins Park, where
+  Methodology and the README had said it ran entirely outside the city.
+
 ### 2026-10-02 — License
 
 - **Added a license, split by what each part of the repo is.** Without one
