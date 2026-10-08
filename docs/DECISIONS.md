@@ -31,6 +31,28 @@ each; detail lives in the sections below.
   covers the code in the page files, not the prose in them. The README
   banner's byline reads "By Dace Roberts · © 2026". `components.py`, the
   six page files, `README.md`, `docs/images/readme-banner.png`.
+- **Added invisible authorship marks to the map and every page.** A mark
+  reads `lsc:v1:<id>:<check>`, where the check is an HMAC of the id under a
+  secret key kept outside the repository (`~/.lsc/fingerprint.key`, backed
+  up offline). Anyone can copy a mark, but only that key confirms it, and
+  git history dates it. Only the two checks are committed
+  (`fingerprint_marks.json`), so the hosting service renders the marks
+  without the key. The map carries three copies (a generator meta tag, a
+  comment in its head, a hidden element) and every page carries one hidden
+  span in the footer. They are metadata only: no coordinate, count, name or
+  visible text changed, and none sits in text a reader copies. Rejected:
+  fake "trap" entries, which would have changed published figures and put
+  invented pins at real addresses, and hidden text in the prose, which
+  screen readers would read out. The marks travel with wholesale copies of
+  a file or a saved page, not with excerpts or screenshots, and anyone who
+  knows they're there can remove them; the real protection stays the
+  copyright, MIT's notice requirement and the dated history. Streamlit
+  builds pages in the browser, so a copy is checked by saving the page and
+  running `verify` on the file. `python scripts/fingerprint.py coverage` now
+  runs after any change to step 5 or the footer. Adapted from the
+  expanded-heatmap project's kit, with this project's own prefix and key.
+  `config.py`, `components.py`, `src/step5_map.py`,
+  `scripts/fingerprint.py`, `CLAUDE.md`.
 
 ### 2026-10-08 — Sound Transit reply; presentation round
 
