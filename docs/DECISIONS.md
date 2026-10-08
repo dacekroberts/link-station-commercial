@@ -13,6 +13,25 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-08 — Copyright notice and site footer
+
+- **Added a copyright and license footer to every page, led by the
+  project's copyright notice.** Visitors to the site never see the README,
+  so the license split wasn't stated anywhere they'd look. Each page now
+  ends with the notice approved in the Seattle Visual Session after a
+  designer's review: "© 2026 Dace Roberts. Project design, writing and
+  analysis; code under the MIT License. Built with Python, GeoPandas and
+  Streamlit, with development assistance from Claude Code. Data: City of
+  Seattle, Sound Transit; map © OpenStreetMap contributors." A second line
+  keeps "Writing all rights reserved; data under each source's own terms"
+  and links to the README. The notice alone credits the writing to me
+  without reserving it, and a blanket "All rights reserved" would
+  contradict the MIT grant on the code. The same notice now opens the
+  README's License section, which also gains a sentence that the MIT grant
+  covers the code in the page files, not the prose in them. The README
+  banner's byline reads "By Dace Roberts · © 2026". `components.py`, the
+  six page files, `README.md`, `docs/images/readme-banner.png`.
+
 ### 2026-10-08 — Sound Transit reply; presentation round
 
 - **Sound Transit answered the ridership terms question.** I asked Sound
