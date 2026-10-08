@@ -13,6 +13,37 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-08 — Sound Transit reply; presentation round
+
+- **Sound Transit answered the ridership terms question.** I asked Sound
+  Transit whether this portfolio could use the System Performance Tracker
+  ridership figures, and their Passenger Care team replied by email on
+  2026-09-30 that since the data is publicly available, I'm welcome to
+  proceed. That settles the open conflict in `docs/data_sources.md`
+  (source 5), which now records the reply without the staff member's name.
+  The credit line "Ridership: Sound Transit System Performance Tracker,
+  2025." stays on every piece that shows the figures. It's a
+  customer-service answer, not a license, so the data stays excluded from
+  the repo's MIT grant.
+- **The presentation's tags are flat labels, not pills.** The filled oval
+  verdict tags ("Supported", "Loosely supported", "Both supported") on the
+  carousel, deck slides 4-6 and project sheet, and the "Standard pattern" /
+  "Against the pattern" tags on the 16 station cards and the ring explorer,
+  looked like buttons someone could click. Each is now a thin colored rule
+  with small capitals, the style the poster already used. Pill shapes stay
+  only on real buttons (the explorer's station picker). Presentation files
+  only; the site is unchanged.
+- **Presentation exports live in a local `visuals/` folder kept out of git
+  by `.git/info/exclude`.** That follows the 10-02 decision that the
+  presentation binaries stay out of the repo without editing `.gitignore`.
+  Files carry the item numbers of the plain-language visuals guide, so
+  "item 22" means the same file everywhere.
+- **Voiceover pieces are parked for a later batch.** The title card, video
+  thumbnail and vertical video frames only work once the narration is
+  recorded, so they're grouped as a "voiceover project" and left out of
+  this first round of showing the project to connections. The approved
+  narration script stays in the Presentation Kit.
+
 ### 2026-10-03 — Mobile map taps
 
 - **Centered every map view on the visible window, made the legend

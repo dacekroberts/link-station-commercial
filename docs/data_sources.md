@@ -200,6 +200,10 @@ through this site," so they cover sources 1, 2 and 3. Three clauses matter:
   4. **Remove it.** This would cost Graph 3, Graph 4, Table 2 and one of the
      project's three analyses. Listed for completeness, not recommended
      before options 1-3 are tried.
+- Update 2026-10-08: Sound Transit's Passenger Care team replied by email on
+  2026-09-30 that, because the data is publicly available, the portfolio may
+  proceed. Recorded as permission to use, not a license; the credit line stays
+  on every piece that shows the figures.
 - **Terms read at:**
   `soundtransit.org/help-contacts/business-information/terms-use`
 
