@@ -39,8 +39,9 @@ currently based in the Seattle area.
 st.subheader("Education")
 st.markdown(
     """
-I studied Philosophy, Politics and Economics (PPE) at the University of
-Southern California (USC), graduating in 2025. Through my
+I graduated magna cum laude from the University of Southern California
+(USC) in 2025 with a bachelor's in Philosophy, Politics and Economics
+(PPE). Through my
 relevant education and research, particularly my collegiate Urban
 Economics and Philosophy of Economics courses, I formed the starting
 assumptions this project is built on. Previously, I obtained a Python
