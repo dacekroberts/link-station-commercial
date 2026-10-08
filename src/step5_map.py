@@ -28,6 +28,7 @@ from jinja2 import Template
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (  # noqa: E402
+    fingerprint_mark,
     DATA_RAW,
     STATIONS_CSV,
     BUSINESSES_GEOCODED_CSV,
@@ -1077,6 +1078,16 @@ def main():
     m.add_child(touch)
 
     HEATMAP_HTML.parent.mkdir(parents=True, exist_ok=True)
+    # Authorship mark (see config.py and scripts/fingerprint.py): a generator
+    # meta tag, an HTML comment in <head> and a hidden element in the body.
+    # Metadata only. With no table entry the map renders unmarked, and
+    # `fingerprint.py coverage` fails it.
+    mark = fingerprint_mark("map/heatmap")
+    if mark:
+        m.get_root().header.add_child(folium.Element(
+            f'<meta name="generator" content="link-station-commercial {mark}">\n<!-- {mark} -->'))
+        m.get_root().html.add_child(folium.Element(f'<div hidden data-mark="{mark}"></div>'))
+
     m.save(str(HEATMAP_HTML))
     print(f"Wrote {HEATMAP_HTML}")
     print(f"{len(businesses_in_rings):,} points plotted (within-ring default) / "

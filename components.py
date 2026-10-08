@@ -7,6 +7,8 @@ called from each page.
 
 import streamlit as st
 
+from config import fingerprint_mark
+
 # Streamlit's default is 300px. 240px is the narrowest width where the
 # longest nav label ("Methodology & Limitations") doesn't clip in Inter;
 # it clips at 235px. Re-measure if the base font changes.
@@ -275,7 +277,11 @@ def render_footer():
     project's copyright notice (wording approved 2026-10-08) and, on a
     second line, the license split the README states (code MIT, writing all
     rights reserved, data under each source's terms), linking to it.
+    The project's authorship mark rides along as a hidden element (see
+    config.py and scripts/fingerprint.py); no visible text changes.
     """
+    mark = fingerprint_mark("site")
+    hidden = f'<span hidden data-mark="{mark}"></span>' if mark else ""
     st.markdown(
         """
         <style>
@@ -294,6 +300,7 @@ def render_footer():
           <a href="https://github.com/dacekroberts/link-station-commercial#license"
              target="_blank" rel="noopener noreferrer">License details</a>
         </div>
-        """,
+        """
+        + hidden,
         unsafe_allow_html=True,
     )

@@ -69,5 +69,11 @@ After any change to step 2's row filtering or to step 5, run
 `python scripts/check_personal_exposure.py` (needs the local `data/` tree).
 Its section 4 must pass before the map is published.
 
+After any change to step 5, the footer (`components.py`) or the list of
+marked items, run `python scripts/fingerprint.py coverage`; it must say OK.
+The authorship key lives outside the repo (`~/.lsc/fingerprint.key`): never
+read it into a conversation, print it or commit it. `table` and `verify`
+need it; `coverage` and rendering don't.
+
 Commit after each step that succeeds. Prompt the user to fill in
 `docs/DECISIONS.md` after each session.

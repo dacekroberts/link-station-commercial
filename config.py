@@ -248,3 +248,28 @@ LICENSE_SOURCE = (
     "(dataset wnbq-64tb). Point geometry joined from the companion GIS layer "
     "'Seattle Business License' where account numbers match"
 )
+
+# --- Authorship marks ----------------------------------------------------
+# Invisible marks in the rendered map and pages that tie a copy back to this
+# project: `lsc:v1:<id>:<check>`, where the check is an HMAC of the id under
+# a secret key kept outside the repository. Only the checks are committed
+# (FINGERPRINT_TABLE), so rendering never needs the key. Metadata only: no
+# coordinate, count, name or visible text changes. scripts/fingerprint.py
+# writes the table and verifies copies; see its docstring.
+FINGERPRINT_PREFIX = "lsc:v1"
+FINGERPRINT_TABLE = ROOT / "fingerprint_marks.json"
+_fingerprint_cache = {}
+
+
+def fingerprint_mark(ident):
+    """`lsc:v1:<ident>:<check>` from the committed table, or None when the
+    table has no entry. A missing or unreadable table never breaks a render;
+    `python scripts/fingerprint.py coverage` is what catches it."""
+    import json
+    if not _fingerprint_cache:
+        try:
+            _fingerprint_cache.update(json.loads(FINGERPRINT_TABLE.read_text(encoding="utf-8")))
+        except (OSError, ValueError):
+            return None
+    check = _fingerprint_cache.get(ident)
+    return f"{FINGERPRINT_PREFIX}:{ident}:{check}" if check else None
