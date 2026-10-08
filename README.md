@@ -1,6 +1,6 @@
 <p align="center">
   <img src="docs/images/readme-banner.png" width="1280"
-       alt="Commercial Density Around Seattle's Light Rail Stations, by Dace Roberts: a title banner with four concentric rings around a station point">
+       alt="Commercial Density Around Seattle's Light Rail Stations, by Dace Roberts, © 2026: a title banner with four concentric rings around a station point">
 </p>
 
 # Commercial density around Seattle's light rail stations
@@ -99,6 +99,11 @@ are filtered out in step 2.)
 Read `pages/3_Methodology_&_Limitations.py` before drawing conclusions from any of this.
 
 ## License
+
+© 2026 Dace Roberts. Project design, writing and analysis; code under the MIT
+License. Built with Python, GeoPandas and Streamlit, with development
+assistance from Claude Code. Data: City of Seattle, Sound Transit; map ©
+OpenStreetMap contributors.
 
 The repository mixes three kinds of material, licensed differently:
 

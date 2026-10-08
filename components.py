@@ -271,9 +271,10 @@ def render_social_links():
 def render_footer():
     """Copyright and license notice, last on every page.
 
-    Visitors to the site never see the README, so the license split it
-    states (code MIT, writing all rights reserved, data under each source's
-    terms) is repeated here in one line, linking to the full statement.
+    Visitors to the site never see the README, so the footer carries the
+    project's copyright notice (wording approved 2026-10-08) and, on a
+    second line, the license split the README states (code MIT, writing all
+    rights reserved, data under each source's terms), linking to it.
     """
     st.markdown(
         """
@@ -285,8 +286,11 @@ def render_footer():
         .site-footer a:hover { color: #F3EDE6; }
         </style>
         <div class="site-footer">
-          © 2026 Dace Roberts. Code released under the MIT License; writing all
-          rights reserved; data remains under each source's own terms.
+          © 2026 Dace Roberts. Project design, writing and analysis; code under
+          the MIT License. Built with Python, GeoPandas and Streamlit, with
+          development assistance from Claude Code. Data: City of Seattle, Sound
+          Transit; map © OpenStreetMap contributors.<br>
+          Writing all rights reserved; data under each source's own terms.
           <a href="https://github.com/dacekroberts/link-station-commercial#license"
              target="_blank" rel="noopener noreferrer">License details</a>
         </div>
