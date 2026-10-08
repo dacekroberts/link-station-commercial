@@ -104,7 +104,8 @@ The repository mixes three kinds of material, licensed differently:
 
 - **Code:** the Python source (`src/`, `pages/`, `scripts/`,
   `components.py`, `config.py`, `Overview_&_Introduction.py`) is released
-  under the [MIT License](LICENSE).
+  under the [MIT License](LICENSE). The MIT grant covers the code in the
+  page files, not the prose in them.
 - **Writing:** the site's prose and the documents in `docs/` are
   © 2026 Dace Roberts, all rights reserved. Quote and link freely, but don't
   republish them as your own.

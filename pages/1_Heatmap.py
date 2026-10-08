@@ -9,6 +9,7 @@ Python.
 import streamlit as st
 
 from components import (
+    render_footer,
     render_sidebar_nav_label,
     render_social_links,
     render_train_banner,
@@ -78,3 +79,5 @@ if HEATMAP_HTML.exists():
     st.iframe(HEATMAP_HTML, width=1000, height=650)
 else:
     st.info("No map yet. Run `python src/step5_map.py` to generate it.")
+
+render_footer()

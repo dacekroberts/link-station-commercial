@@ -8,6 +8,7 @@ siting; when trimming, trim elsewhere.
 import streamlit as st
 
 from components import (
+    render_footer,
     render_sidebar_nav_label,
     render_social_links,
     render_train_banner,
@@ -625,3 +626,5 @@ st.markdown(
   project's scope didn't call for, though.
 """
 )
+
+render_footer()

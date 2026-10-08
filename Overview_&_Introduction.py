@@ -11,6 +11,7 @@ import pandas as pd
 import streamlit as st
 
 from components import (
+    render_footer,
     render_sidebar_nav_label,
     render_social_links,
     render_train_banner,
@@ -302,3 +303,5 @@ commercial density in relation to this increasingly popular transit
 infrastructure phenomenon.
 """
 )
+
+render_footer()

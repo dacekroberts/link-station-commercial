@@ -10,6 +10,7 @@ import pandas as pd
 import streamlit as st
 
 from components import (
+    render_footer,
     render_sidebar_nav_label,
     render_social_links,
     render_train_banner,
@@ -1101,3 +1102,5 @@ st.markdown(
     both cap how precisely any single station's figures should be read.
     """
 )
+
+render_footer()

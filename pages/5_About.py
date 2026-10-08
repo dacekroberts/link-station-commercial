@@ -9,6 +9,7 @@ approval.
 import streamlit as st
 
 from components import (
+    render_footer,
     render_sidebar_nav_label,
     render_social_links,
     render_train_banner,
@@ -103,3 +104,5 @@ st.markdown(
   and its judgment calls kept as my own.
 """
 )
+
+render_footer()

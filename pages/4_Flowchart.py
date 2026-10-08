@@ -11,6 +11,7 @@ import base64
 import streamlit as st
 
 from components import (
+    render_footer,
     render_sidebar_nav_label,
     render_social_links,
     render_train_banner,
@@ -166,3 +167,5 @@ _FLOWCHART_DATA_URL = "data:text/html;base64," + base64.b64encode(
     _FLOWCHART_HTML.encode("utf-8")
 ).decode("ascii")
 st.iframe(_FLOWCHART_DATA_URL, width="stretch", height=925)
+
+render_footer()

@@ -266,3 +266,30 @@ def render_social_links():
         """,
         unsafe_allow_html=True,
     )
+
+
+def render_footer():
+    """Copyright and license notice, last on every page.
+
+    Visitors to the site never see the README, so the license split it
+    states (code MIT, writing all rights reserved, data under each source's
+    terms) is repeated here in one line, linking to the full statement.
+    """
+    st.markdown(
+        """
+        <style>
+        .site-footer { margin-top: 3rem; padding-top: 0.75rem;
+            border-top: 1px solid #3A322B; color: #A39A90; font-size: 0.8rem;
+            line-height: 1.5; }
+        .site-footer a { color: #A39A90; text-decoration: underline; }
+        .site-footer a:hover { color: #F3EDE6; }
+        </style>
+        <div class="site-footer">
+          © 2026 Dace Roberts. Code released under the MIT License; writing all
+          rights reserved; data remains under each source's own terms.
+          <a href="https://github.com/dacekroberts/link-station-commercial#license"
+             target="_blank" rel="noopener noreferrer">License details</a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
