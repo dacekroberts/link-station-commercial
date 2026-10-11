@@ -16,7 +16,7 @@ from components import (
     set_base_font,
     set_sidebar_width,
 )
-from config import HEATMAP_HTML
+from config import HEATMAP_HTML, LICENSE_SNAPSHOT, RING_EDGES_MILES
 
 # The embedded map's own Leaflet layer-control icon
 # (leaflet@1.9.3/dist/images/layers.png, 26x26), inlined as a data URI so
@@ -103,6 +103,56 @@ with st.container(key="try_wide"):
 with st.container(key="try_narrow"):
     with st.expander(TRY_HEADING):
         st.markdown(TRY_LIST)
+
+# Ring distances and the snapshot date come from config.py so these notes
+# cannot drift from the pipeline. Colours named here match NAICS_GROUPS in
+# step5_map.py.
+_inner = ", ".join(f"{m:g}" for m in RING_EDGES_MILES[1:-1])
+_outer = f"{RING_EDGES_MILES[-1]:g}"
+with st.expander("How to read this map"):
+    st.markdown(
+        f"""
+- **Blue dots** are the 16 stations. Hover over one (or tap it) to see its
+  average monthly boardings.
+- **Thin circles** mark {_inner} and {_outer} miles from each station.
+- **Coloured dots** are single businesses: blue for retail, pink for food
+  service, green for personal services. Hover over one to see its name,
+  category, nearest station and ring.
+- **Numbered circles** are nearby businesses added together. Each colour is
+  counted separately, so a station's total is the sum of its circles, not
+  any single one.
+- **The orange glow** shows roughly where businesses bunch up. Both the
+  glow and the numbered circles change as the map zooms, so compare two
+  stations at the same zoom level.
+
+Only businesses within {_outer} miles of a station are pinned. A few pins
+read "Name withheld (sole proprietor)": the business is real, but the name
+is a person's own.
+"""
+    )
+with st.expander("Where to trust it, and where not"):
+    st.markdown(
+        f"""
+**Good for:** seeing where shops, restaurants and services cluster around
+each station, which kinds are there, and how one station compares with
+another.
+
+**Not good for:**
+
+- **Whether a place is open today.** The licence list is a snapshot from
+  {LICENSE_SNAPSHOT}, so closures and openings since then don't show.
+- **Whether a pin is a shopfront.** The list records registered businesses,
+  so a home-based business looks the same as a shop on the street.
+- **How far the walk is.** The rings are straight-line distances. A
+  freeway, a hill or water inside a ring is ignored.
+- **How many people walk past.** Boardings count people getting on the
+  train, including those who arrive by bus or car and never pass a
+  storefront.
+- **What could open here.** Zoning is not accounted for.
+
+The Methodology & Limitations page covers each of these in full.
+"""
+    )
 
 st.markdown(
     f"""
