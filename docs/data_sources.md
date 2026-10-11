@@ -25,15 +25,17 @@ are ambiguous the entry says so rather than resolving it.
 | Seattle Business License (GIS layer) | covered by the portal terms | as above | resolved |
 | Seattle land use zoning | **PDDL** | permitted | clear (not redistributed) |
 | Sound Transit GTFS | limited, **revocable** | permitted **with flow-down** | note added |
-| Sound Transit ridership dashboard | website terms: informational use only | **prohibited without prior permission** | **conflict** |
-| US Census geocoder | API terms require a notice | not restricted | **notice missing** |
+| Sound Transit ridership dashboard | website terms: informational use only | prohibited without prior permission; **permission given by email 2026-09-30, for this portfolio** | resolved 2026-10-08, credit line required |
+| US Census geocoder | API terms require a notice | not restricted | notice displayed (2026-09-20) |
 | OpenStreetMap tiles | ODbL (data), attribution required | see entry | attribution present |
 
-**The one that needs a decision:** Sound Transit's ridership figures were
-transcribed from a page on `soundtransit.org`, which its website terms treat
-as "Website Content" and license for informational use only, prohibiting
-republication "without prior permission." This project republishes those
-figures. See source 5.
+**The one that needed a decision, now settled:** Sound Transit's ridership
+figures were transcribed from a page on `soundtransit.org`, which its website
+terms treat as "Website Content" and license for informational use only,
+prohibiting republication "without prior permission." This project
+republishes those figures. Sound Transit's Passenger Care team replied by
+email on 2026-09-30 that the portfolio may proceed. That reply covers this
+non-commercial portfolio only and is not a license. See source 5.
 
 ---
 
@@ -146,6 +148,9 @@ through this site," so they cover sources 1, 2 and 3. Three clauses matter:
 - **Obtained:** **manually transcribed** from an embedded Power BI dashboard —
   screenshots of twelve 2025 months, into a document, into a CSV. No export
   endpoint exists.
+- **Status, 2026-10-11:** settled by Sound Transit's reply of 2026-09-30
+  (see the update at the end of this entry). The findings below are kept as
+  written on 2026-09-20; they describe the conflict the reply resolved.
 - **License: resolved, and it conflicts with what this project does.** The
   dashboard is a page on `soundtransit.org`, so it is governed by Sound
   Transit's **website** Terms of Use, not the OTD Transit Data Terms. Those
@@ -224,6 +229,8 @@ through this site," so they cover sources 1, 2 and 3. Three clauses matter:
   > the Census Bureau Data API but is not endorsed or certified by the Census
   > Bureau.'"*
 
+- **Status, 2026-10-11:** the notice has been on the Methodology page since
+  2026-09-20 ("Attribution and terms"). The text above is kept as written.
 - **Does it apply here?** Genuinely unclear. The batch geocoder at
   `geocoding.geo.census.gov` is a different endpoint from the data API those
   terms are written for, and it publishes no terms of its own. **The cheap
@@ -295,10 +302,15 @@ first writing; all three are now answered, and two produced actions.
 1. **Decide what to do about the ridership figures (source 5).** This is the
    only item where what a source says and what this project does are in
    conflict. Options are listed in that entry; asking is the cheapest.
+   *Done:* I asked, and Sound Transit replied on 2026-09-30 that the
+   portfolio may proceed. The credit line stays on every piece that shows
+   the figures, and the figures stay out of anything paid.
 2. **Add the Census API notice.** One line on the Methodology page: "This
    product uses the Census Bureau Data API but is not endorsed or certified
    by the Census Bureau." Whether it is strictly required here is unclear,
-   which is exactly why adding it is easier than deciding.
+   which is exactly why adding it is easier than deciding. *Done
+   2026-09-20:* the notice is in the Methodology page's "Attribution and
+   terms" note.
 3. **Pass Sound Transit's GTFS terms on.** *Done* — the Methodology page's
    "Attribution and terms" note carries them, discharging the flow-down
    clause for the station and alignment geometry.

@@ -13,6 +13,61 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-11 — Portfolio review handoff
+
+- **Took the portfolio review's handoff notes as a starting brief and
+  corrected four points in them against this repo's records.** The notes
+  (2026-10-11, from the review session, covering advisers D, S, W and Z)
+  set this project's job as the flagship case study and the pilot for the
+  portfolio's storytelling model and tone guide. Corrections: (1) the
+  Sound Transit reply was already recorded on 10-08; only the status lines
+  were stale (next entry). (2) "Ask before installing Node.js or Remotion,
+  as CLAUDE.md requires": CLAUDE.md has no install rule. I still approve
+  installs first. (3) "King County zoning" in the "where to trust it" list:
+  no zoning of any kind is in this analysis (Seattle's layer was used once,
+  for the privacy check), and S's zoning point belongs to a separate
+  project idea, so this site's box says only that zoning isn't accounted
+  for. (4) Visual 26 is titled "Four forks in the road", not "Four
+  decisions". The line "compare two stations before you sign a lease" also
+  stays out of this repo's pieces: it likely belongs to a new project idea,
+  and on 10-01 I cut a similar line from the voiceover as causal-sounding.
+- **Brought `docs/data_sources.md`'s status lines up to date; no terms
+  changed.** The summary table still showed the ridership source as
+  "conflict" and the Census geocoder as "notice missing". The first was
+  settled by Sound Transit's 2026-09-30 email (logged 10-08), and the
+  Census notice has been on the Methodology page since 2026-09-20
+  (a5be6b1). The table, the paragraph under it, sources 5 and 6 and the
+  to-do list now say so, each with its date. The findings as written on
+  09-20 are kept under a dated status line, not rewritten.
+- **Added `docs/TONE_GUIDE.md`, a first version built from my own
+  writing.** One page: the voice to keep, what changes for a business or
+  general reader, four levels of communication (hook, story, method,
+  depth) and how to use supporting data. It was drawn from three of my
+  academic essays and the site prose I wrote, leaving out the sentences
+  the 10-01 entry lists as drafted by Claude Code. The essays themselves
+  aren't in the repo. The guide is self-contained so it can be carried to
+  the other portfolio repos; it isn't loaded by `CLAUDE.md` yet, and I'll
+  revise it after the story reviews (e2f17ed).
+- **Approved a medians visual as a scope addition, as a presentation piece
+  only.** S's point was that outliers and percentiles matter for location
+  data. Across the 16 stations the median density per ring is 717 / 260 /
+  153 / 164 businesses per square mile, against the published means of 837
+  / 550 / 555 / 310, with the middle half of stations spanning 159-1,491,
+  125-1,121, 77-709 and 117-500. On medians the ring-3 uptick disappears
+  and the ring 1 to 4 fall is 77%, not 62.9%: the uptick lives in the
+  mean, pulled up by Westlake's ring 3 (2,570). The live site stays as it
+  is for now, so no published figure or Findings sentence changes.
+- **Regrouping visual 20 by business mix is deferred, and flagged as a
+  second scope addition.** Business mix (22) isn't public, was tested by
+  ring and not by station (Cramér's V 0.094), and per-station groups would
+  rest on counts as small as 5 (University of Washington). An in-scope
+  alternative, grouping by the published standard / against-the-pattern
+  split, is on the table for later.
+- **Order of work:** site rewrite (problem first), the medians visual,
+  visuals 27 and 35, visual 20, the motion opener in its own folder (with
+  ridership and its credit line), then the talk track and PR/FAQ, then the
+  voiceover. The handoff's dates are not binding.
+
 ### 2026-10-08 — Copyright notice and site footer
 
 - **Added a copyright and license footer to every page, led by the
