@@ -49,10 +49,22 @@ with st.container(key="overview_columns"):
     st.markdown(
         """
         <style>
-        .st-key-overview_columns [data-testid="stHorizontalBlock"]
-        > [data-testid="stColumn"]:not(:first-child) {
-            border-left: 1px solid rgba(128, 128, 128, 0.3);
-            padding-left: 1.5rem;
+        /* Side rule only while the columns sit side by side. Streamlit
+           stacks them at 640px and below; there the rule moves above
+           each stacked column so the three lists still read as groups. */
+        @media (min-width: 641px) {
+            .st-key-overview_columns [data-testid="stHorizontalBlock"]
+            > [data-testid="stColumn"]:not(:first-child) {
+                border-left: 1px solid rgba(128, 128, 128, 0.3);
+                padding-left: 1.5rem;
+            }
+        }
+        @media (max-width: 640px) {
+            .st-key-overview_columns [data-testid="stHorizontalBlock"]
+            > [data-testid="stColumn"]:not(:first-child) {
+                border-top: 1px solid rgba(128, 128, 128, 0.3);
+                padding-top: 1rem;
+            }
         }
         </style>
         """,
@@ -91,6 +103,14 @@ with st.container(key="overview_columns"):
         )
 
 st.divider()
+# The page's one-line hook: the problem, then the headline answer. The
+# figure is registered in scripts/check_published_numbers.py.
+st.markdown(
+    "**How much does it matter for a storefront to sit next to a light rail "
+    "platform?** I measured where storefronts sit around Seattle's 16 "
+    "in-city 1 Line stations: "
+    "density falls 62.9% from the platform to the outer ring."
+)
 st.subheader("What I Asked")
 # Pairs with "What I Found" directly below. The three numbered questions
 # are the Findings page's section hypotheses, worded identically there;
@@ -192,6 +212,15 @@ if STATION_STATS_CSV.exists():
         <style>
         [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:last-child
         [data-testid="stMetricValue"] { font-size: 30px !important; }
+        /* Metric labels wrap. Streamlit keeps them on one line and cuts
+           them with an ellipsis: the middle label needs 360px and a
+           stacked phone column is 333px. */
+        [data-testid="stMetricLabel"],
+        [data-testid="stMetricLabel"] * {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
         </style>
         """,
         unsafe_allow_html=True,

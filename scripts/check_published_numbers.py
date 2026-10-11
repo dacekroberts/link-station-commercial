@@ -55,6 +55,7 @@ FLOWCHART = "pages/4_Flowchart.py"
 # quotes between literals break the match.
 CITATIONS = [
     (OVERVIEW, "drop {fall} between the innermost and outermost rings, {r1} to {r4}"),
+    (OVERVIEW, "density falls {fall} from the platform to the outer ring"),
     (OVERVIEW, "lands at r = {r}"),
     (OVERVIEW, "about {cv_ratio} times as uneven"),
     (OVERVIEW, "{chain_r1} in the first ring, and falls to {chain_r4} by the fourth"),
