@@ -230,9 +230,26 @@ else:
     )
 
 st.divider()
-with st.expander("Why Seattle?"):
+# Background essays, collapsed so the questions and findings come first.
+# An expander label renders at 14px regular; the rule below sizes these two
+# like st.subheader (28px, 600). The container key scopes it to this page,
+# so the Findings page's table expanders keep the default label.
+with st.container(key="background_sections"):
     st.markdown(
         """
+        <style>
+        .st-key-background_sections [data-testid="stExpander"] summary
+        [data-testid="stMarkdownContainer"] p {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.expander("Why Seattle?"):
+        st.markdown(
+            """
 Seattle has several factors that make it an intriguing option to
 explore this particular topic within. Firstly, the unparalleled growth
 of the city, centered around its burgeoning tech sector, has created a
@@ -268,11 +285,11 @@ Therefore, how can a business make informed decisions about its
 locational choice in Seattle with this transit-oriented roadmap put in
 place?
 """
-    )
+        )
 
-with st.expander("Starting Assumptions"):
-    st.markdown(
-        """
+    with st.expander("Starting Assumptions"):
+        st.markdown(
+            """
 Contemporary relocation trends increasingly suggest a rural exodus among
 young people in developed nations. These trends point toward an inevitable
 outcome of increased urban density, and all the logistical changes that
@@ -299,6 +316,6 @@ established, a case can be made for furthering our understanding of
 commercial density in relation to this increasingly popular transit
 infrastructure phenomenon.
 """
-    )
+        )
 
 render_footer()
