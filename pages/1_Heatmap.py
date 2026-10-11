@@ -150,15 +150,20 @@ another.
   storefront.
 - **What could open here.** Zoning is not accounted for.
 
-The Methodology & Limitations page covers each of these in full.
+Each of these is covered in full on:
 """
+    )
+    st.page_link(
+        "pages/3_Methodology_&_Limitations.py",
+        label="Methodology & Limitations",
+        icon=":material/arrow_forward:",
     )
 
 st.markdown(
     f"""
-<u>Concentric ring boundaries and NAICS/GIS geocoded storefronts are
+<b>Concentric ring boundaries and NAICS/GIS geocoded storefronts are
 toggleable via the layer control in the top left, and the button beneath
-it switches between light and dark mode.</u> <img src="{LAYER_CONTROL_ICON_DATA_URI}" width="18"
+it switches between light and dark mode.</b> <img src="{LAYER_CONTROL_ICON_DATA_URI}" width="18"
 height="18" style="vertical-align: middle;" alt="Layer control icon"/>
 
 The heat layer is illustrative. Leaflet applies a visual blur rather than a
