@@ -91,6 +91,69 @@ with st.container(key="overview_columns"):
         )
 
 st.divider()
+st.subheader("What I Asked")
+# Pairs with "What I Found" directly below. The three numbered questions
+# are the Findings page's section hypotheses, worded identically there;
+# a change to one needs the same change in the other.
+st.caption(
+    "These are the questions I started with: one larger question, and "
+    "three narrower ones this project could actually test. The headline "
+    "answers follow directly below."
+)
+st.markdown(
+    "Do transit platforms bring businesses into their neighborhoods, or do "
+    "cities place transit along preexisting commercial corridors?"
+)
+st.markdown(
+    """
+1. **Concentric ring gradient.** Does commercial density drop off with
+   decreased proximity to transit hubs?
+2. **Ridership.** Does station boarding volume track commercial density?
+3. **Chains.** Do multi-location brands appear at more stations than
+   independents? In the middle of my chain share investigation, the
+   driving question shifted to more closely mirror the gradient's: Does
+   chain share rise as you approach transit platforms?
+"""
+)
+st.markdown(
+    """
+The 1 Line's route offers some context for the larger question above.
+Much of the clustering near its stations likely predates the rail
+itself, as the line largely ran through developed neighborhoods like downtown and Capitol Hill that already had
+commercial cores, rather than seeding new ones. Newer stations tell a
+different story: University of Washington, added in 2016, sits at the
+center of campus and hospital land rather than an established retail core
+the line reached. This project measures the resulting density pattern,
+not which came first at each station.
+"""
+)
+
+st.divider()
+st.subheader("What I Found")
+st.caption(
+    "These are the headline numbers. For the full breakdown, including "
+    "per-station detail, the correlation's leverage check, and further "
+    "pattern discovery, see the Findings & EDA page."
+)
+st.markdown(
+    """
+- **Density falls off fast, but not cleanly.** Businesses per square mile
+  drop 62.9% between the innermost and outermost rings, 837 to 310, with
+  a slight uptick at the third ring. It's small, but it traces back to a
+  specific, checkable cause rather than just being noise.
+- **Ridership and density move together, moderately.** The correlation
+  across all sixteen stations lands at r = 0.684, strong enough to
+  matter, not strong enough to lean on by itself.
+- **Businesses cluster far less evenly than ridership does.** Businesses'
+  spread across stations is about 1.8 times as uneven as ridership's,
+  proportionally, not just in raw numbers.
+- **Chains lean into platform proximity too.** Chain share is highest
+  right at the platform, 9.5% in the first ring, and falls to 6.8% by the
+  fourth, the same declining pattern found in overall density.
+"""
+)
+
+st.divider()
 
 st.subheader("Introduction")
 
@@ -167,73 +230,9 @@ else:
     )
 
 st.divider()
-st.subheader("What I Asked")
-# Pairs with "What I Found" directly below. The three numbered questions
-# are the Findings page's section hypotheses, worded identically there;
-# a change to one needs the same change in the other.
-st.caption(
-    "These are the questions I started with: one larger question, and "
-    "three narrower ones this project could actually test. The headline "
-    "answers follow directly below."
-)
-st.markdown(
-    "Do transit platforms bring businesses into their neighborhoods, or do "
-    "cities place transit along preexisting commercial corridors?"
-)
-st.markdown(
-    """
-1. **Concentric ring gradient.** Does commercial density drop off with
-   decreased proximity to transit hubs?
-2. **Ridership.** Does station boarding volume track commercial density?
-3. **Chains.** Do multi-location brands appear at more stations than
-   independents? In the middle of my chain share investigation, the
-   driving question shifted to more closely mirror the gradient's: Does
-   chain share rise as you approach transit platforms?
-"""
-)
-st.markdown(
-    """
-The 1 Line's route offers some context for the larger question above.
-Much of the clustering near its stations likely predates the rail
-itself, as the line largely ran through developed neighborhoods like downtown and Capitol Hill that already had
-commercial cores, rather than seeding new ones. Newer stations tell a
-different story: University of Washington, added in 2016, sits at the
-center of campus and hospital land rather than an established retail core
-the line reached. This project measures the resulting density pattern,
-not which came first at each station.
-"""
-)
-
-st.divider()
-st.subheader("What I Found")
-st.caption(
-    "These are the headline numbers. For the full breakdown, including "
-    "per-station detail, the correlation's leverage check, and further "
-    "pattern discovery, see the Findings & EDA page."
-)
-st.markdown(
-    """
-- **Density falls off fast, but not cleanly.** Businesses per square mile
-  drop 62.9% between the innermost and outermost rings, 837 to 310, with
-  a slight uptick at the third ring. It's small, but it traces back to a
-  specific, checkable cause rather than just being noise.
-- **Ridership and density move together, moderately.** The correlation
-  across all sixteen stations lands at r = 0.684, strong enough to
-  matter, not strong enough to lean on by itself.
-- **Businesses cluster far less evenly than ridership does.** Businesses'
-  spread across stations is about 1.8 times as uneven as ridership's,
-  proportionally, not just in raw numbers.
-- **Chains lean into platform proximity too.** Chain share is highest
-  right at the platform, 9.5% in the first ring, and falls to 6.8% by the
-  fourth, the same declining pattern found in overall density.
-"""
-)
-
-st.divider()
-st.subheader("Why Seattle?")
-
-st.markdown(
-    """
+with st.expander("Why Seattle?"):
+    st.markdown(
+        """
 Seattle has several factors that make it an intriguing option to
 explore this particular topic within. Firstly, the unparalleled growth
 of the city, centered around its burgeoning tech sector, has created a
@@ -269,13 +268,11 @@ Therefore, how can a business make informed decisions about its
 locational choice in Seattle with this transit-oriented roadmap put in
 place?
 """
-)
+    )
 
-st.divider()
-st.subheader("Starting Assumptions")
-
-st.markdown(
-    """
+with st.expander("Starting Assumptions"):
+    st.markdown(
+        """
 Contemporary relocation trends increasingly suggest a rural exodus among
 young people in developed nations. These trends point toward an inevitable
 outcome of increased urban density, and all the logistical changes that
@@ -302,6 +299,6 @@ established, a case can be made for furthering our understanding of
 commercial density in relation to this increasingly popular transit
 infrastructure phenomenon.
 """
-)
+    )
 
 render_footer()
