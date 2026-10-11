@@ -47,6 +47,64 @@ render_social_links()
 st.title("Commercial density around station areas")
 
 st.markdown(
+    "**Pick a station and see how many shops, restaurants and services sit "
+    "within a short walk of the platform.**"
+)
+
+# The map sits directly under the purpose line so it is on screen when the
+# page opens; the tasks and the control notes follow it.
+if HEATMAP_HTML.exists():
+    # st.iframe, not the deprecated st.components.v1.html (removal announced
+    # for 2026-06-01). It reads the Path itself as UTF-8. Don't swap in
+    # Path.read_text() without encoding=: on Windows it falls back to cp1252
+    # and mangles multi-byte characters, such as the em dashes in the layer
+    # names.
+    #
+    # width=1000, height=650 match the Folium map's fixed pixel size in
+    # step5_map.py (fixed there for the Leaflet.heat init-race fix). A wider
+    # or taller iframe leaves dead white space right of and below the map;
+    # change both files together. The browser's default scrolling (auto)
+    # covers a stray pixel of overflow.
+    st.iframe(HEATMAP_HTML, width=1000, height=650)
+    # Required wherever the station boardings figure is shown (permission
+    # terms recorded in docs/data_sources.md, source 5).
+    st.caption("Ridership: Sound Transit System Performance Tracker, 2025.")
+else:
+    st.info("No map yet. Run `python src/step5_map.py` to generate it.")
+
+# Short tasks that each use a control already on the map. Rendered twice
+# and switched by CSS at Streamlit's 640px column breakpoint: a plain list
+# on wide screens, a collapsed expander on phones to keep the page short. Layer names quoted here must match step5_map.py.
+TRY_HEADING = "Four things to try"
+TRY_LIST = """
+1. **Compare two stations.** Zoom in on Westlake, then on Othello, and
+   compare the numbered circles inside the innermost ring at each.
+2. **Filter to one kind of business.** Open the layer control (top left)
+   and untick Retail and Personal services so only Food service is left.
+   Follow the line south and see where the restaurants thin out.
+3. **Check a station's foot traffic.** Hover over (or tap) any blue station
+   dot to see its average monthly boardings, then look at how many
+   storefronts surround it.
+4. **Compare with the rest of the city.** Tick "Commercial Density (All
+   Seattle Businesses)" to see how the station areas compare with
+   everywhere else.
+"""
+st.markdown(
+    """
+    <style>
+    @media (max-width: 640px) { .st-key-try_wide { display: none; } }
+    @media (min-width: 641px) { .st-key-try_narrow { display: none; } }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+with st.container(key="try_wide"):
+    st.markdown(f"**{TRY_HEADING}**\n{TRY_LIST}")
+with st.container(key="try_narrow"):
+    with st.expander(TRY_HEADING):
+        st.markdown(TRY_LIST)
+
+st.markdown(
     f"""
 Stations are represented by blue dots along the 1 Line (thick green line).
 <u>Concentric ring boundaries and NAICS/GIS geocoded storefronts are
@@ -63,21 +121,5 @@ cluster" and take the numbers from the findings page.
 """,
     unsafe_allow_html=True,
 )
-
-if HEATMAP_HTML.exists():
-    # st.iframe, not the deprecated st.components.v1.html (removal announced
-    # for 2026-06-01). It reads the Path itself as UTF-8. Don't swap in
-    # Path.read_text() without encoding=: on Windows it falls back to cp1252
-    # and mangles multi-byte characters, such as the em dashes in the layer
-    # names.
-    #
-    # width=1000, height=650 match the Folium map's fixed pixel size in
-    # step5_map.py (fixed there for the Leaflet.heat init-race fix). A wider
-    # or taller iframe leaves dead white space right of and below the map;
-    # change both files together. The browser's default scrolling (auto)
-    # covers a stray pixel of overflow.
-    st.iframe(HEATMAP_HTML, width=1000, height=650)
-else:
-    st.info("No map yet. Run `python src/step5_map.py` to generate it.")
 
 render_footer()
