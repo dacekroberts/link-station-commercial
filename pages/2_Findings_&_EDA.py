@@ -1079,6 +1079,33 @@ else:
     st.info("Run `python src/step4_rings.py` to generate chain statistics.")
 
 st.divider()
+st.header("What This Means for a Business Choosing a Location")
+
+# Written by the project author. The 62.9% figure is registered in
+# scripts/check_published_numbers.py; the other comparisons are rounded.
+st.markdown(
+    """
+    For Seattle businesses in this dataset, which station it sits near
+    matters more than how close it sits to the platform. Across the sixteen
+    stations covered here, storefront density falls 62.9% from the innermost
+    ring to the outer one, so closer does look better. But that average
+    hides two very different kinds of station. At Othello, the outer ring
+    has a tenth of the density found beside the platform. At Pioneer Square,
+    the two are nearly the same.
+
+    Therefore, read the rings station by station. Around neighborhood
+    stations like Othello, the shops sit within a block or two of the
+    platform and thin out fast. In more urban downtown setting, a spot three
+    blocks out is still surrounded by storefronts. A busy station isn’t
+    always a busy street either: Capitol Hill has about twice Symphony’s
+    boardings and well under half its nearby businesses.
+
+    What this can’t show is whether a shop does well in any of these
+    places. The license list holds only businesses that are open.
+    """
+)
+
+st.divider()
 st.header("In Summary")
 
 st.markdown(

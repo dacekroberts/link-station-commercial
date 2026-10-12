@@ -73,6 +73,7 @@ CITATIONS = [
     (FINDINGS, "against {single_mean_stations} for single-location businesses"),
     (FINDINGS, "net {fall} decline from ring 1"),
     (FINDINGS, "Commercial density falls {fall} from the first ring to the last"),
+    (FINDINGS, "storefront density falls {fall} from the innermost"),
     (FINDINGS, "commercial density at r = {r}"),
 
     (METHODOLOGY, "narrows {in_rings} pins"),
