@@ -13,6 +13,25 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-11 — README banner
+
+- **Put real businesses in the README banner: dots around Westlake, sized
+  by address.** The ring emblem was abstract; it now shows what the
+  project maps. I compared Westlake, Symphony and Pioneer Square, and plain
+  dots against dots sized by the number of businesses at an address, and
+  picked Westlake, sized (approved 10-08, placed 10-11). Westlake was
+  chosen for being close to typical, not the best case: pooled density
+  falls 62.9% from ring 1 to ring 4 and Westlake falls 69.0%, second
+  closest of the 16. Mount Baker (64.9%) is closest but too sparse to read
+  as an emblem. Only U District (91.7%) and International
+  District/Chinatown (79.3%) fall at every ring, and featuring either
+  would overstate the finding. The dots are 848 businesses at 370
+  addresses from the same rows the live map plots, with no names, measured
+  in EPSG:32610. Rings 1 to 3 are to scale; ring 4 is drawn compressed, so
+  its dots are thinned to the drawn-to-true area ratio (0.34) to keep the
+  on-screen density honest. `docs/images/readme-banner.png`, `README.md`
+  (alt text).
+
 ### 2026-10-11 — Medians visual; one correction
 
 - **Built the medians visual as number 42, "The average station and the

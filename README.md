@@ -1,6 +1,6 @@
 <p align="center">
   <img src="docs/images/readme-banner.png" width="1280"
-       alt="Commercial Density Around Seattle's Light Rail Stations, by Dace Roberts, © 2026: a title banner with four concentric rings around a station point">
+       alt="Commercial Density Around Seattle's Light Rail Stations, by Dace Roberts, © 2026: a title banner with four concentric rings around Westlake station, each business address shown as a dot sized by its number of businesses">
 </p>
 
 # Commercial density around Seattle's light rail stations
