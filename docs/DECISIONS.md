@@ -13,6 +13,72 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-11 — Problem-first pages
+
+- **Reordered the Overview so the questions and findings come before the
+  background; no existing sentence was reworded.** The three summary
+  columns stay at the top (my call, to revisit once I've lived with it).
+  Under them: a one-line hook, "What I Asked", "What I Found", the
+  Introduction with its metrics, then "Why Seattle?" and "Starting
+  Assumptions" as two expanders with labels sized like section headings.
+  The hook is the page's one new line: "How much does it matter for a
+  storefront to sit next to a light rail platform?" followed by the 62.9%
+  fall, which is registered in `scripts/check_published_numbers.py`
+  (90092f4, 88e7ddb, 0b79916).
+- **Changed the middle Overview metric label to "Businesses within a
+  station's ring area".** The old label was cut off with an ellipsis at
+  phone width. I first shortened it to "ring walkshed", then dropped that
+  word the same day: the Methodology page says the rings are straight-line
+  radii, "not actual walksheds", and the label shouldn't contradict it.
+  Metric labels now wrap as a fallback, and the summary columns swap their
+  side rule for a top rule when they stack at 640px and below (0b79916,
+  8e48027, ab91be5).
+- **Rebuilt the Heatmap page around the map: it now sits directly under a
+  one-line purpose.** With any text above it the map started below the
+  first screen at both phone and desktop widths, and I wanted it visible
+  on opening. Order: title, purpose line, map, ridership credit, "Four
+  things to try" (a plain list on wide screens, a collapsed expander on
+  phones), "How to read this map" and "Where to trust it, and where not"
+  (both collapsed), then my layer-control sentence and heat-layer
+  paragraph. The page stays in the utility frame: what a visitor can do
+  with the map, no personas, and no "before you sign a lease". The purpose
+  line, the four tasks and both boxes were drafted by Claude Code from
+  facts in the map code and the Methodology page, and I approved them. My
+  first paragraph was cut to its layer-control sentence, now bold, since
+  the "How to read" box covers the rest. Ring distances and the snapshot
+  date in the boxes are read from `config.py`, not typed. Zoning appears
+  only as "not accounted for". Scrolling over the map zooms it, as on
+  other web maps; that is intended and stays (7b71a55, b175425, fba1a5a,
+  a50578a).
+- **Added the ridership credit line under the map.** The station hover
+  has shown 2025 boardings since the map went live, and Sound Transit's
+  permission requires the credit wherever the figure appears. The page had
+  none. It now reads "Ridership: Sound Transit System Performance Tracker,
+  2025." (7b71a55).
+- **Wrote a new Findings section, "What This Means for a Business
+  Choosing a Location", above "In Summary".** Its point: which station a
+  business sits near matters more than which ring. Othello's outer ring
+  has a tenth of its platform-side density; Pioneer Square's is nearly the
+  same (92%). Capitol Hill has about twice Symphony's boardings (278,486
+  against 138,262 a month) and well under half its businesses within 0.3
+  miles (204 against 543). It makes no causal claim and ends on the limit
+  that the license list holds only open businesses. I wrote the paragraph
+  after comparing it against a draft from Claude Code, then asked for four
+  fixes: a missing article, a singular subject, straight apostrophes, and
+  a closing clause ("so it shows where they are, not which ones lasted")
+  that comes from that draft. Only the 62.9% figure is exact and
+  registered; the other comparisons are rounded on purpose (6d30ee2,
+  70c2506).
+- **Set rules for the DeepSeek worker in this repo; nothing has been
+  delegated.** Candidates, each needing my approval first: the visual 20
+  HTML regroup and the motion opener's Remotion scaffold. Never delegated:
+  anything touching `fingerprint.py`, the footer marks or the authorship
+  key, `check_personal_exposure.py` or the raw business register, and the
+  ridership analysis. A worker may read ridership values handed to it (the
+  opener works from pre-set values); it doesn't analyse them. The medians
+  computation stays with Claude Code: it is about ten lines and feeds a
+  visual, not a page figure. All page prose stays with me.
+
 ### 2026-10-11 — Portfolio review handoff
 
 - **Took the portfolio review's handoff notes as a starting brief and
