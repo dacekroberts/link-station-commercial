@@ -173,4 +173,14 @@ cluster" and take the numbers from the findings page.
     unsafe_allow_html=True,
 )
 
+# Closing bridge to the follow-on project. The city count is that project's
+# figure (given by the author, 2026-10-12), not derivable from outputs/; it
+# is listed under NOT_CHECKED in scripts/check_published_numbers.py. No link
+# yet: add one here when that project has a public address.
+st.divider()
+st.markdown(
+    "**The same map, in 237 cities.** Storefronts Near Transit applies this "
+    "method to other transit systems."
+)
+
 render_footer()

@@ -96,6 +96,8 @@ CITATIONS = [
 # known gap rather than a forgotten one; check these by hand when the
 # underlying data changes.
 NOT_CHECKED = [
+    "237 cities (Heatmap, closing line) - Storefronts Near Transit's count, "
+    "a separate project",
     "84,390 raw rows (Flowchart, Methodology) - data/raw, not outputs/",
     "41 withheld pins / 0.17% (Methodology) - step 5's name test",
     "1,767 (42.9%) multi-station claims (Methodology) - needs the spatial join",
