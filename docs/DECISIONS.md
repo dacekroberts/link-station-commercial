@@ -13,6 +13,26 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-11 — Medians visual; one correction
+
+- **Built the medians visual as number 42, "The average station and the
+  middle station".** One dot per station in each ring, a box for the
+  middle half of stations, the median as a solid line and the mean as a
+  dashed one. It keeps both falls side by side: 62.9% on the mean, 77% on
+  the median. I kept the 77% even though it is the stronger number,
+  because the site's published figure is the mean and the visual's job is
+  to show how the two differ. Its reconciling line: the ring 3 rise is in
+  the average only. Without Westlake (2,570) and Symphony (2,410) the ring
+  3 average is 278, below ring 2's 431. The wording was drafted by Claude
+  Code and I approved it. It lives in `visuals/` (outside git), from a
+  standalone generator, `visuals/_scripts/gen_medians.py`, that fails if a
+  new data pull changes which two stations top ring 3. The live site is
+  unchanged.
+- **Correction to the entry below: ring 1's middle half is 159-1,490, not
+  159-1,491.** The 75th percentile is 1,490.49. The earlier figure rounded
+  a number that had already been rounded to 1,490.5. No published figure
+  is affected; the visual shows 1,490.
+
 ### 2026-10-11 — Problem-first pages
 
 - **Reordered the Overview so the questions and findings come before the
