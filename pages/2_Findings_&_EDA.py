@@ -1085,7 +1085,7 @@ st.header("What This Means for a Business Choosing a Location")
 # scripts/check_published_numbers.py; the other comparisons are rounded.
 st.markdown(
     """
-    For Seattle businesses in this dataset, which station it sits near
+    For a Seattle business in this dataset, which station it sits near
     matters more than how close it sits to the platform. Across the sixteen
     stations covered here, storefront density falls 62.9% from the innermost
     ring to the outer one, so closer does look better. But that average
@@ -1095,13 +1095,14 @@ st.markdown(
 
     Therefore, read the rings station by station. Around neighborhood
     stations like Othello, the shops sit within a block or two of the
-    platform and thin out fast. In more urban downtown setting, a spot three
-    blocks out is still surrounded by storefronts. A busy station isn’t
-    always a busy street either: Capitol Hill has about twice Symphony’s
+    platform and thin out fast. In a more urban downtown setting, a spot
+    three blocks out is still surrounded by storefronts. A busy station isn't
+    always a busy street either: Capitol Hill has about twice Symphony's
     boardings and well under half its nearby businesses.
 
-    What this can’t show is whether a shop does well in any of these
-    places. The license list holds only businesses that are open.
+    What this can't show is whether a shop does well in any of these
+    places. The license list holds only businesses that are open, so it
+    shows where they are, not which ones lasted.
     """
 )
 
