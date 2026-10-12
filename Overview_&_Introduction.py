@@ -235,10 +235,10 @@ if STATION_STATS_CSV.exists():
         # caption. "4,120 / 11,409 (36.1%)" as the value overflowed the
         # column and truncated with an ellipsis. The full string stays in
         # the DOM, so check this visually, not with a text-content check.
-        mid.metric("Businesses within a station's ring walkshed", f"{in_rings:,}")
+        mid.metric("Businesses within a station's ring area", f"{in_rings:,}")
         mid.caption(f"of {citywide:,} citywide ({in_rings / citywide:.1%})")
     else:
-        mid.metric("Businesses within a station's ring walkshed", "N/A")
+        mid.metric("Businesses within a station's ring area", "N/A")
     right.metric("Data Retrieved on", LICENSE_SNAPSHOT)
     # States both dates outright: no metric above shows a ridership figure,
     # so a caption referring to "the two dates" would have nothing to point at.
