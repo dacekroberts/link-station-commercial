@@ -13,6 +13,71 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-12 — Rights notices; Methodology page; motion films
+
+- **Added rights notices in four places after a rights check found gaps.**
+  The site already had a visible footer and the README's split between
+  code, writing and data. Missing were: machine-readable tags, an owner
+  name inside figures, a licence file for content, and a crawler policy.
+  Now: the map file and the flowchart document carry `copyright`,
+  `dcterms.rights` and `dcterms.rightsHolder` tags; each of the five
+  Findings charts draws "© 2026 Dace Roberts" and the site address under
+  its plot, and the map shows "Map design © 2026 Dace Roberts" beside the
+  unchanged OpenStreetMap credit, so a saved chart or a map screenshot
+  carries my name; `NOTICE.md` states the three-way split as its own file.
+  The Streamlit pages themselves can't carry the tags, because Streamlit
+  owns each page's header. A `robots.txt` is not possible: the site's
+  `/robots.txt` address is answered by Streamlit's servers, not the app.
+  `NOTICE.md` says instead that the writing and figures aren't offered for
+  training machine-learning models, which states my position and enforces
+  nothing. No rights are claimed over third-party data. The map was
+  re-rendered; the only differences from the previous file are the tags
+  and the credit, and the privacy, fingerprint and number checks pass
+  (ea6d9c5, ee22afb).
+- **That push broke Findings and Flowchart on the live site for a few
+  minutes; fixed by moving the new constants into `rights.py`.** Both
+  pages failed with `ImportError` on names I had just added to
+  `config.py`. Streamlit Community Cloud kept the already-imported
+  `config` module in memory across the redeploy, so the new names didn't
+  exist there. The local check passed because it started a fresh process.
+  A module that didn't exist before the deploy has no stale copy, and both
+  pages recovered without a reboot. From now on a new name that a page
+  imports goes in a new module or comes with a reboot, and every live page
+  gets checked after a push that touches a shared module (6611351).
+- **Made the Methodology page shorter without hiding it from search.** It
+  ran to about 13 screens on a desktop and 26 on a phone. A contents list
+  under the title links to every section. Eight expanders hold the long
+  detail in three sections (What Was Filtered Out, Ridership as a
+  foot-traffic proxy, Spatial interpretation); each section's opening
+  stays in view, as do "Access mode is the bigger problem" and "Station
+  siting isn't random either". I tested search on the live page: Ctrl+F
+  found nothing inside a closed expander. So a "Show all detail" switch
+  opens all eight, with a line telling the reader to switch it on before
+  searching; with it on, the search worked. I chose that over reverting,
+  and over leaving the detail unsearchable. Collapsed, the page is about a
+  quarter shorter (10,328 to 7,994 px on desktop). No prose changed
+  (2da4979, 54149da, 4e29e3a).
+- **The motion films draw the 2 Line and Sound Transit's planned lines for
+  context; the study's scope is unchanged.** The films carry the footnotes
+  "* 2 Line not covered in this study" and "Sound Transit's plans as of
+  Oct 2026; routes approximate". Nothing outside the sixteen 1 Line
+  stations is measured.
+- **Recorded the films' extra sources in `docs/data_sources.md` (source
+  9), with two points left open.** OpenStreetMap building footprints and
+  traced OSM map captures are credited on screen, but they are data taken
+  from OSM's database, which the basemap tiles never were, so the ODbL may
+  expect the method to be available on request. The planned lines were
+  traced from Sound Transit project maps, which fall under the same
+  website terms as the ridership page; the 2026-09-30 email covered
+  ridership only. That one I need to decide before the opener is
+  published: ask Sound Transit, or drop the planned lines.
+- **Checked the films' business-mix figures by hand.** Inside the rings:
+  retail 41.3%, food service 43.4%, personal services 15.3% of 4,120.
+  Rest of Seattle: 48.3%, 29.1%, 22.6% of 7,289. They match the films'
+  41/43/15 and 48/29/23. The ridership scene's "A strong link" conflicts
+  with the site's "moderate correlation" for the same r = 0.684; the film
+  is being changed to match the site.
+
 ### 2026-10-12 — Review visuals; motion route
 
 - **The motion opener is being built in Claude Motion, not Remotion.** The

@@ -28,6 +28,9 @@ are ambiguous the entry says so rather than resolving it.
 | Sound Transit ridership dashboard | website terms: informational use only | prohibited without prior permission; **permission given by email 2026-09-30, for this portfolio** | resolved 2026-10-08, credit line required |
 | US Census geocoder | API terms require a notice | not restricted | notice displayed (2026-09-20) |
 | OpenStreetMap tiles | ODbL (data), attribution required | see entry | attribution present |
+| OSM building footprints (motion opener only) | ODbL | attribution; see source 9 on derived data | attribution on screen; one point open |
+| OSM map captures, traced (motion opener only) | ODbL | as above | attribution on screen; one point open |
+| Sound Transit project maps, traced (motion opener only) | website terms, as source 5 | **not covered by the 2026-09-30 email** | **open** |
 
 **The one that needed a decision, now settled:** Sound Transit's ridership
 figures were transcribed from a page on `soundtransit.org`, which its website
@@ -291,6 +294,60 @@ forbids bulk or pre-emptive downloading. Checked 2026-09-20:
 Referenced in `data/raw/README.md` as an optional extra and **never
 incorporated**. Obtained by that blog via public records request. No terms
 reviewed, because nothing from it reaches this project.
+
+## 9. Sources used only in the motion opener
+
+Added 2026-10-12. These appear in the motion opener films built in Claude
+Motion (`visuals/motion/`, outside git). **None of them is used by the
+site, the pipeline or `outputs/`, and no figure comes from them.** They
+draw the city behind the data and the lines around the studied one. The
+list comes from the opener's return notes; the terms below were not
+re-read for this entry except where it says so.
+
+### 9a. OpenStreetMap building footprints
+
+- **Used for:** the buildings in the films' drawn city. Fetched 2026-10-12
+  through the Overpass API by `visuals/_scripts/fetch_buildings.py`: all
+  35,818 buildings within half a mile of the 1 Line between Northgate and
+  Rainier Beach.
+- **License:** ODbL. Attribution required.
+- **Attribution:** "© OpenStreetMap contributors" is on every map frame,
+  per the return notes.
+- **Open point:** unlike the basemap tiles (source 7), this *is* data
+  extracted from the OSM database, then filtered and simplified. The ODbL
+  asks that when a work made from an adapted database is shown publicly,
+  the adapted database or the method that made it is available on request.
+  The method is the fetch script. It sits in `visuals/`, which is not in
+  the public repo. Not legal advice; recorded so the difference from
+  source 7 is not lost.
+
+### 9b. OpenStreetMap map captures, traced
+
+- **Used for:** water, parks and shorelines, traced from dark and light
+  screenshots of OSM maps; also the 2 Line and the parts of the 1 Line
+  outside the study.
+- **License and attribution:** as 9a. Tracing a rendered map produces data
+  derived from OSM, so the same open point applies.
+
+### 9c. Sound Transit project maps, traced
+
+- **Used for:** the dashed planned lines (West Seattle, South
+  Kirkland-Issaquah, Everett, Ballard), traced or drawn from project maps
+  on `soundtransit.org`. On-screen credit: "Sound Transit's plans as of
+  Oct 2026; routes approximate."
+- **Terms:** these are pages on `soundtransit.org`, so the website terms
+  read on 2026-09-20 for source 5 apply: informational use, no
+  republication without prior permission.
+- **Status: open.** The 2026-09-30 email answered a question about the
+  ridership figures. It did not mention project maps. The films show
+  approximate routes with a credit and reproduce no Sound Transit map
+  image, which may be enough, but nobody at Sound Transit has been asked.
+  Decide before the opener is published: ask, or drop the planned lines.
+
+### 9d. Other maps, looked at only
+
+Stock and watershed maps were used to check shapes and place neighbourhood
+labels. The return notes say nothing was traced from watermarked images.
 
 ---
 
