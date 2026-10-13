@@ -18,7 +18,7 @@ from components import (
     set_base_font,
     set_sidebar_width,
 )
-from config import RIGHTS_META_TAGS
+from rights import RIGHTS_META_TAGS
 
 st.set_page_config(page_title="Flowchart", page_icon="🔀", layout="wide")
 

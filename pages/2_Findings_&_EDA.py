@@ -18,7 +18,6 @@ from components import (
     set_sidebar_width,
 )
 from config import (
-    FIGURE_CREDIT,
     RING_STATS_CSV,
     STATION_STATS_CSV,
     CHAIN_STATS_CSV,
@@ -27,6 +26,7 @@ from config import (
     RING_EDGES_MILES,
     SEATTLE_1LINE_STATIONS,
 )
+from rights import FIGURE_CREDIT
 
 def with_credit(chart):
     """Return the chart with the owner credit drawn under the plot.

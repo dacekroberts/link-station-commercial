@@ -29,8 +29,6 @@ from jinja2 import Template
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (  # noqa: E402
     fingerprint_mark,
-    FIGURE_CREDIT,
-    RIGHTS_META_TAGS,
     DATA_RAW,
     STATIONS_CSV,
     BUSINESSES_GEOCODED_CSV,
@@ -42,6 +40,7 @@ from config import (  # noqa: E402
     RING_EDGES_METERS,
     RING_LABELS,
 )
+from rights import FIGURE_CREDIT, RIGHTS_META_TAGS  # noqa: E402
 
 SEATTLE_CENTER = [47.6062, -122.3321]
 

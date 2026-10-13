@@ -250,27 +250,11 @@ LICENSE_SOURCE = (
 )
 
 # --- Rights notices ------------------------------------------------------
-# One source for the owner credit drawn inside figures and for the
-# machine-readable rights tags in the HTML this project writes itself (the
-# map and the flowchart document). Streamlit owns each page's <head>, so
-# page-level tags are not possible there; the visible footer in
-# components.py covers the pages. Third-party data is not claimed: its
-# terms are in docs/data_sources.md.
-RIGHTS_HOLDER = "Dace Roberts"
-RIGHTS_YEAR = "2026"
-SITE_ADDRESS = "link-station-commercial-daceroberts.streamlit.app"
-FIGURE_CREDIT = f"© {RIGHTS_YEAR} {RIGHTS_HOLDER} · {SITE_ADDRESS}"
-_RIGHTS_TEXT = (
-    f"Map design, text and figures © {RIGHTS_YEAR} {RIGHTS_HOLDER}. "
-    "All rights reserved. Code under the MIT License."
-)
-RIGHTS_META_TAGS = (
-    f'<meta name="copyright" content="{_RIGHTS_TEXT}">\n'
-    f'<meta name="dcterms.rights" content="{_RIGHTS_TEXT} Third-party data '
-    "remains under its publishers' terms; see docs/data_sources.md in the "
-    'project repository.">\n'
-    f'<meta name="dcterms.rightsHolder" content="{RIGHTS_HOLDER}">'
-)
+# The owner credit and the machine-readable rights tags live in rights.py,
+# not here. Streamlit Community Cloud keeps an already-imported module in
+# memory across a redeploy, so a name added to this file is missing on the
+# live site until the app is rebooted (it broke two pages on 2026-10-12).
+# A new name that pages import belongs in a new module, or needs a reboot.
 
 # --- Authorship marks ----------------------------------------------------
 # Invisible marks in the rendered map and pages that tie a copy back to this
