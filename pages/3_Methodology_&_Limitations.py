@@ -47,7 +47,22 @@ render_social_links()
 
 st.title("Methodology")
 
-st.subheader("Method")
+# Contents list. Each link targets the explicit anchor= on its heading
+# below (or the id on the Limitations h1); keep the two in step when a
+# heading is added, renamed or removed.
+st.markdown(
+    """
+**On this page**
+
+**Methodology:** [Method](#method) · [Data Sources](#data-sources) · [What Was Filtered Out](#filtered-out) · [Citations](#citations) · [AI Use](#ai-use)
+
+**[Limitations](#limitations):** [What "commercial space" means](#commercial-space) · [Privacy restrictions](#privacy) · [Ridership as a proxy](#ridership) · [Temporal misalignment](#temporal) · [Spatial interpretation](#spatial) · [Empty rings](#empty-rings) · [Inference](#inference)
+
+**[What a Fuller Version Would Add](#fuller-version)**
+"""
+)
+
+st.subheader("Method", anchor="method")
 
 st.markdown(
     f"""
@@ -97,7 +112,7 @@ in the data.
 """
 )
 
-st.subheader("Data Sources")
+st.subheader("Data Sources", anchor="data-sources")
 
 st.markdown(
     f"""
@@ -160,7 +175,7 @@ including the two I couldn't settle by reading, is in `docs/data_sources.md`.
 """
 )
 
-st.subheader("What Was Filtered Out")
+st.subheader("What Was Filtered Out", anchor="filtered-out")
 
 st.markdown(
     """
@@ -219,7 +234,7 @@ if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
         "choice\" apart from \"one vendor, many kitchens\" on its own."
     )
 
-st.subheader("Citations")
+st.subheader("Citations", anchor="citations")
 
 st.markdown(
     """
@@ -245,7 +260,7 @@ st.markdown(
     "vol. 43, no. 1, 2012, pp. 11-19."
 )
 
-st.subheader("AI Use")
+st.subheader("AI Use", anchor="ai-use")
 
 st.markdown(
     """
@@ -265,12 +280,12 @@ judgment call, is mine.
 st.divider()
 
 st.markdown(
-    '<h1 style="font-size:44px; font-weight:700; line-height:52.8px; '
+    '<h1 id="limitations" style="font-size:44px; font-weight:700; line-height:52.8px; '
     'margin:0 0 0.5rem 0;">Limitations</h1>',
     unsafe_allow_html=True,
 )
 
-st.subheader("What \"commercial space\" means here")
+st.subheader("What \"commercial space\" means here", anchor="commercial-space")
 
 st.markdown(
     f"""
@@ -307,7 +322,7 @@ distribution among survivors, not survival itself.
 """
 )
 
-st.subheader("Self-imposed privacy restrictions")
+st.subheader("Self-imposed privacy restrictions", anchor="privacy")
 
 st.markdown(
     """
@@ -356,7 +371,7 @@ verified, and nobody was contacted. Checked 2026-09-20.
 """
 )
 
-st.subheader("Ridership as a foot-traffic proxy")
+st.subheader("Ridership as a foot-traffic proxy", anchor="ridership")
 
 st.markdown(
     """
@@ -412,7 +427,7 @@ dashboard instead. I followed the same convention here.
 """
 )
 
-st.subheader("Temporal misalignment")
+st.subheader("Temporal misalignment", anchor="temporal")
 
 st.markdown(
     f"""
@@ -450,7 +465,7 @@ open at the time.
 """
 )
 
-st.subheader("Spatial interpretation")
+st.subheader("Spatial interpretation", anchor="spatial")
 
 st.markdown(
     f"""
@@ -546,7 +561,7 @@ contains.
 """
 )
 
-st.subheader("Empty rings")
+st.subheader("Empty rings", anchor="empty-rings")
 
 st.markdown(
     """
@@ -578,7 +593,7 @@ which I had been reporting as 311 after rounding an already-rounded number.
 """
 )
 
-st.subheader("Inference")
+st.subheader("Inference", anchor="inference")
 
 st.markdown(
     """
@@ -598,7 +613,7 @@ businesses choose to locate.
 """
 )
 
-st.header("What a Fuller Version Would Add")
+st.header("What a Fuller Version Would Add", anchor="fuller-version")
 
 st.markdown(
     """
