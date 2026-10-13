@@ -175,12 +175,13 @@ cluster" and take the numbers from the findings page.
 
 # Closing bridge to the follow-on project. The city count is that project's
 # figure (given by the author, 2026-10-12), not derivable from outputs/; it
-# is listed under NOT_CHECKED in scripts/check_published_numbers.py. No link
-# yet: add one here when that project has a public address.
+# is listed under NOT_CHECKED in scripts/check_published_numbers.py. The
+# address was given by the author and checked as public, 2026-10-12.
 st.divider()
 st.markdown(
-    "**The same map, in 237 cities.** Storefronts Near Transit applies this "
-    "method to other transit systems."
+    "**The same map, in 237 cities.** "
+    "[Storefronts Near Transit](https://expanded-heatmap-daceroberts.streamlit.app) "
+    "applies this method to other transit systems."
 )
 
 render_footer()
