@@ -29,7 +29,7 @@ are ambiguous the entry says so rather than resolving it.
 | US Census geocoder | API terms require a notice | not restricted | notice displayed (2026-09-20) |
 | OpenStreetMap tiles | ODbL (data), attribution required | see entry | attribution present |
 | OSM building footprints (motion opener only) | ODbL | attribution; see source 9 on derived data | attribution on screen; method public in `motion_sources/` |
-| OSM map captures, traced (motion opener only) | ODbL | as above | attribution on screen; one point open |
+| OSM map captures, traced (motion opener only) | ODbL | as above | attribution on screen; method described in `motion_sources/` |
 | Sound Transit project maps, traced (motion opener only) | website terms, as source 5 | not named in the 2026-09-30 email; covered by its reasoning | accepted 2026-10-12, credit line required |
 
 **The one that needed a decision, now settled:** Sound Transit's ridership
@@ -330,6 +330,9 @@ re-read for this entry except where it says so.
   outside the study.
 - **License and attribution:** as 9a. Tracing a rendered map produces data
   derived from OSM, so the same open point applies.
+- **Closed 2026-10-12:** there is no script; the tracing was done inside
+  Claude Motion. The method and its check against a second capture are
+  described in `motion_sources/README.md`, as reported by the film build.
 
 ### 9c. Sound Transit project maps, traced
 

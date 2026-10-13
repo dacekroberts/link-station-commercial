@@ -23,6 +23,17 @@ outlines along the line, 879 around Westlake) are available on request.
 Credit wherever the outlines are drawn: **© OpenStreetMap contributors**
 (Open Database License).
 
+## Traced by hand, no script
+
+Water, shorelines and parks in the films were not fetched. They were
+traced inside Claude Motion from dark and light OpenStreetMap map captures
+(© OpenStreetMap contributors): colour segmentation, bridging gaps along
+known channels, then smoothing into polygons. The result was checked
+against a separate light capture. 98.7% of pixels agreed, and 99.8% of the
+shoreline fell within 3 px in the close view (99.0% within 2 px in the
+wide view). These figures are as reported by the film build and were not
+re-measured in this repo.
+
 ## Running it
 
 From the repo root, with the pipeline environment
