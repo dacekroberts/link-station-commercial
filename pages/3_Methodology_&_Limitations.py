@@ -191,48 +191,60 @@ my reasoning recorded here so the choice is checkable instead of silent.
 """
 )
 
-if NAICS_STOREFRONT_EXCLUDE:
-    for code, (label, reason) in NAICS_STOREFRONT_EXCLUDE.items():
-        st.markdown(f"**Excluded: {label}** (NAICS `{code}`)")
-        st.markdown(reason)
-else:
-    st.markdown("*No categories excluded yet.*")
+# The opening paragraph above stays in view; the per-code and per-brand
+# detail sits in expanders to shorten the page. Labels carry the counts so
+# a reader sees how much is inside before opening one.
+with st.expander(
+    f"NAICS codes reviewed, with reasons "
+    f"({len(NAICS_STOREFRONT_EXCLUDE)} excluded, "
+    f"{len(NAICS_STOREFRONT_REVIEWED_KEPT)} kept)"
+):
+    if NAICS_STOREFRONT_EXCLUDE:
+        for code, (label, reason) in NAICS_STOREFRONT_EXCLUDE.items():
+            st.markdown(f"**Excluded: {label}** (NAICS `{code}`)")
+            st.markdown(reason)
+    else:
+        st.markdown("*No categories excluded yet.*")
 
-if NAICS_STOREFRONT_REVIEWED_KEPT:
-    for code, (label, reason) in NAICS_STOREFRONT_REVIEWED_KEPT.items():
-        st.markdown(f"**Kept: {label}** (NAICS `{code}`)")
-        st.markdown(reason)
+    if NAICS_STOREFRONT_REVIEWED_KEPT:
+        for code, (label, reason) in NAICS_STOREFRONT_REVIEWED_KEPT.items():
+            st.markdown(f"**Kept: {label}** (NAICS `{code}`)")
+            st.markdown(reason)
 
 if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
-    for brand, (label, reason) in CHAIN_ANALYSIS_EXCLUDE_BRANDS.items():
-        st.markdown(f"**Excluded from chain analysis: {label}**")
-        st.markdown(reason)
+    with st.expander(
+        f"Excluded from the chain analysis only "
+        f"({len(CHAIN_ANALYSIS_EXCLUDE_BRANDS)} brands)"
+    ):
+        for brand, (label, reason) in CHAIN_ANALYSIS_EXCLUDE_BRANDS.items():
+            st.markdown(f"**Excluded from chain analysis: {label}**")
+            st.markdown(reason)
 
-    st.markdown(
-        "These are real "
-        "businesses, and nothing about how I filtered, geocoded, or "
-        "counted them was wrong; they still count fully toward the "
-        "density, gradient, and ridership figures everywhere else on "
-        "this site. They only became a problem for one specific piece "
-        "of analysis, which brands cluster near stations, and for a "
-        "reason that has nothing to do with transit."
-    )
-    st.markdown(
-        "Each one is a corporate food-service **contractor** (NAICS "
-        "`722310`, \"Food Service Contractors\"), not an independent "
-        "chain. One vendor running cafeterias inside however many "
-        "buildings its client company occupies looks identical, in a "
-        "brand-name count, to a coffee chain that made eight separate "
-        "real-estate decisions to be near a platform, but it isn't the "
-        "same kind of \"chain.\""
-    )
-    st.markdown(
-        "Averaging it in would credit one company's office-campus "
-        "footprint as evidence about transit-adjacency site selection. "
-        "This is a limitation of the approach rather than an error in "
-        "it: name-based brand grouping can't tell \"repeated deliberate "
-        "choice\" apart from \"one vendor, many kitchens\" on its own."
-    )
+        st.markdown(
+            "These are real "
+            "businesses, and nothing about how I filtered, geocoded, or "
+            "counted them was wrong; they still count fully toward the "
+            "density, gradient, and ridership figures everywhere else on "
+            "this site. They only became a problem for one specific piece "
+            "of analysis, which brands cluster near stations, and for a "
+            "reason that has nothing to do with transit."
+        )
+        st.markdown(
+            "Each one is a corporate food-service **contractor** (NAICS "
+            "`722310`, \"Food Service Contractors\"), not an independent "
+            "chain. One vendor running cafeterias inside however many "
+            "buildings its client company occupies looks identical, in a "
+            "brand-name count, to a coffee chain that made eight separate "
+            "real-estate decisions to be near a platform, but it isn't the "
+            "same kind of \"chain.\""
+        )
+        st.markdown(
+            "Averaging it in would credit one company's office-campus "
+            "footprint as evidence about transit-adjacency site selection. "
+            "This is a limitation of the approach rather than an error in "
+            "it: name-based brand grouping can't tell \"repeated deliberate "
+            "choice\" apart from \"one vendor, many kitchens\" on its own."
+        )
 
 st.subheader("Citations", anchor="citations")
 
