@@ -40,6 +40,45 @@ render_social_links()
 st.title("Commercial Density Around Seattle's Light Rail Stations")
 st.caption("By Dace Roberts")
 
+# Opener film. An HTML video tag, not st.video: st.video has no poster
+# option. preload="none" means the 10.5 MB file is fetched only when the
+# visitor presses play. The files are served from static/ (see
+# .streamlit/config.toml). Width is capped on wide screens so the Overview
+# columns below stay in view on a laptop; full width at 640px and below.
+with st.container(key="opener_film"):
+    st.html(
+        """
+        <style>
+        .st-key-opener_film .opener { max-width: 60%; margin: 0 auto; }
+        .st-key-opener_film video {
+            width: 100%; aspect-ratio: 16 / 9; display: block;
+            border-radius: 8px; background: #171412;
+        }
+        .st-key-opener_film .credit {
+            font-size: 0.8rem; color: #8A8179; margin-top: 0.4rem;
+            text-align: center;
+        }
+        .st-key-opener_film .credit a { color: inherit; }
+        @media (max-width: 640px) {
+            .st-key-opener_film .opener { max-width: 100%; }
+        }
+        </style>
+        <div class="opener">
+          <video controls playsinline muted preload="none"
+                 poster="app/static/opener-poster-stations.webp"
+                 aria-label="An 80-second silent film summarising the project">
+            <source src="app/static/opener-2.5d-dark-web.mp4" type="video/mp4">
+          </video>
+          <div class="credit">
+            80 seconds, no sound. Map data ©
+            <a href="https://www.openstreetmap.org/copyright">OpenStreetMap
+            contributors</a>. Ridership: Sound Transit System Performance
+            Tracker, 2025.
+          </div>
+        </div>
+        """
+    )
+
 st.subheader("Overview")
 
 # Skimmable orientation before the denser prose: three short lists, not

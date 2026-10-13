@@ -18,3 +18,8 @@ secondaryBackgroundColor = "#221D19"
 textColor = "#F3EDE6"
 linkColor = "#FBB878"
 borderColor = "#3A322B"
+
+# Serves the files in static/ at app/static/<name>, so the Overview's opener
+# film and its poster frame have an address an HTML video tag can load.
+[server]
+enableStaticServing = true

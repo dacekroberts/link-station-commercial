@@ -13,6 +13,32 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-13 — Motion opener on the Overview
+
+- **Put the motion opener on the Overview page, under the title.** It is
+  the dark 2.5D film's web copy: 80 seconds, silent, 1280 x 720, 10.5 MB.
+  This adds to a site I had called final, so it is a scope addition and I
+  chose it knowingly: one film, on one page. A film per page would be
+  overkill and would mean five exports to keep in step with every number.
+  The poster is the stations frame ("16 stations. Every licensed
+  storefront."), not the density frame. I picked density first and
+  reversed it: it gives the finding away before the visitor has pressed
+  play. The film takes 60% of the page width on a desktop, so the three
+  Overview columns still start in view on a laptop, and full width on a
+  phone. It doesn't autoplay and the file is fetched only on play, so a
+  phone visitor who never presses it downloads nothing. `st.video` has no
+  poster option, so the page uses an HTML video tag; the film and poster
+  sit in a new tracked `static/` folder, served by `enableStaticServing`
+  in `.streamlit/config.toml`. The caption under it carries the
+  OpenStreetMap credit, linked to its copyright page as its guidelines
+  ask for a video, and the ridership credit.
+- **The film shows the business-mix split, which the site's pages do
+  not.** Inside the rings: 41% retail, 43% food, 15% personal services;
+  the rest of Seattle: 48%, 29%, 23%. The film marks the scene "Not part
+  of the original study", and I judge that note enough. The figures were
+  checked by hand on 12 October against the cleaned licence data (41.3,
+  43.4 and 15.3% of 4,120; 48.3, 29.1 and 22.6% of 7,289).
+
 ### 2026-10-12 — Rights notices; Methodology page; motion films
 
 - **Made the buildings fetch script public, in a new `motion_sources/`
