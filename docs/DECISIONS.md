@@ -15,6 +15,22 @@ each; detail lives in the sections below.
 
 ### 2026-10-12 — Rights notices; Methodology page; motion films
 
+- **Kept the planned lines in the motion films; I judge the rights risk
+  acceptable.** The dashed lines for West Seattle, South
+  Kirkland-Issaquah, Everett and Ballard were traced from project maps on
+  soundtransit.org, whose terms bar republication without permission. The
+  entry below left this open with two choices: ask Sound Transit, or drop
+  the lines. I took a third. Sound Transit's 2026-09-30 reply about the
+  ridership figures said the portfolio may proceed because the data is
+  publicly available. It doesn't name the maps, but the same reason holds
+  for them, and the films copy less: approximate routes, no map image,
+  with the credit "Sound Transit's plans as of Oct 2026; routes
+  approximate." Nobody at Sound Transit has been asked about the maps, so
+  this is my reading of their reason, not a licence. I'm already in
+  contact with them over the ridership figures, so they can reach me if
+  that reading is wrong. The ridership limits
+  carry over: portfolio only, nothing paid, credit on screen. Source 9c
+  in `docs/data_sources.md` now says accepted, not open.
 - **Added rights notices in four places after a rights check found gaps.**
   The site already had a visible footer and the README's split between
   code, writing and data. Missing were: machine-readable tags, an owner

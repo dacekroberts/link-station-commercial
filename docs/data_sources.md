@@ -30,7 +30,7 @@ are ambiguous the entry says so rather than resolving it.
 | OpenStreetMap tiles | ODbL (data), attribution required | see entry | attribution present |
 | OSM building footprints (motion opener only) | ODbL | attribution; see source 9 on derived data | attribution on screen; one point open |
 | OSM map captures, traced (motion opener only) | ODbL | as above | attribution on screen; one point open |
-| Sound Transit project maps, traced (motion opener only) | website terms, as source 5 | **not covered by the 2026-09-30 email** | **open** |
+| Sound Transit project maps, traced (motion opener only) | website terms, as source 5 | not named in the 2026-09-30 email; covered by its reasoning | accepted 2026-10-12, credit line required |
 
 **The one that needed a decision, now settled:** Sound Transit's ridership
 figures were transcribed from a page on `soundtransit.org`, which its website
@@ -338,11 +338,18 @@ re-read for this entry except where it says so.
 - **Terms:** these are pages on `soundtransit.org`, so the website terms
   read on 2026-09-20 for source 5 apply: informational use, no
   republication without prior permission.
-- **Status: open.** The 2026-09-30 email answered a question about the
-  ridership figures. It did not mention project maps. The films show
-  approximate routes with a credit and reproduce no Sound Transit map
-  image, which may be enough, but nobody at Sound Transit has been asked.
-  Decide before the opener is published: ask, or drop the planned lines.
+- **Status: accepted 2026-10-12.** The 2026-09-30 email answered a
+  question about the ridership figures and did not mention project maps.
+  Its stated reason was that the data is publicly available, and the
+  project maps are published on the same site for the same public. The
+  films show approximate routes with a credit and reproduce no Sound
+  Transit map image. The author judged the remaining risk acceptable and
+  kept the planned lines. Nobody at Sound Transit has been asked about
+  the maps; this is permission by extension, not a license. The author
+  is already in contact with Sound Transit over source 5, so it can
+  reach the author if it disagrees.
+- **Conditions, as for source 5:** portfolio use only, nothing paid, and
+  the on-screen credit stays.
 
 ### 9d. Other maps, looked at only
 
