@@ -62,6 +62,17 @@ st.markdown(
 """
 )
 
+# One switch opens every expander on the page. Browsers cannot search text
+# inside a closed expander (checked on the live site, 2026-10-12: Ctrl+F
+# found no match), so the caption says to switch this on before searching.
+# Every st.expander on this page must pass expanded=show_all.
+show_all = st.toggle("Show all detail")
+st.caption(
+    "Some detail on this page is folded away to keep it short. Switch this "
+    "on before searching the page (Ctrl+F): a browser can't find text inside "
+    "a closed section."
+)
+
 st.subheader("Method", anchor="method")
 
 st.markdown(
@@ -197,7 +208,8 @@ my reasoning recorded here so the choice is checkable instead of silent.
 with st.expander(
     f"NAICS codes reviewed, with reasons "
     f"({len(NAICS_STOREFRONT_EXCLUDE)} excluded, "
-    f"{len(NAICS_STOREFRONT_REVIEWED_KEPT)} kept)"
+    f"{len(NAICS_STOREFRONT_REVIEWED_KEPT)} kept)",
+    expanded=show_all,
 ):
     if NAICS_STOREFRONT_EXCLUDE:
         for code, (label, reason) in NAICS_STOREFRONT_EXCLUDE.items():
@@ -214,7 +226,8 @@ with st.expander(
 if CHAIN_ANALYSIS_EXCLUDE_BRANDS:
     with st.expander(
         f"Excluded from the chain analysis only "
-        f"({len(CHAIN_ANALYSIS_EXCLUDE_BRANDS)} brands)"
+        f"({len(CHAIN_ANALYSIS_EXCLUDE_BRANDS)} brands)",
+        expanded=show_all,
     ):
         for brand, (label, reason) in CHAIN_ANALYSIS_EXCLUDE_BRANDS.items():
             st.markdown(f"**Excluded from chain analysis: {label}**")
@@ -395,7 +408,12 @@ Boardings measure departures, not arrivals. Alightings would be
 conceptually closer to a customer-arrival proxy, though at most stations
 the two end up similar over a full day since most riders make round
 trips anyway.
+"""
+)
 
+with st.expander("Why the boardings figure includes weekends", expanded=show_all):
+    st.markdown(
+        """
 **The boardings figure I use here includes weekends on purpose**, not by
 default. It's each station's average monthly total across all twelve
 months of 2025, not the "average weekday boardings" figure transit
@@ -422,14 +440,23 @@ figure per station across 2025, the two metrics correlate at
 comparison, which is what this analysis does, that's close enough to
 redundant that transcribing both wouldn't have changed anything. I
 confirmed that empirically rather than just assuming it.
+"""
+    )
 
+st.markdown(
+    """
 **Access mode is the bigger problem.** A large share of riders at some
 stations arrive by car or a connecting bus and board directly, never
 passing a storefront. Much of Northgate's ridership, for example,
 transfers in from the adjacent transit center. So ridership overstates
 pedestrian exposure at park-and-ride and transfer-heavy stations, and
 understates it at walk-up stations.
+"""
+)
 
+with st.expander("On directional figures", expanded=show_all):
+    st.markdown(
+        """
 **On directional figures.** Sound Transit's raw per-direction data has
 no expansion method applied to it and doesn't reconcile with the
 published totals. Seattle Transit Blog found the discrepancy large
@@ -437,7 +464,7 @@ enough to conclude the file only captures a subset of trips, and used it
 for directional ratios while pulling absolute counts from the official
 dashboard instead. I followed the same convention here.
 """
-)
+    )
 
 st.subheader("Temporal misalignment", anchor="temporal")
 
@@ -503,7 +530,12 @@ isn't a marginal effect either: of the businesses that fall within any
 station's ring at all, **1,767 (42.9%)** are claimed by more than one
 station's ring set. That's computed directly from the spatial join,
 not estimated.
+"""
+)
 
+with st.expander("The same overlap in the chain analysis, and how it was corrected", expanded=show_all):
+    st.markdown(
+        """
 **That same overlap distorts the chain analysis even more severely, and
 I corrected it there instead of just disclosing it.** A single physical
 location inside the four-station overlap can touch multiple stations
@@ -518,7 +550,12 @@ analysis did, would have reported **45.5%** of locations as chains.
 Correctly requiring 2+ real locations instead puts the true figure at
 **6.7% (116 brands)**. Every chain statistic used throughout this
 project requires `location_count >= 2`, never station count alone.
+"""
+    )
 
+with st.expander("Brand matching is exact, not fuzzy", expanded=show_all):
+    st.markdown(
+        """
 **Brand matching in this project is exact, not fuzzy**, which is a real
 limitation of this kind of approach generally, not just something
 specific to my project. Name normalization catches most chains, but
@@ -530,7 +567,12 @@ general fix. So the chain-share figures on this site are a **lower
 bound**, not an exact count. A fuzzy-matching pass, using something like
 `rapidfuzz`, could close some of that gap, but at the cost of needing
 every match checked by hand afterward.
+"""
+    )
 
+with st.expander("One storefront can hold more than one license", expanded=show_all):
+    st.markdown(
+        """
 **One storefront can hold more than one business license, and my density
 figures count licenses.** Seattle's export has a row per license account,
 and a business can hold several accounts at the same address. I fixed this
@@ -544,10 +586,19 @@ business-ring matches behind the gradient, so the effect is small, but the
 density figures on this site run slightly higher than a count of
 storefronts would. Removing them cleanly would mean re-running the
 geocoding step, which I didn't get to.
+"""
+    )
 
+st.markdown(
+    """
 Ring boundaries are choices I made as the analyst. Different cutpoints
 would produce a different gradient.
+"""
+)
 
+with st.expander("Station points are an average of two platforms", expanded=show_all):
+    st.markdown(
+        """
 **Station points here are an average of two platforms, not a single
 focal point.** Northbound and southbound platforms get recorded
 separately in the GTFS feed, and I collapsed them to one coordinate per
@@ -562,7 +613,11 @@ point or a single platform as the reference. It matters a lot less for
 the outer rings, since 48 m against a 483 m radius (0.3 mile) is a much
 smaller fraction, so this effect is concentrated in the finest-grained
 comparison.
+"""
+    )
 
+st.markdown(
+    """
 **Station siting isn't random either.** The link rail was routed through
 corridors that were already commercially active, so proximity and
 density are partly co-determined here rather than one simply causing the
