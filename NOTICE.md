@@ -7,9 +7,9 @@ terms. `LICENSE` covers the first only.
 
 ## Code: MIT License
 
-The Python source (`src/`, `pages/`, `scripts/`, `components.py`,
-`config.py`, `Overview_&_Introduction.py`) is released under the MIT
-License in `LICENSE`. The MIT grant covers the code in the page files, not
+The Python source (`src/`, `pages/`, `scripts/`, `motion_sources/`,
+`components.py`, `config.py`, `rights.py`, `Overview_&_Introduction.py`) is
+released under the MIT License in `LICENSE`. The MIT grant covers the code in the page files, not
 the prose in them.
 
 ## Writing and figures: all rights reserved

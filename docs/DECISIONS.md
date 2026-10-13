@@ -15,6 +15,18 @@ each; detail lives in the sections below.
 
 ### 2026-10-12 — Rights notices; Methodology page; motion films
 
+- **Made the buildings fetch script public, in a new `motion_sources/`
+  folder.** The films draw 8,000 building outlines taken from
+  OpenStreetMap and simplified. Its licence asks that the method behind
+  adapted data be available when the result is shown publicly, and the
+  script sat in `visuals/`, which is outside git. I moved it to
+  `motion_sources/fetch_buildings.py` and kept that folder for one
+  purpose: how outside data in the films was made. The outlines
+  themselves stay out of the repo (14 MB in full) and the folder's README
+  offers them on request. Re-ran the script offline from its new place:
+  the same 35,818, 8,000 and 879 shapes. This closes the open point under
+  source 9a in `docs/data_sources.md`. `NOTICE.md` now lists the folder
+  and `rights.py` with the MIT-licensed code.
 - **Kept the planned lines in the motion films; I judge the rights risk
   acceptable.** The dashed lines for West Seattle, South
   Kirkland-Issaquah, Everett and Ballard were traced from project maps on

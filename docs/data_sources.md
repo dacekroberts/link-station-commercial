@@ -28,7 +28,7 @@ are ambiguous the entry says so rather than resolving it.
 | Sound Transit ridership dashboard | website terms: informational use only | prohibited without prior permission; **permission given by email 2026-09-30, for this portfolio** | resolved 2026-10-08, credit line required |
 | US Census geocoder | API terms require a notice | not restricted | notice displayed (2026-09-20) |
 | OpenStreetMap tiles | ODbL (data), attribution required | see entry | attribution present |
-| OSM building footprints (motion opener only) | ODbL | attribution; see source 9 on derived data | attribution on screen; one point open |
+| OSM building footprints (motion opener only) | ODbL | attribution; see source 9 on derived data | attribution on screen; method public in `motion_sources/` |
 | OSM map captures, traced (motion opener only) | ODbL | as above | attribution on screen; one point open |
 | Sound Transit project maps, traced (motion opener only) | website terms, as source 5 | not named in the 2026-09-30 email; covered by its reasoning | accepted 2026-10-12, credit line required |
 
@@ -307,7 +307,7 @@ re-read for this entry except where it says so.
 ### 9a. OpenStreetMap building footprints
 
 - **Used for:** the buildings in the films' drawn city. Fetched 2026-10-12
-  through the Overpass API by `visuals/_scripts/fetch_buildings.py`: all
+  through the Overpass API by `motion_sources/fetch_buildings.py`: all
   35,818 buildings within half a mile of the 1 Line between Northgate and
   Rainier Beach.
 - **License:** ODbL. Attribution required.
@@ -317,9 +317,11 @@ re-read for this entry except where it says so.
   extracted from the OSM database, then filtered and simplified. The ODbL
   asks that when a work made from an adapted database is shown publicly,
   the adapted database or the method that made it is available on request.
-  The method is the fetch script. It sits in `visuals/`, which is not in
-  the public repo. Not legal advice; recorded so the difference from
-  source 7 is not lost.
+  The method is the fetch script. Not legal advice; recorded so the
+  difference from source 7 is not lost.
+- **Closed 2026-10-12:** the script moved from `visuals/` (outside git) to
+  `motion_sources/` in the public repo, and that folder's README offers
+  the adapted files on request.
 
 ### 9b. OpenStreetMap map captures, traced
 
