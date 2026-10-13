@@ -13,6 +13,47 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-12 — Review visuals; motion route
+
+- **The motion opener is being built in Claude Motion, not Remotion.** The
+  review notes set Remotion with Claude Code as Route A and Claude Motion
+  as Route B, for when I had Team-plan access. I have it, so Route B came
+  first, and Node.js and Remotion were never installed. The storyboard is
+  11 scenes over 47 seconds, in 16:9 and 4:5, in the order problem, what I
+  built, what it found, how to use it. Claude Motion takes its numbers
+  from the prompt, not from files, so every figure in the handoff has to
+  be checked by hand against `outputs/` after each render. Ridership is
+  in, with its credit line. The end frame reads "The same map, in 237
+  cities".
+- **The opener shows the business mix, marked "Not part of the original
+  study".** Visual 22 was kept non-public on 10-01 because the mix isn't
+  on the live site. I asked for it in the opener anyway, as one scene with
+  an asterisk. Its card wording is still a draft.
+- **Added OpenStreetMap building footprints as a backdrop for the
+  opener.** The first render looked empty. The buildings are decoration:
+  no figure comes from them, and they sit in `visuals/data/buildings/`,
+  outside git and the pipeline. Of 35,818 buildings within half a mile of
+  the line, the 8,000 largest are kept (nothing under 188 m²), plus all
+  879 within 0.6 miles of Westlake for the rings scene. Credit: ©
+  OpenStreetMap contributors.
+- **Visual 27 is now "The chain count I caught by hand", replacing "Who
+  did what".** One story in my words: Claude Code's first chain definition
+  counted 45.7% of locations as chains, and my hand check put it at 8.8%
+  (Session 6 figures). The two example shops are unnamed. The old board is
+  in `visuals/set-aside/`.
+- **Visual 43 groups the line diagram by the published standard /
+  against-the-pattern split,** eight stations each, with hover cards. This
+  is the in-scope alternative to grouping by business mix, which stays
+  deferred. Visual 20 is unchanged beside it.
+- **Visual 35 ends on "What this is for".** It says the findings are
+  "relevant to commercial locational choice", not that they cause
+  anything.
+- **Added a closing line to the Heatmap page: "The same map, in 237
+  cities."** It names Storefronts Near Transit without a link, since that
+  project has no public address yet. The 237 is that project's count, not
+  derivable from this repo, so it is listed under the number check's
+  unchecked figures (8672fea).
+
 ### 2026-10-11 — README banner
 
 - **Put real businesses in the README banner: dots around Westlake, sized
