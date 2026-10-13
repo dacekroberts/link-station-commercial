@@ -18,6 +18,7 @@ from components import (
     set_base_font,
     set_sidebar_width,
 )
+from config import RIGHTS_META_TAGS
 
 st.set_page_config(page_title="Flowchart", page_icon="🔀", layout="wide")
 
@@ -87,6 +88,7 @@ _FLOWCHART_HTML = f"""
 <html>
 <head>
 <meta charset="utf-8">
+{RIGHTS_META_TAGS}
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
   html, body {{

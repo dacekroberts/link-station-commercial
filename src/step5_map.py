@@ -29,6 +29,8 @@ from jinja2 import Template
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config import (  # noqa: E402
     fingerprint_mark,
+    FIGURE_CREDIT,
+    RIGHTS_META_TAGS,
     DATA_RAW,
     STATIONS_CSV,
     BUSINESSES_GEOCODED_CSV,
@@ -1078,6 +1080,20 @@ def main():
     m.add_child(touch)
 
     HEATMAP_HTML.parent.mkdir(parents=True, exist_ok=True)
+    # Rights notices (see config.py). The meta tags are machine-readable;
+    # the owner credit joins Leaflet's attribution control beside the
+    # OpenStreetMap credit, which is left as the tile layer supplies it, so
+    # a screenshot of the map carries both.
+    m.get_root().header.add_child(folium.Element(RIGHTS_META_TAGS))
+    owner_credit = folium.MacroElement()
+    owner_credit._template = Template("""
+        {% macro script(this, kwargs) %}
+            {{ this._parent.get_name() }}.attributionControl.addAttribution(
+                {{ this.credit|tojson }});
+        {% endmacro %}
+    """)
+    owner_credit.credit = f"Map design {FIGURE_CREDIT}"
+    m.add_child(owner_credit)
     # Authorship mark (see config.py and scripts/fingerprint.py): a generator
     # meta tag, an HTML comment in <head> and a hidden element in the body.
     # Metadata only. With no table entry the map renders unmarked, and

@@ -18,6 +18,7 @@ from components import (
     set_sidebar_width,
 )
 from config import (
+    FIGURE_CREDIT,
     RING_STATS_CSV,
     STATION_STATS_CSV,
     CHAIN_STATS_CSV,
@@ -26,6 +27,25 @@ from config import (
     RING_EDGES_MILES,
     SEATTLE_1LINE_STATIONS,
 )
+
+def with_credit(chart):
+    """Return the chart with the owner credit drawn under the plot.
+
+    The credit is part of the chart itself (a bottom title), not a caption
+    beside it, so an image saved from the chart's menu carries the name.
+    The gray reads on both the dark theme and a white export.
+    """
+    return chart.properties(
+        title=alt.TitleParams(
+            FIGURE_CREDIT,
+            orient="bottom",
+            anchor="end",
+            fontSize=11,
+            fontWeight="normal",
+            color="#8A8179",
+        )
+    )
+
 
 # The "against the pattern" red, shared by Graph 2's lines and legend,
 # Table 1's station names, and the station write-up headers, so retuning it
@@ -155,7 +175,7 @@ if RING_STATS_CSV.exists():
                 ],
             )
         )
-        st.altair_chart(bar_chart, width="stretch")
+        st.altair_chart(with_credit(bar_chart), width="stretch")
 
     with schematic_col:
         st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
@@ -262,7 +282,7 @@ if RING_STATS_CSV.exists():
     # ~343px container at a 375px phone viewport and cut off Rings 2-4. The
     # legend sits above the plot so it doesn't cover the lines at narrow
     # widths, which is why it needs no opaque background fill.
-    st.altair_chart(per_station_chart, width="stretch")
+    st.altair_chart(with_credit(per_station_chart), width="stretch")
 
     st.markdown(
         """
@@ -580,7 +600,7 @@ if STATION_STATS_CSV.exists():
                 color=alt.value("#4c78a8"),
             )
             st.altair_chart(
-                (points + trend).properties(height=420),
+                with_credit((points + trend).properties(height=420)),
                 width="stretch",
             )
             st.subheader("Correlation")
@@ -801,7 +821,7 @@ if STATION_STATS_CSV.exists():
                 padding={"left": 12, "top": 5, "right": 5, "bottom": 5},
             )
         )
-        st.altair_chart(dot_chart, width="stretch")
+        st.altair_chart(with_credit(dot_chart), width="stretch")
 
         # For each metric, the widest gap between consecutive sorted
         # z-scores and the stations past it. Computed from cv_long rather
@@ -1006,7 +1026,7 @@ if CHAIN_STATS_CSV.exists():
                     ],
                 )
             )
-            st.altair_chart(chain_ring_chart, width="stretch")
+            st.altair_chart(with_credit(chain_ring_chart), width="stretch")
 
         with schematic_col:
             st.markdown(RING_SCHEMATIC_SVG, unsafe_allow_html=True)
