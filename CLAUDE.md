@@ -22,6 +22,29 @@ Seattle Link light rail / commercial density analysis. Full context in
   pipeline to the GIS layer as its primary source (it hides a ~10% coverage
   gap). See `docs/DECISIONS.md`.
 
+## Where things live
+
+Only what the README and the code don't show.
+
+- **`visuals/` is outside git** (excluded in `.git/info/exclude`, so the
+  rule itself is local too). It holds the presentation pieces, their
+  generator scripts (`visuals/_scripts/`) and the motion films
+  (`visuals/motion/out/`). The site and pipeline never read it. A fresh
+  clone has none of it.
+- **`motion_sources/` is in git** and has one job: how outside data in
+  the motion films was made. See its README.
+- **Other sessions.** The visuals session owns the styling of everything
+  in `visuals/` and works from the worktree `.claude/worktrees/visuals`
+  (branch `visuals`). Claude Motion is a separate tool that builds the
+  films from `visuals/motion/props.json`; its exports come back as MP4s
+  and are checked with the `motion-evaluation` skill.
+- **Shared modules on the live site.** Streamlit Community Cloud keeps
+  already-imported modules in memory across a redeploy. A new name added
+  to `config.py` or `components.py` and imported by a page fails there
+  with `ImportError`, though it passes locally. Put new shared names in a
+  new module (as `rights.py` did), and after any push that touches a
+  shared module, load every page on the live site.
+
 ## Working with this user
 
 Introductory Python, no GIS background. Explain geospatial concepts as they
