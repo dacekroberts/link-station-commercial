@@ -18,6 +18,7 @@ from components import (
     set_base_font,
     set_sidebar_width,
 )
+from film import enable_film_autohide
 from rights import RIGHTS_META_TAGS
 
 st.set_page_config(page_title="Flowchart", page_icon="🔀", layout="wide")
@@ -208,3 +209,6 @@ _FLOWCHART_DATA_URL = "data:text/html;base64," + base64.b64encode(
 st.iframe(_FLOWCHART_DATA_URL, width="stretch", height=925)
 
 render_footer()
+
+# Last on the page: the script's element still takes a row gap.
+enable_film_autohide()

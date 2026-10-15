@@ -18,6 +18,7 @@ from components import (
     set_base_font,
     set_sidebar_width,
 )
+from film import enable_film_autohide
 from config import (
     STATION_STATS_CSV,
     CITYWIDE_COVERAGE_CSV,
@@ -387,3 +388,6 @@ infrastructure phenomenon.
         )
 
 render_footer()
+
+# Last on the page: the script's element still takes a row gap.
+enable_film_autohide()
