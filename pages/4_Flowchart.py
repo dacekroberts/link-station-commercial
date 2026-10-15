@@ -46,6 +46,43 @@ visual more decisions and workflow items went into this project.
 """
 )
 
+# Build film. Same setup as the Overview's opener: an HTML video tag for
+# the poster, preload="none" so the 13.5 MB file loads only on play, files
+# served from static/. Width capped on wide screens; full width at 640px
+# and below.
+with st.container(key="build_film"):
+    st.html(
+        """
+        <style>
+        .st-key-build_film .film { max-width: 60%; margin: 0 auto; }
+        .st-key-build_film video {
+            width: 100%; aspect-ratio: 16 / 9; display: block;
+            border-radius: 8px; background: #171412;
+        }
+        .st-key-build_film .credit {
+            font-size: 0.8rem; color: #8A8179; margin-top: 0.4rem;
+            text-align: center;
+        }
+        .st-key-build_film .credit a { color: inherit; }
+        @media (max-width: 640px) {
+            .st-key-build_film .film { max-width: 100%; }
+        }
+        </style>
+        <div class="film">
+          <video controls playsinline muted preload="none"
+                 poster="app/static/build-film-poster-stations.webp"
+                 aria-label="A 106-second silent film on how the project was built">
+            <source src="app/static/build-film-2.5d-dark-web.mp4" type="video/mp4">
+          </video>
+          <div class="credit">
+            106 seconds, no sound. Map data ©
+            <a href="https://www.openstreetmap.org/copyright">OpenStreetMap
+            contributors</a>.
+          </div>
+        </div>
+        """
+    )
+
 # Mermaid from a CDN, not st.graphviz_chart, so requirements.txt stays at
 # streamlit/pandas/altair. Fixed pixel height, as in the heatmap embed:
 # percentage-sized iframes caused a rendering bug before (see step5_map.py's
