@@ -20,7 +20,6 @@ from pathlib import Path
 
 import folium
 import geopandas as gpd
-import numpy as np
 import pandas as pd
 from folium.plugins import HeatMap, FastMarkerCluster
 from jinja2 import Template
@@ -35,12 +34,11 @@ from config import (  # noqa: E402
     HEATMAP_HTML,
     CITYWIDE_COVERAGE_CSV,
     CRS_GEOGRAPHIC,
-    CRS_PROJECTED,
     RING_EDGES_METERS,
     RING_LABELS,
 )
 from rights import FIGURE_CREDIT, RIGHTS_META_TAGS  # noqa: E402
-from step4_rings import normalize_brand  # noqa: E402
+from step4_rings import nearest_ring_membership, normalize_brand  # noqa: E402
 # WITHHELD_NAME replaces a pin's name where that name is the registrant's
 # own identity; the tooltip renders it in italics. Re-exported here for
 # scripts that import it from this module.
@@ -177,41 +175,34 @@ def load_rail_line_shape():
 
 
 def nearest_station_and_ring(businesses: pd.DataFrame, stations: pd.DataFrame):
-    """Return each business's nearest station and its ring band for that station.
+    """Return each business's nearest containing station and its ring band.
 
-    Distance is straight-line, in projected meters. Deliberately separate
-    from step4_rings.py's ring_stats, which assigns a business to every
+    Ring membership comes from step4_rings.py's own polygons and 'within'
+    test (nearest_ring_membership), so the map's ring set and every pin's
+    ring agree with ring_stats. ring_stats assigns a business to every
     station whose buffer contains it (downtown overlap included, on purpose;
-    see docs/DECISIONS.md). This is a single nearest-station view for the
-    pin tooltip, not a re-derivation or replacement of the ring analysis.
+    see docs/DECISIONS.md); this keeps only the closest of those stations,
+    a single view for the pin tooltip.
     """
     biz_gdf = gpd.GeoDataFrame(
         businesses,
         geometry=gpd.points_from_xy(businesses["longitude"], businesses["latitude"]),
         crs=CRS_GEOGRAPHIC,
-    ).to_crs(CRS_PROJECTED)
+    )
     sta_gdf = gpd.GeoDataFrame(
         stations,
         geometry=gpd.points_from_xy(stations["longitude"], stations["latitude"]),
         crs=CRS_GEOGRAPHIC,
-    ).to_crs(CRS_PROJECTED)
+    )
+    member = nearest_ring_membership(biz_gdf, sta_gdf).reindex(businesses.index)
 
-    biz_xy = np.column_stack([biz_gdf.geometry.x, biz_gdf.geometry.y])
-    sta_xy = np.column_stack([sta_gdf.geometry.x, sta_gdf.geometry.y])
-    dist = np.sqrt(((biz_xy[:, None, :] - sta_xy[None, :, :]) ** 2).sum(axis=2))
-    nearest_idx = dist.argmin(axis=1)
-    nearest_dist = dist.min(axis=1)
-
-    def band(d):
-        for i, ring_label in enumerate(RING_LABELS):
-            if RING_EDGES_METERS[i] <= d < RING_EDGES_METERS[i + 1]:
-                return f"Ring {i + 1} ({ring_label})"
-        outer_mi = RING_EDGES_METERS[-1] / 1609.344
-        return f"Beyond ring 4 (>{outer_mi:.1f} mi)"
-
-    nearest_station = sta_gdf["station"].to_numpy()[nearest_idx]
-    ring_band = [band(d) for d in nearest_dist]
-    return nearest_station, ring_band
+    outer_mi = RING_EDGES_METERS[-1] / 1609.344
+    beyond = f"Beyond ring 4 (>{outer_mi:.1f} mi)"
+    ring_band = [
+        beyond if pd.isna(i) else f"Ring {int(i) + 1} ({RING_LABELS[int(i)]})"
+        for i in member["ring_index"]
+    ]
+    return member["station"].to_numpy(), ring_band
 
 
 def main():
@@ -225,13 +216,13 @@ def main():
 
     # `businesses` (all 11,409, citywide) stays the full set, the source for
     # the "all Seattle businesses" heat toggle. `businesses_in_rings` is the
-    # subset within some station's outer ring (0.6 mi): the default view and
-    # the source for every pin layer. Nearest-station distance replaces a
-    # union-of-buffers computation: if the closest station is beyond the
-    # outer ring edge, every other station is too, so the two conditions are
-    # the same. The map opens ring-only because step4_rings.py's gradient and
-    # chain analysis counts only ring-bounded businesses; opening citywide
-    # would overstate how spread out the analysis's universe is.
+    # subset inside some station's ring polygon (0.6 mi): the default view and
+    # the source for every pin layer. The test is step4_rings.py's polygon
+    # membership, not a distance cut-off, so this set is exactly the
+    # businesses ring_stats counts. The map opens ring-only because
+    # step4_rings.py's gradient and chain analysis counts only ring-bounded
+    # businesses; opening citywide would overstate how spread out the
+    # analysis's universe is.
     businesses["nearest_station"], businesses["ring_band"] = nearest_station_and_ring(
         businesses, stations
     )
@@ -404,7 +395,7 @@ def main():
     #
     # nearest_station / ring_band (used for the hover tooltip) were computed
     # above on the full pre-filter set, for the ring filter. See
-    # nearest_station_and_ring() for why this is separate from step4's
+    # nearest_station_and_ring() for how this relates to step4's
     # overlap-aware ring_stats.
     businesses_in_rings["_group"], businesses_in_rings["_color"] = zip(
         *businesses_in_rings["naics"].map(naics_group)

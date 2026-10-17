@@ -46,7 +46,6 @@ import re
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -60,9 +59,8 @@ from config import (  # noqa: E402
     CRS_GEOGRAPHIC,
     CRS_PROJECTED,
     HEATMAP_HTML,
-    RING_EDGES_METERS,
 )
-from step4_rings import normalize_brand  # noqa: E402
+from step4_rings import nearest_ring_membership, normalize_brand  # noqa: E402
 from withholding import (  # noqa: E402
     WITHHELD_NAME,
     own_identity_mask,
@@ -134,9 +132,9 @@ def person_like(name) -> bool:
 def published_pins():
     """The businesses the map actually draws: those inside some station ring.
 
-    Same nearest-station distance test step5_map.py uses to pick its pin set,
-    not step4's overlap-aware spatial join: the privacy question is about
-    what is on the map.
+    Same ring-polygon membership step5_map.py uses to pick its pin set
+    (step4_rings.nearest_ring_membership), so the two cannot disagree at a
+    ring edge. The privacy question is about what is on the map.
     """
     import geopandas as gpd
 
@@ -149,13 +147,10 @@ def published_pins():
             geometry=gpd.points_from_xy(df["longitude"].astype(float),
                                         df["latitude"].astype(float)),
             crs=CRS_GEOGRAPHIC,
-        ).to_crs(CRS_PROJECTED)
+        )
 
-    biz, sta = gdf(geo), gdf(stations)
-    bxy = np.column_stack([biz.geometry.x, biz.geometry.y])
-    sxy = np.column_stack([sta.geometry.x, sta.geometry.y])
-    nearest = np.sqrt(((bxy[:, None, :] - sxy[None, :, :]) ** 2).sum(-1)).min(1)
-    return biz[nearest <= RING_EDGES_METERS[-1]].copy()
+    member = nearest_ring_membership(gdf(geo), gdf(stations))
+    return gdf(geo).to_crs(CRS_PROJECTED).loc[member.index.sort_values()].copy()
 
 
 def check_fallback(pub):

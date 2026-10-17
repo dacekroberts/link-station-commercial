@@ -97,6 +97,36 @@ def build_rings(stations_gdf):
     return gpd.GeoDataFrame(rows, crs=CRS_PROJECTED)
 
 
+def nearest_ring_membership(businesses_gdf, stations_gdf):
+    """Each business's nearest station whose ring polygon contains it.
+
+    Uses the same polygons and the same 'within' test as the counts in
+    main(), so a business counted in no ring here is counted in no ring
+    there. A distance cut-off is not equivalent: shapely's buffer is a
+    64-sided polygon inscribed in the circle, so a point a few cm inside a
+    ring's radius can sit outside its polygon (4 businesses at 965.4 m, and
+    5 near the ring 3 edge, disagreed).
+
+    Returns a DataFrame on the businesses' index with 'station' and
+    'ring_index'; businesses inside no ring are absent.
+    """
+    biz = businesses_gdf.to_crs(CRS_PROJECTED)[["geometry"]]
+    stations_proj = stations_gdf.to_crs(CRS_PROJECTED).set_index("station")
+    matches = gpd.sjoin(
+        biz, build_rings(stations_gdf)[["station", "ring_index", "geometry"]],
+        how="inner", predicate="within",
+    )
+    # Downtown overlap gives one business several matches; keep the closest
+    # station's, the single view a map pin needs.
+    centers = stations_proj.geometry.reindex(matches["station"])
+    matches["dist_m"] = matches.geometry.distance(
+        gpd.GeoSeries(centers.to_numpy(), index=matches.index, crs=CRS_PROJECTED)
+    )
+    matches = matches.sort_values("dist_m", kind="stable")
+    matches = matches[~matches.index.duplicated(keep="first")]
+    return matches[["station", "ring_index"]]
+
+
 # Known same-chain name variants that exact matching after normalization
 # can't merge: a compound-word spacing difference in how the license was
 # filed (see docs/DECISIONS.md). An explicit lookup, like GTFS_NAME_ALIASES
