@@ -44,6 +44,7 @@ from config import (  # noqa: E402
     CHAIN_RING_STATS_CSV,
     CHAIN_ANALYSIS_EXCLUDE_BRANDS,
 )
+from withholding import placeholder_labels, withheld_keys  # noqa: E402
 
 RIDERSHIP_COL = "avg_monthly_boardings"
 
@@ -228,6 +229,14 @@ def main():
     name_col = "business_name" if "business_name" in joined.columns else None
     if name_col:
         joined["brand"] = joined[name_col].apply(normalize_brand)
+        # A brand key that is a registrant's own name is replaced before
+        # grouping, by the same rule step 5 applies to the map's pins: this
+        # file is published too. Each key gets its own placeholder, a 1:1
+        # rename, so every count and share below is unchanged.
+        placeholders = placeholder_labels(withheld_keys(joined, normalize_brand))
+        joined["brand"] = joined["brand"].replace(placeholders)
+        print(f"{len(placeholders)} brand key(s) withheld as a registrant's own "
+              "identity (see withholding.py)")
         # Corporate food-service contractors (Compass One, Bon Appetit
         # Management, Flik International) are excluded from the chain
         # analysis only; they still count fully in ring_stats/station_stats

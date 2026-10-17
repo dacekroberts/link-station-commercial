@@ -13,6 +13,49 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-17 — Withheld names in chain_stats.csv
+
+- **Applied the name withholding to `chain_stats.csv`, which had been
+  publishing every name the map withholds.** Step 4 grouped every in-ring
+  brand into the file before step 5 withheld anything, so all 41 withheld
+  names were brand keys there, 12 of them on residentially zoned land, in a
+  committed, public file. An audit on 17 October found it. Each withheld
+  brand key is now renamed to its own numbered placeholder before grouping.
+  A one-to-one rename moves no figure: 3,900 brands, 116 chains, 6.7%, and
+  ring shares of 9.5%, 6.8% and 6.8% are unchanged, and Table 4's top 25 is
+  identical. I rejected keeping only multi-location brands. The 6.7% and
+  the Methodology's overlap figures are computed over the single-location
+  rows, and one withheld name was itself a two-location "chain" (rank 86),
+  so dropping single locations alone wouldn't have fixed it.
+- **Widened the withholding rule from an exact match to a contained one: 41
+  to 117 names, on 118 pins.** Exact equality missed names filed in a
+  different order ("Jane Doe" against "DOE JANE M") or shortened: 44
+  reordered and about 29 shortened cases among in-ring sole
+  proprietorships. A name is now withheld when every word of it appears in
+  the legal name, ignoring case, punctuation, entity suffixes and middle
+  initials, and the entity is a sole proprietorship. Of the 117, 34 are on
+  residentially zoned land and 8 on single-family land. One more pin
+  carries a withheld name under a different registrant and is withheld too,
+  so a withheld string never shows elsewhere. A trade name that adds words
+  to the owner's name ("Jane Doe Photography") stays published: it is a
+  chosen identity, as an LLC filed under the owner's name is. The cost is
+  the same kind as before: a real shop named only for its owner loses its
+  label. The rule lives in a new `withholding.py`, shared by step 4, step 5
+  and the check.
+- **Made the rule and its gate fail closed.** Both read the ownership
+  column with a fallback to empty, so a renamed column would have withheld
+  nothing and the check would have printed "OK". The rule now raises an
+  error if a column is missing or no row is a sole proprietorship. Section
+  4 of `scripts/check_personal_exposure.py` fails on that, on an empty set,
+  and on any withheld name found in `chain_stats.csv`. I tested it three
+  ways: a dropped column fails, a renamed category fails, and the old
+  committed outputs give 268 failures. Section 3 no longer prints names
+  unless run with `--show-names`, and its review file moved from the repo
+  root to `data/processed/`.
+- **[Your decision: the git history.]** The names are still in 4 past
+  commits of `outputs/chain_stats.csv`, from `d01a028`, on GitHub. Removing
+  them takes a history rewrite and a force push.
+
 ### 2026-10-13 — Motion opener on the Overview
 
 - **Put the motion opener on the Overview page, under the title.** It is

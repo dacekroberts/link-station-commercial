@@ -14,7 +14,6 @@ the ring statistics from step 4 carry the quantitative claims.
 Run:  python src/step5_map.py
 """
 
-import re
 import sys
 import zipfile
 from pathlib import Path
@@ -41,6 +40,11 @@ from config import (  # noqa: E402
     RING_LABELS,
 )
 from rights import FIGURE_CREDIT, RIGHTS_META_TAGS  # noqa: E402
+from step4_rings import normalize_brand  # noqa: E402
+# WITHHELD_NAME replaces a pin's name where that name is the registrant's
+# own identity; the tooltip renders it in italics. Re-exported here for
+# scripts that import it from this module.
+from withholding import WITHHELD_NAME, withhold_mask  # noqa: E402,F401
 
 SEATTLE_CENTER = [47.6062, -122.3321]
 
@@ -61,11 +65,6 @@ HEAT_RADIUS = 8
 HEAT_BLUR = 10
 HEAT_MIN_OPACITY = 0.35
 
-# Replaces a pin's name where that name is the registrant's own identity
-# rather than a chosen trade name. It states the reason so it reads as a
-# deliberate omission, not missing data; the tooltip renders it in italics
-# for the same reason. See the withholding block in main().
-WITHHELD_NAME = "Name withheld (sole proprietor)"
 
 # Single-hue orange ramp, pale at low density to deep at peak, so the scale
 # reads as one color getting stronger. Leaflet.heat's default blue-to-red
@@ -418,46 +417,28 @@ def main():
     # --- Withhold names that are a person's own identity -------------------
     # A trade name chosen for a shop is commercial information, and mapping it
     # is the point of this project. A sole proprietor's own name is not, and
-    # this registry publishes one wherever no trade name was filed.
-    #
-    # The test: the published name IS the legal entity name (a chosen trade
-    # name gives two different strings) AND the entity is a natural person
-    # rather than a company. The second half is load-bearing: without it,
-    # single-member LLCs dominate, because an LLC's legal name is its brand
-    # ("Barking Gorgeous LLC"). An LLC filed under the owner's own name is
-    # deliberately not caught; that is a commercial identity chosen at filing.
+    # this registry publishes one wherever no trade name was filed. The rule
+    # (sole proprietorship, and every word of the published name is in the
+    # legal name) lives in withholding.py, shared with step 4's
+    # chain_stats.csv and with scripts/check_personal_exposure.py. It raises
+    # on a missing column rather than silently withholding nothing.
     #
     # Substituted HERE, where the pin arrays are built, not in the tooltip
     # JavaScript: the pin data is baked into heatmap.html as a literal array,
     # so hiding a name only at render time would leave it readable in the
     # page source. It must never enter the file.
     #
-    # Cost: roughly three dozen pins whose trade name equals their legal name
-    # ("Hami Salon") lose their label. Accepted, because the rule recomputes
-    # from the registry on every run, unlike a hand-maintained list that
-    # would go stale silently against a newer export.
-    # See scripts/check_personal_exposure.py and the Methodology page.
-    def _entity_key(name):
-        if not isinstance(name, str):
-            return ""
-        s = re.sub(r"[^A-Z0-9 ]", " ", name.upper())
-        s = re.sub(r"\b(?:LLC|INC|CORP|CO|LTD|LP|LLP|PLLC|THE)\b", " ", s)
-        return " ".join(s.split())
-
-    _published = businesses_in_rings["business_name"].map(_entity_key)
-    _legal = businesses_in_rings.get(
-        "Business Legal Name", pd.Series("", index=businesses_in_rings.index)
-    ).map(_entity_key)
-    _is_person = (
-        businesses_in_rings.get(
-            "Ownership Type", pd.Series("", index=businesses_in_rings.index)
-        ).fillna("").str.strip() == "Sole proprietorship"
-    )
-    _withhold = (_published != "") & (_published == _legal) & _is_person
+    # Matched on the normalized brand key, as step 4 groups, so a withheld
+    # name is withheld on every pin carrying it. Cost: a trade name made only
+    # of words from the owner's legal name loses its label, real shop or not.
+    # Accepted, because the rule recomputes from the registry on every run,
+    # unlike a hand-maintained list that would go stale silently against a
+    # newer export. See the Methodology page.
+    _withhold = withhold_mask(businesses_in_rings, normalize_brand)
     if _withhold.any():
         businesses_in_rings.loc[_withhold, "business_name"] = WITHHELD_NAME
         print(f"{_withhold.sum()} pin name(s) withheld as a registrant's own "
-              "identity (see scripts/check_personal_exposure.py)")
+              "identity (see withholding.py)")
 
     def add_pin_layer(rows, sublabel, group_name, color, bold=False, show=False):
         """Add one toggleable, clustered, colored pin layer to the map.

@@ -10,11 +10,16 @@ Sections 1-3 print numbers, deliberately not a pass/fail: the judgment is a
 person's. A check that prints a verdict nobody reads is worse than one that
 prints numbers somebody has to think about.
 
-Section 4 is the exception, because it asks a yes/no question: does the
-published map actually withhold the names section 3 identifies? It reads
-outputs/heatmap.html and exits non-zero if any of those names is readable.
+Section 4 is the exception, because it asks a yes/no question: do the
+published outputs actually withhold the names section 3 identifies? It reads
+outputs/heatmap.html and outputs/chain_stats.csv and exits non-zero if any
+of those names is readable in either, or if the rule cannot run at all
+(a missing registry column, or no own-identity names found).
 
-Run:  python scripts/check_personal_exposure.py
+Names are never printed unless asked for: they are the thing being
+protected, and terminal output ends up in logs.
+
+Run:  python scripts/check_personal_exposure.py [--show-names]
 
 Needs the pipeline venv (geopandas) and the local `data/` tree, so this is a
 developer gate, not something the deployed app runs. Re-run it after any
@@ -35,6 +40,7 @@ it the check still runs, minus the strongest signal. To fetch it:
   "Current Land Use Zoning Detail" on Seattle GeoData.
 """
 
+import argparse
 import json
 import re
 import sys
@@ -47,6 +53,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from config import (  # noqa: E402
     DATA_RAW,
+    DATA_PROCESSED,
+    CHAIN_STATS_CSV,
     STATIONS_CSV,
     BUSINESSES_GEOCODED_CSV,
     CRS_GEOGRAPHIC,
@@ -54,11 +62,19 @@ from config import (  # noqa: E402
     HEATMAP_HTML,
     RING_EDGES_METERS,
 )
-from step5_map import WITHHELD_NAME  # noqa: E402
+from step4_rings import normalize_brand  # noqa: E402
+from withholding import (  # noqa: E402
+    WITHHELD_NAME,
+    own_identity_mask,
+    withhold_mask,
+    withheld_keys,
+)
 
 RAW_CSV = DATA_RAW / "business_licenses.csv"
 ZONING_GEOJSON = DATA_RAW / "seattle_zoning.geojson"
-FLAGGED_CSV = Path(__file__).parent.parent / "personal_exposure_flagged.csv"
+# Holds personal names, so it sits with the other personal data in the
+# gitignored data/ tree, not in the repo root.
+FLAGGED_CSV = DATA_PROCESSED / "personal_exposure_flagged.csv"
 
 # Seattle's registry column names. TRADE is what the map publishes; OWNER is
 # what step 2 falls back to when TRADE is blank, and is the registrant.
@@ -84,38 +100,17 @@ MULTI_FAMILY = "Multi-Family"
 
 
 def normalize(name) -> str:
-    """Strip punctuation and entity suffixes so two spellings compare equal."""
+    """Strip punctuation and entity suffixes so two spellings compare equal.
+
+    Used only to compare a pin's name with a business's name in section 4.
+    Which names are withheld is decided by withholding.py, shared with
+    steps 4 and 5 so the check and the pipeline cannot drift apart.
+    """
     if not isinstance(name, str):
         return ""
     s = re.sub(r"[^A-Z0-9 ]", " ", name.upper())
-    s = re.sub(r"\b(?:LLC|INC|CORP|CO|LTD|LP|LLP|PLLC|THE)\b", " ", s)
+    s = re.sub(r"(?:LLC|INC|CORP|CO|LTD|LP|LLP|PLLC|THE)", " ", s)
     return " ".join(s.split())
-
-
-def own_identity(row) -> bool:
-    """Is the published name the registrant's own identity, not a trade name?
-
-    Two conditions, and both matter:
-
-    - The published name equals the legal entity name. Someone who picked a
-      trade name has two different strings here; someone who never picked one
-      is published under whatever the registry holds, which for a natural
-      person is their name.
-    - The entity is a sole proprietorship, i.e. a natural person. Without
-      this, single-member LLCs dominate the result, because an LLC's legal
-      name IS its brand: "Barking Gorgeous LLC" and "Blue Sky Bridal" both
-      match the first condition and neither is anybody's personal name.
-
-    This separates the two cases the name regex cannot: a name someone
-    chose to trade under, versus a name the registry is exposing on their
-    behalf. It deliberately does NOT flag a person who registered an LLC
-    under their own name ("Anne McGowan LLC"): that is a commercial
-    identity they chose to file.
-    """
-    published = normalize(row.get("business_name"))
-    legal = normalize(row.get("Business Legal Name"))
-    is_sole = str(row.get("Ownership Type", "")).strip() == "Sole proprietorship"
-    return bool(published) and published == legal and is_sole
 
 
 def person_like(name) -> bool:
@@ -188,7 +183,7 @@ def check_fallback(pub):
     return hits
 
 
-def check_zoning(pub):
+def check_zoning(pub, show_names=False):
     """Intersect a person-like name with land that people live on."""
     import geopandas as gpd
 
@@ -235,14 +230,14 @@ def check_zoning(pub):
         print("   A small difference means the count above is mostly the")
         print("   heuristic's own noise, not evidence of home addresses.")
 
-    # The signal that actually answers the question. See own_identity().
+    # The signal that actually answers the question. See withholding.py.
     print("\n3. IS THE PUBLISHED NAME THE REGISTRANT'S OWN IDENTITY?")
-    joined["own_identity"] = joined.apply(own_identity, axis=1)
+    joined["own_identity"] = own_identity_mask(joined)
     mine = joined[joined["own_identity"]]
     on_res = joined[joined["own_identity"] & joined["CLASS_DESC"].isin(
         [SINGLE_FAMILY, MULTI_FAMILY])]
     on_sf = joined[joined["own_identity"] & (joined["CLASS_DESC"] == SINGLE_FAMILY)]
-    print(f"   published name == legal name AND a sole proprietorship: "
+    print(f"   published name within the legal name AND a sole proprietorship: "
           f"{len(mine)} ({len(mine) / len(joined) * 100:.2f}%)")
     print(f"   >> of those, on residentially zoned land: {len(on_res)} "
           f"({len(on_res) / len(joined) * 100:.2f}%)")
@@ -251,11 +246,13 @@ def check_zoning(pub):
     print("   This set is small enough to read in full, and it is the one")
     print("   worth reading: it excludes trade names by construction rather")
     print("   than by guessing at them.")
-    if len(on_res):
+    if len(on_res) and show_names:
         print()
         for _, r in on_res.iterrows():
             print(f"      {str(r['business_name'])[:34]:36}{str(r['naics']):8}"
                   f"{str(r['CLASS_DESC'])}")
+    elif len(on_res):
+        print("   (names hidden; --show-names prints them for local review)")
     return on_res
 
 
@@ -273,15 +270,36 @@ def map_pins(html_path):
 
 
 def check_withholding(pub):
-    """Is every own-identity name withheld on the published map? Pass/fail.
+    """Are the own-identity names withheld in every published output? Pass/fail.
 
-    For each in-ring business own_identity() flags, the pins at its
+    Fails, rather than passing on an empty set, when the rule cannot run (a
+    registry column missing or renamed) or finds nothing at all: a gate that
+    checks zero names proves nothing.
+
+    Map: for each in-ring business withholding.py withholds, the pins at its
     coordinates must include WITHHELD_NAME and must not include its real
     name, in any layer. Keyed on coordinates, not name search alone: two
     different businesses can share a trade name, and only one of them may
     be a sole proprietor trading under their own name.
+
+    chain_stats.csv: no brand key may be the normalized form of a withheld
+    name. The file lists every in-ring brand, single locations included, so
+    without this a name withheld on the map is still published there.
     """
-    print("\n4. DOES THE PUBLISHED MAP WITHHOLD THEM?")
+    print("\n4. DO THE PUBLISHED OUTPUTS WITHHOLD THEM?")
+    try:
+        withhold = withhold_mask(pub, normalize_brand)
+        own = own_identity_mask(pub)
+        keys = withheld_keys(pub, normalize_brand)
+    except (KeyError, ValueError) as e:
+        print(f"   FAIL: the withholding rule cannot run. {e}")
+        return 1
+    if not own.any():
+        print("   FAIL: 0 own-identity names among published pins. With 760")
+        print("   sole-proprietor pins as of 2026-10-17, zero means the rule")
+        print("   or the data changed shape, not that the problem went away.")
+        return 1
+
     pins = map_pins(HEATMAP_HTML)
     if not pins:
         print(f"   FAIL: parsed 0 pins from {HEATMAP_HTML.name}. step5's pin")
@@ -293,10 +311,9 @@ def check_withholding(pub):
     for p in pins:
         names_at.setdefault(key(p[0], p[1]), set()).add(normalize(p[2]))
 
-    own = pub[pub.apply(own_identity, axis=1)]
     withheld = normalize(WITHHELD_NAME)
     missing_pin, not_withheld, leaked = [], [], []
-    for _, r in own.iterrows():
+    for _, r in pub[withhold].iterrows():
         here = names_at.get(key(r["latitude"], r["longitude"]))
         if here is None:
             missing_pin.append(r)
@@ -306,27 +323,40 @@ def check_withholding(pub):
         if normalize(r["business_name"]) in here:
             leaked.append(r)
 
+    chains = pd.read_csv(CHAIN_STATS_CSV, dtype=str)
+    chain_leaks = chains["brand"].isin(keys).sum()
+
     print(f"   pin entries parsed from {HEATMAP_HTML.name}: {len(pins):,}")
-    print(f"   own-identity businesses among published pins: {len(own)}")
+    print(f"   own-identity businesses among published pins: {own.sum()}")
+    print(f"   withheld in all (sharing a withheld name): {withhold.sum()}")
     print(f"   >> with no pin at their coordinates: {len(missing_pin)}")
     print(f"   >> with no '{WITHHELD_NAME}' pin there: {len(not_withheld)}")
     print(f"   >> real name still readable there: {len(leaked)}")
+    print(f"   brand rows in {CHAIN_STATS_CSV.name}: {len(chains):,}")
+    print(f"   >> rows whose brand is a withheld name: {chain_leaks}")
 
-    failures = len(missing_pin) + len(not_withheld) + len(leaked)
+    failures = len(missing_pin) + len(not_withheld) + len(leaked) + chain_leaks
     if failures:
-        print(f"\n   FAIL. Re-run `python src/step5_map.py` - the map may predate")
-        print("   the data. If it still fails, step5's withholding block no")
-        print("   longer matches own_identity() in this script; the two must")
-        print("   apply the same rule. (Names not printed: they are the thing")
-        print("   being protected. Inspect the rows locally.)")
+        print("\n   FAIL. Re-run `python src/step4_rings.py` and")
+        print("   `python src/step5_map.py` - the outputs may predate the data.")
+        print("   If it still fails, a step no longer applies withholding.py.")
+        print("   (Names not printed: they are the thing being protected.")
+        print("   Inspect the rows locally.)")
     else:
-        print("   OK: every one is withheld, and no real name survives at its")
-        print("   coordinates in any layer.")
+        print("   OK: every one is withheld, no real name survives at its")
+        print(f"   coordinates in any layer, and none is a brand in {CHAIN_STATS_CSV.name}.")
     return failures
 
 
 def main():
-    for path in (RAW_CSV, BUSINESSES_GEOCODED_CSV, STATIONS_CSV, HEATMAP_HTML):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--show-names", action="store_true",
+                    help="print section 3's residential names (for local "
+                         "review only; never paste the output anywhere)")
+    show_names = ap.parse_args().show_names
+
+    for path in (RAW_CSV, BUSINESSES_GEOCODED_CSV, STATIONS_CSV, HEATMAP_HTML,
+                 CHAIN_STATS_CSV):
         if not path.exists():
             sys.exit(f"Missing {path}. Run the pipeline first.")
 
@@ -334,7 +364,7 @@ def main():
     print(f"Published map pins (inside some station ring): {len(pub):,}\n")
 
     fallback_hits = check_fallback(pub)
-    flagged = check_zoning(pub)
+    flagged = check_zoning(pub, show_names)
     withholding_failures = check_withholding(pub)
 
     # Guard the empty case: with no zoning layer and a clean fallback, both
@@ -347,7 +377,7 @@ def main():
                 if c in out.columns]
         out = out[cols].drop_duplicates()
         out.to_csv(FLAGGED_CSV, index=False, encoding="utf-8-sig")
-        print(f"\nWrote {len(out):,} flagged rows to {FLAGGED_CSV.name} "
+        print(f"\nWrote {len(out):,} flagged rows to data/processed/{FLAGGED_CSV.name} "
               "for hand review. Rows from section 3 are withheld on the map "
               "if section 4 passed; the file is for judging the rule, not a "
               "list of live exposures.")
