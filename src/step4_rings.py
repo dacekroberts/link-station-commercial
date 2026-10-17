@@ -43,6 +43,7 @@ from config import (  # noqa: E402
     CHAIN_STATS_CSV,
     CHAIN_RING_STATS_CSV,
     CHAIN_ANALYSIS_EXCLUDE_BRANDS,
+    CHAIN_ANALYSIS_EXCLUDE_ENTITIES,
 )
 from withholding import placeholder_labels, withheld_keys  # noqa: E402
 
@@ -244,8 +245,12 @@ def main():
         # office campus, not independent chain site-selection. See
         # CHAIN_ANALYSIS_EXCLUDE_BRANDS in config.py for the reasoning,
         # including why NAICS 722310 alone doesn't cleanly separate these
-        # from legitimate small chains.
-        excluded = joined["brand"].isin(CHAIN_ANALYSIS_EXCLUDE_BRANDS)
+        # from legitimate small chains. Matched on the legal entity first,
+        # since a contractor licenses some sites under other trade names;
+        # the brand key is the fallback.
+        legal = joined["Business Legal Name"].fillna("").str.strip().str.upper()
+        excluded = (legal.isin(CHAIN_ANALYSIS_EXCLUDE_ENTITIES)
+                    | joined["brand"].isin(CHAIN_ANALYSIS_EXCLUDE_BRANDS))
         if excluded.any():
             print(f"{excluded.sum():,} business-ring rows excluded from chain "
                   f"analysis only (contractor brands): "

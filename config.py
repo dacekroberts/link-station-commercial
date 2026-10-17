@@ -208,6 +208,18 @@ CHAIN_ANALYSIS_EXCLUDE_BRANDS = {
     ),
 }
 
+# The primary exclusion test: the licence's Business Legal Name, uppercased.
+# A contractor files some licences under other trade names (Compass One LLC
+# as "EUREST DINING", Bon Appetit Management Co under each client's name),
+# which the brand keys above miss: by brand key 24 of Compass One's 28
+# licences and 8 of Bon Appetit's 17 were caught. The brand keys stay as a
+# fallback. Read by step4_rings.py only; no page imports it.
+CHAIN_ANALYSIS_EXCLUDE_ENTITIES = {
+    "COMPASS ONE LLC",
+    "BON APPETIT MANAGEMENT CO",
+    "FLIK INTERNATIONAL CORP",
+}
+
 # Sanity bounds for geocoder output. Anything outside this is a bad match.
 KING_COUNTY_BBOX = {
     "lat_min": 47.15,
