@@ -954,9 +954,9 @@ if CHAIN_STATS_CSV.exists():
         could back my hypothesis with the actions of real-world decision
         makers.
 
-        The initial data probe revealed promising results: 116 brands had
+        The initial data probe revealed promising results: 115 brands had
         at least two locations within the sample range of Seattle
-        stations, with all chain brands accounting for 6.7% of locations
+        stations, with all chain brands accounting for 6.6% of locations
         in the corridor. Topping the line of individual brands
         angling toward transit is Subway, which is currently operating
         seven locations within a range of eight stations. The other 24
@@ -1055,8 +1055,8 @@ if CHAIN_STATS_CSV.exists():
     st.markdown(
         """
         Graph 5 cleanly supports the hypothesis that chain share rises
-        closer to the station, going from 9.5% share within concentric ring
-        1 down to 6.8% within ring 4. The gap in chain share from ring 3 to
+        closer to the station, going from 9.3% share within concentric ring
+        1 down to 6.7% within ring 4. The gap in chain share from ring 3 to
         4 is notably small, with both rings tied at 6.8%, possibly because
         of the downtown buffer overlap described in the gradient section.
         The downtown stations from Westlake to International

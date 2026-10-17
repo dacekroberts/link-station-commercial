@@ -6,7 +6,7 @@ inferred from the fact that a source sits on an open-data portal.
 
 This matters more here than for a project that only displays data, because
 this repository **redistributes derived data publicly**:
-`outputs/heatmap.html` is committed and served, and carries 4,120 business
+`outputs/heatmap.html` is committed and served, and carries 4,116 business
 records paired with precise coordinates; `outputs/*.csv` carry aggregate
 statistics; and the station coordinates and rail alignment are republished as
 map geometry. "Is redistribution of derived data permitted" is therefore a

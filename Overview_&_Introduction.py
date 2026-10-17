@@ -208,7 +208,7 @@ st.markdown(
   spread across stations is about 1.8 times as uneven as ridership's,
   proportionally, not just in raw numbers.
 - **Chains lean into platform proximity too.** Chain share is highest
-  right at the platform, 9.5% in the first ring, and falls to 6.8% by the
+  right at the platform, 9.3% in the first ring, and falls to 6.7% by the
   fourth, the same declining pattern found in overall density.
 """
 )
@@ -272,7 +272,7 @@ if STATION_STATS_CSV.exists():
         in_rings = int(coverage["businesses_in_rings"])
         citywide = int(coverage["businesses_citywide"])
         # Whole number as the metric value; fraction and percentage go in a
-        # caption. "4,120 / 11,409 (36.1%)" as the value overflowed the
+        # caption. "4,116 / 11,409 (36.1%)" as the value overflowed the
         # column and truncated with an ellipsis. The full string stays in
         # the DOM, so check this visually, not with a text-content check.
         mid.metric("Businesses within a station's ring area", f"{in_rings:,}")

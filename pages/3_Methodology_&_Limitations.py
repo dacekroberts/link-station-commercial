@@ -368,7 +368,7 @@ gets published under whatever the registry holds. I can identify that
 case exactly rather than guess at it, because the registry carries both
 names: if someone chose a trade name, the two strings differ. Requiring
 that the published name *be* the legal entity name, and that the entity
-be a sole proprietorship rather than a company, narrows 4,120 pins to 41,
+be a sole proprietorship rather than a company, narrows 4,116 pins to 41,
 and to 12 once I keep only residentially zoned addresses (using the
 City's published land use zoning layer). That is few enough to read
 rather than sample, and reading them, seven are genuinely someone's name
@@ -543,12 +543,12 @@ all on its own. I verified this by hand: a one-location shop with no
 other branches showed up as "present at 4 stations," indistinguishable
 from an actual chain.
 
-Checking across every normalized brand, **1,604 of 3,900 (41.1%)** touch
+Checking across every normalized brand, **1,602 of 3,895 (41.1%)** touch
 more than one station from exactly one physical location. Defining
 "chain" as `station_count > 1`, which is what the first version of this
 analysis did, would have reported **45.5%** of locations as chains.
 Correctly requiring 2+ real locations instead puts the true figure at
-**6.7% (116 brands)**. Every chain statistic used throughout this
+**6.6% (115 brands)**. Every chain statistic used throughout this
 project requires `location_count >= 2`, never station count alone.
 """
     )

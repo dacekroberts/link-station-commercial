@@ -58,9 +58,9 @@ Flowchart, and About.
   businesses per square mile), with a slight **+0.9%** rise from ring 2 to 3.
 - Ridership and nearby business density correlate moderately: **r = 0.684**.
 - Businesses spread across stations **1.8x** as unevenly as ridership does.
-- Chain share is highest at the platform: **9.5%** in ring 1, falling to
+- Chain share is highest at the platform: **9.3%** in ring 1, falling to
   **6.8%** by ring 3, then level.
-- **4,120 of 11,409** geocoded Seattle businesses (36.1%) sit within 0.6
+- **4,116 of 11,409** geocoded Seattle businesses (36.1%) sit within 0.6
   miles of a station.
 
 **What it can't answer.** Whether transit draws businesses or follows
@@ -220,14 +220,14 @@ only reads `outputs/`.
   commercial purpose.
 
 ### Chains
-- **116 brands** have two or more distinct locations near the stations,
-  accounting for **6.7%** of locations. Subway leads with seven locations
+- **115 brands** have two or more distinct locations near the stations,
+  accounting for **6.6%** of locations. Subway leads with seven locations
   within range of eight stations.
 - **Original question:** chains appear near **2.95** stations on average
   against **1.66** for single-location businesses. Partly built in: more
   locations mean more chances to sit near different stations.
-- **Refined question:** chain share by ring is **9.5% / 7.5% / 6.8% /
-  6.8%**. Per square mile, chain density falls **73.6%** from ring 1 to
+- **Refined question:** chain share by ring is **9.3% / 7.5% / 6.8% /
+  6.7%**. Per square mile, chain density falls **73.3%** from ring 1 to
   ring 4 against **61.8%** for other businesses, so chains lean into
   platform proximity harder than other businesses.
 - **The ring 3/4 tie** (6.82% vs 6.77%) is consistent with downtown buffer
