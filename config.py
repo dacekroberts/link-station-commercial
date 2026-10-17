@@ -178,12 +178,13 @@ NAICS_STOREFRONT_REVIEWED_KEPT = {
 # one vendor running cafeterias in its client's office buildings, not an
 # independent chain repeatedly choosing transit-adjacent sites.
 #
-# The filter is these three brand names, not a NAICS code. NAICS 722310
+# The filter is these three companies (by legal entity, see
+# CHAIN_ANALYSIS_EXCLUDE_ENTITIES below), not a NAICS code. NAICS 722310
 # (Food Service Contractors) identified them and is disclosed on the
-# methodology page, but it tags only 1 of Compass One's 24 records (the
-# other 23 are 722514, "Cafeterias, Grill Buffets, and Buffets"), and 722514
-# would also catch ~30 genuine independent cafes (Boon Boona Coffee, Turtle
-# Coffee, Tea Addicts, and others).
+# methodology page, but it tags only 3 of Compass One's 28 records (23 are
+# 722514, "Cafeterias, Grill Buffets, and Buffets", and 2 are 722330), and
+# 722514 would also catch ~30 genuine independent cafes (Boon Boona Coffee,
+# Turtle Coffee, Tea Addicts, and others).
 CHAIN_ANALYSIS_EXCLUDE_BRANDS = {
     "COMPASS ONE": (
         "Compass One LLC",
