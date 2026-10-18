@@ -2,7 +2,7 @@
 
 A complete account of what this project built, measured, used and taught,
 organized by concept rather than by date. Written 2026-10-01, when the
-site reached its final version. Figures are current as of that date; the
+site reached its final version. Figures are current as of 2026-10-17; the
 dated records in `docs/DECISIONS.md` keep the history of how each one got
 there.
 
