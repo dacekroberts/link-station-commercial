@@ -13,6 +13,36 @@ Format: what you chose, why, and what it rules out.
 Macro-level deviations from the original project design, newest first. One line
 each; detail lives in the sections below.
 
+### 2026-10-17 — Two audit corrections: contractor exclusion and map rings
+
+- **Excluded the contract caterers by legal entity, not trade name: 116 to
+  115 chains.** The exclusion matched brand keys, so Compass One LLC's 4
+  licences filed as "Eurest Dining" counted as a chain of 3 locations. Bon
+  Appetit Management Co holds 17 licences, and its brand key caught 8; the
+  rest are filed under a client's or a café's name. Step 4 now tests the
+  Business Legal Name first and keeps the brand keys as a fallback. Chain
+  share falls from 6.7% to 6.6% of locations. By ring it is now 9.3%, 7.5%,
+  6.8% and 6.7% (ring 1: 39 of 420; ring 4: 281 of 4,207), so the ring 3 to
+  4 tie is gone. The overlap check moves to 1,602 of 3,895 brands, still
+  41.1%. Per square mile, chain density now falls 73.3% from ring 1 to ring
+  4, against 61.8% for other businesses.
+- **Made the map's rings use step 4's polygons: 4,120 to 4,116 pins.** Step
+  5 binned straight-line distance against true circles, while step 4 counts
+  with a 'within' test against 64-sided polygons that sit just inside the
+  circle. So 4 businesses at 965.4 m were on the map but in no ring count,
+  and 5 pins near the ring 3 edge said "Ring 3" where step 4 counts them in
+  ring 4 of the same station. A shared `nearest_ring_membership()` in
+  `step4_rings.py` now picks the pins, their ring labels and the exposure
+  check's pin set. Coverage stays at 36.1% (4,116 of 11,409). Inside the
+  rings the mix is 41.4% retail, 43.4% food service and 15.3% personal
+  services; across the other 7,293 it is 48.3%, 29.1% and 22.6%. The films'
+  rounded 41/43/15 and 48/29/23 hold. Withholding is unchanged: 117 names on
+  118 pins.
+- **[Your decision: Compass Group USA Inc.]** A related entity with 6
+  licences, 1 of them filed as "Eurest Dining Services", is still counted in
+  the chain analysis. Excluding it would be one more line in
+  `CHAIN_ANALYSIS_EXCLUDE_ENTITIES`.
+
 ### 2026-10-17 — Withheld names in chain_stats.csv
 
 - **Applied the name withholding to `chain_stats.csv`, which had been
