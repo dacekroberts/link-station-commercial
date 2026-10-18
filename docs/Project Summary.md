@@ -59,7 +59,7 @@ Flowchart, and About.
 - Ridership and nearby business density correlate moderately: **r = 0.684**.
 - Businesses spread across stations **1.8x** as unevenly as ridership does.
 - Chain share is highest at the platform: **9.3%** in ring 1, falling to
-  **6.8%** by ring 3, then level.
+  **6.7%** by ring 4.
 - **4,116 of 11,409** geocoded Seattle businesses (36.1%) sit within 0.6
   miles of a station.
 

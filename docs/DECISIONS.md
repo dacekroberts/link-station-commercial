@@ -38,10 +38,10 @@ each; detail lives in the sections below.
   services; across the other 7,293 it is 48.3%, 29.1% and 22.6%. The films'
   rounded 41/43/15 and 48/29/23 hold. Withholding is unchanged: 117 names on
   118 pins.
-- **[Your decision: Compass Group USA Inc.]** A related entity with 6
-  licences, 1 of them filed as "Eurest Dining Services", is still counted in
-  the chain analysis. Excluding it would be one more line in
-  `CHAIN_ANALYSIS_EXCLUDE_ENTITIES`.
+- **Left Compass Group USA Inc, Compass One's parent, in the chain
+  analysis.** The caterers were removed because they distorted the chain
+  count. The parent's 6 licences don't: each of its 3 brands inside the
+  rings has one location, so excluding it would move no chain figure.
 
 ### 2026-10-17 — Withheld names in chain_stats.csv
 
