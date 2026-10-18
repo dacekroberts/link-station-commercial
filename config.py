@@ -188,19 +188,22 @@ NAICS_STOREFRONT_REVIEWED_KEPT = {
 CHAIN_ANALYSIS_EXCLUDE_BRANDS = {
     "COMPASS ONE": (
         "Compass One LLC",
-        "23 of its 24 licensed locations use NAICS 722514, not 722310, "
-        "but all 24 cluster in South Lake Union under addresses that read "
-        "as office-campus buildings (Terry Ave N, Boren Ave N, Fairview "
-        "Ave N), not walk-in storefronts. Compass Group is a real, large "
+        "Holds 28 licences here, 4 of them filed as \"Eurest Dining\", "
+        "and 23 use NAICS 722514, not 722310. 23 of the 28 sit in South "
+        "Lake Union and the Denny Triangle, under addresses that read as "
+        "office-campus buildings (Terry Ave N, Boren Ave N, 7th Ave), not "
+        "walk-in storefronts. The other 5 are downtown, in SoDo and on "
+        "Elliott Ave W. Compass Group is a real, large "
         "contract food-service company; \"11 locations\" in the raw chain "
         "count reflected one vendor's footprint across a single client's "
         "campus, not 11 independent site-selection decisions.",
     ),
     "BON APPETIT MANAGEMENT": (
         "Bon Appétit Management Company",
-        "NAICS 722310 (Food Service Contractors) throughout; another "
-        "national contract caterer, same pattern as Compass One at a "
-        "smaller scale in this dataset (4 locations).",
+        "NAICS 722310 (Food Service Contractors) on 12 of its 17 "
+        "licences, and 9 are filed under another trade name, mostly the "
+        "client's. Another national contract caterer, same pattern as "
+        "Compass One at a smaller scale.",
     ),
     "FLIK INTERNATIONAL": (
         "Flik International",

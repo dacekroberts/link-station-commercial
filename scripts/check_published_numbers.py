@@ -76,7 +76,7 @@ CITATIONS = [
     (FINDINGS, "storefront density falls {fall} from the innermost"),
     (FINDINGS, "commercial density at r = {r}"),
 
-    (METHODOLOGY, "narrows {in_rings} pins"),
+    (METHODOLOGY, "117 of the {in_rings} pins"),
     # "Empty rings": the old values in that passage (957, 67.5%, +7.6%, 311)
     # describe the corrected error and are deliberately not checked.
     (METHODOLOGY, "drops from 957 to **{r1}** businesses/sq mi"),
@@ -99,7 +99,8 @@ NOT_CHECKED = [
     "237 cities (Heatmap, closing line) - Storefronts Near Transit's count, "
     "a separate project",
     "84,390 raw rows (Flowchart, Methodology) - data/raw, not outputs/",
-    "41 withheld pins / 0.17% (Methodology) - step 5's name test",
+    "117 withheld names on 118 pins, 34 residential, 8 single-family "
+    "(Methodology) - withholding.py, counted by check_personal_exposure.py",
     "1,767 (42.9%) multi-station claims (Methodology) - needs the spatial join",
     "0.27 to 0.41 miles between downtown stations (Findings, Graph 5 "
     "paragraph) - stations.csv, measured in EPSG:32610",

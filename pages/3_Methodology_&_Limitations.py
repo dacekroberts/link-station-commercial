@@ -367,23 +367,26 @@ the map. The second is a sole proprietor with no trade name at all, who
 gets published under whatever the registry holds. I can identify that
 case exactly rather than guess at it, because the registry carries both
 names: if someone chose a trade name, the two strings differ. Requiring
-that the published name *be* the legal entity name, and that the entity
-be a sole proprietorship rather than a company, narrows 4,116 pins to 41,
-and to 12 once I keep only residentially zoned addresses (using the
-City's published land use zoning layer). That is few enough to read
-rather than sample, and reading them, seven are genuinely someone's name
-and five are trade names that happen to match the legal one. **Seven
-pins, 0.17% of the map, three of them on single-family land.**
+that every word of the published name appear in the legal entity name,
+and that the entity be a sole proprietorship rather than a company,
+picks out **117 of the 4,116 pins (2.8%)**. Of those, 34 are on
+residentially zoned land (using the City's published land use zoning
+layer) and 8 on single-family land. An earlier, exact-match version of
+this test found 12 on residential land; reading them, seven were
+genuinely someone's name and five were trade names that happened to
+match the legal one.
 
-Those seven names are not published. The map withholds a pin's name
+None of those 117 names is published. The map withholds a pin's name
 wherever it is the registrant's own identity by the test above, showing
 *Name withheld (sole proprietor)* in its place; the pin, its location,
 its category and its ring all stay, so no figure anywhere on this site
-changes. That covers 41 pins rather than seven, because the rule
-deliberately over-reaches: around three dozen of them are trade names
-that happen to match the legal name, and they lose their label too. I
-preferred that to a hand-written list of the seven, which would go stale
-against a newer license export without ever saying so. Excluding NAICS
+changes. One more pin is withheld because another registrant files under
+one of the same names, so a withheld name never shows elsewhere on the
+map, and the published chain table renames those brands the same way.
+The rule deliberately over-reaches: a real shop trading under exactly
+its owner's name loses its label too. I preferred that to a hand-written
+list of names, which would go stale against a newer license export
+without ever saying so. Excluding NAICS
 `812990` above had already removed the category where home-based sole
 proprietors concentrate, which is most of why the number was small to
 begin with. The check itself
@@ -392,7 +395,8 @@ than a verdict. Its limits are worth stating plainly: matching a name
 against the legal entity name can't tell a real shop trading under its
 owner's name from a registrant sitting at home, zoning describes
 permitted use rather than actual use, no individual record here was
-verified, and nobody was contacted. Checked 2026-09-20.
+verified, and nobody was contacted. Checked 2026-09-20; rule widened and
+re-checked 2026-10-17.
 """
 )
 
