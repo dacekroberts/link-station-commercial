@@ -68,7 +68,7 @@ CITATIONS = [
     (FINDINGS, "{chain_brands} brands had at least two locations"),
     (FINDINGS, "accounting for {chain_share} of locations"),
     (FINDINGS, "going from {chain_r1} share within concentric ring 1 down to {chain_r4} within ring 4"),
-    (FINDINGS, "with both rings tied at {chain_r3}"),
+    (FINDINGS, "from ring 3's {chain_r3} share down to the aforementioned {chain_r4}"),
     (FINDINGS, "chains appear near {chain_mean_stations} stations"),
     (FINDINGS, "against {single_mean_stations} for single-location businesses"),
     (FINDINGS, "net {fall} decline from ring 1"),

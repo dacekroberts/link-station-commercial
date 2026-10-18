@@ -1057,10 +1057,12 @@ if CHAIN_STATS_CSV.exists():
         Graph 5 cleanly supports the hypothesis that chain share rises
         closer to the station, going from 9.3% share within concentric ring
         1 down to 6.7% within ring 4. The gap in chain share from ring 3 to
-        4 is notably small, with both rings tied at 6.8%, possibly because
-        of the downtown buffer overlap described in the gradient section.
-        The downtown stations from Westlake to International
-        District/Chinatown sit 0.27 to 0.41 miles apart, so
+        4 is notably small, with only a 0.1% drop from ring 3's 6.8% share
+        down to the aforementioned 6.7%. The downtown buffer overlap
+        described in the density gradient section likely has a degree of
+        influence on the diminishing decay. The downtown stations from
+        Westlake to International District/Chinatown sit 0.27 to 0.41 miles
+        apart, so
         each one's fourth ring, which runs out to 0.6 miles, reaches past
         its neighbor's platform and takes in that station's close-in
         storefronts. At Westlake and Symphony, chain share holds at 8 to 9%
